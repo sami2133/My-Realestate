@@ -1,9 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
 //    id("com.google.gms.google-services")
+}
+
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) load(FileInputStream(f))
 }
 
 android {
@@ -22,10 +30,17 @@ android {
     
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "release.keystore.jks")
+            storeFile = file(
+                System.getenv("KEYSTORE_PATH")
+                    ?: localProps.getProperty("RELEASE_STORE_FILE")
+                    ?: "release.keystore.jks"
+            )
             storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: localProps.getProperty("RELEASE_STORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
+                ?: localProps.getProperty("RELEASE_KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
+                ?: localProps.getProperty("RELEASE_KEY_PASSWORD")
         }
     }
 
@@ -62,6 +77,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
 

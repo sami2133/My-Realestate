@@ -12,6 +12,9 @@ import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.ClientViewModel
+import com.realestate.sami.util.parseTomanInput
+import com.realestate.sami.util.parseNumberInput
+import com.realestate.sami.util.parseIntInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,12 +80,12 @@ fun AddClientScreen(
                         desiredPropertyType = propertyType,
                         desiredDealType = dealType,
                         desiredRegion = region,
-                        minArea = minArea.toDoubleOrNull(),
-                        maxArea = maxArea.toDoubleOrNull(),
-                        minRooms = minRooms.toIntOrNull(),
-                        maxTotalPrice = maxTotalPrice.toLongOrNull(),
-                        maxDepositPrice = maxDepositPrice.toLongOrNull(),
-                        maxRentPrice = maxRentPrice.toLongOrNull(),
+                        minArea = minArea.parseNumberInput(),
+                        maxArea = maxArea.parseNumberInput(),
+                        minRooms = minRooms.parseIntInput(),
+                        maxTotalPrice = maxTotalPrice.parseTomanInput(),
+                        maxDepositPrice = maxDepositPrice.parseTomanInput(),
+                        maxRentPrice = maxRentPrice.parseTomanInput(),
                         needsParking = needsParking,
                         needsElevator = needsElevator
                     )
