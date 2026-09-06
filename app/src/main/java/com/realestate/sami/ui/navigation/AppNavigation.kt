@@ -1,8 +1,9 @@
 package com.realestate.sami.ui.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,7 +39,7 @@ fun AppNavigation() {
                 val currentDestination = backStackEntry?.destination
 
                 bottomItems.forEach { screen ->
-                    val icon = if (screen == Screen.PropertyList) Icons.Filled.Home else Icons.Filled.People
+                    val icon = if (screen == Screen.PropertyList) Icons.Filled.Home else Icons.Filled.Person
                     NavigationBarItem(
                         icon = { Icon(icon, contentDescription = screen.label) },
                         label = { Text(screen.label) },
