@@ -29,7 +29,8 @@ class PropertyRepository @Inject constructor(
         return propertyDao.insert(toSave)
     }
 
-    suspend fun delete(property: PropertyEntity) = propertyDao.delete(property)
+    /** soft-delete: به‌جای حذف فیزیکی، رکورد را tombstone می‌کند تا حذف بین دستگاه‌های تیم هم sync شود. */
+    suspend fun delete(property: PropertyEntity) = propertyDao.softDelete(property.id)
 
     fun findMatchingProperties(
         propertyType: com.realestate.sami.data.local.entity.PropertyType,

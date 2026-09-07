@@ -18,4 +18,12 @@ object DriveConstants {
 
     const val DRIVE_API_BASE = "https://www.googleapis.com/drive/v3"
     const val DRIVE_UPLOAD_BASE = "https://www.googleapis.com/upload/drive/v3"
+
+    /**
+     * رکوردهای soft-delete شده (tombstone) این تعداد روز در فایل JSON مشترک نگه داشته می‌شوند
+     * تا فرصت کافی برای رسیدن پیام حذف به همه‌ی دستگاه‌های تیم باشد، بعد از آن پاک‌سازی می‌شوند
+     * تا حجم فایل مشترک بی‌نهایت رشد نکند. دستگاهی که بیش از این مدت آفلاین بماند، ممکن است
+     * حذف رو نبینه (محدودیت شناخته‌شده).
+     */
+    const val TOMBSTONE_RETENTION_DAYS = 90L
 }

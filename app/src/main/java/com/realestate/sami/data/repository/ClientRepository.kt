@@ -24,7 +24,8 @@ class ClientRepository @Inject constructor(
         return clientDao.insert(toSave)
     }
 
-    suspend fun delete(client: ClientEntity) = clientDao.delete(client)
+    /** soft-delete: به‌جای حذف فیزیکی، رکورد را tombstone می‌کند تا حذف بین دستگاه‌های تیم هم sync شود. */
+    suspend fun delete(client: ClientEntity) = clientDao.softDelete(client.id)
 
     fun findMatchingClients(property: PropertyEntity): Flow<List<ClientEntity>> =
         clientDao.findMatchingClients(

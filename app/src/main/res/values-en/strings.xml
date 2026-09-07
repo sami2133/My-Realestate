@@ -161,4 +161,10 @@
     <string name="sync_never_synced">Not synced yet</string>
     <string name="sync_consent_needed">Drive access needs to be re-confirmed</string>
     <string name="sync_description">Properties and clients are shared with team members who have access to the same shared Drive folder.</string>
+    <string name="sync_team_folder_title">Team folder</string>
+    <string name="sync_team_folder_has_one">You\'re connected to a team folder. Share its link with the rest of the team so they connect to the same folder instead of creating a separate one.</string>
+    <string name="sync_team_folder_share_button">Share team folder link</string>
+    <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
+    <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
+    <string name="sync_team_folder_join_button">Join existing team</string>
 </resources>

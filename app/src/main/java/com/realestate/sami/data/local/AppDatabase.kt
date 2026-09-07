@@ -19,7 +19,11 @@ import com.realestate.sami.data.local.entity.VisitEntity
         ContactLogEntity::class,
         VisitEntity::class
     ],
-    version = 1,
+    // نسخه ۲: افزودن ستون isDeleted برای پشتیبانی از soft-delete در فاز ۴.۱ (sync حذف رکورد).
+    // چون هنوز exportSchema=false و fallbackToDestructiveMigration فعال است (پروژه هنوز منتشر نشده)،
+    // نیازی به Migration واقعی نیست؛ قبل از انتشار عمومی این باید با یک Migration واقعی جایگزین شود
+    // تا داده‌ی کاربرهای واقعی موقع آپدیت پاک نشود.
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

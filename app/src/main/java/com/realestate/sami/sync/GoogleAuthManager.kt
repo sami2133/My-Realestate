@@ -54,6 +54,20 @@ class GoogleAuthManager @Inject constructor() {
     }
 
     /**
+     * توکن فعلی را از کش محلی Google Play Services باطل می‌کند (بدون نیاز به sign-out کامل کاربر).
+     * وقتی Drive API با 401 برمی‌گرده (توکن منقضی/باطل‌شده)، باید این صدا زده بشه و بعد getAccessToken
+     * دوباره فراخوانی بشه تا یک توکن تازه بگیره.
+     */
+    suspend fun clearToken(context: Context, token: String) = withContext(Dispatchers.IO) {
+        try {
+            GoogleAuthUtil.clearToken(context, token)
+        } catch (_: Exception) {
+            // پاک نشدن توکن از کش محلی مسئله‌ی بحرانی نیست؛ getToken دفعه‌ی بعد در نهایت
+            // دوباره یک توکن معتبر برمی‌گردونه یا کاربر مجبور به consent مجدد می‌شه.
+        }
+    }
+
+    /**
      * تلاش برای گرفتن access token. اگر کاربر هنوز رضایت Drive رو نداده،
      * ConsentRequired برمی‌گرده که باید Intent داخلش رو با activity result launcher باز کنی.
      */

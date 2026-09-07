@@ -16,6 +16,12 @@ import javax.inject.Singleton
 
 data class DriveFile(val id: String, val name: String)
 
+/** توکن دسترسی رد شده (منقضی/باطل) — فراخوان باید توکن رو invalidate و دوباره تلاش کنه. */
+class DriveAuthException(code: Int) : IOException("توکن دسترسی به Drive نامعتبر یا منقضی است (HTTP $code)")
+
+/** پوشه/فایل با این شناسه پیدا نشد یا کاربر بهش دسترسی نداره — برای پیام مخصوص «join by ID». */
+class DriveNotFoundException(message: String) : IOException(message)
+
 /**
  * کلاینت سبک برای Google Drive REST API v3 (بدون کتابخانه‌ی سنگین google-api-client)
  * فقط عملیات لازم برای همگام‌سازی: پیدا/ساخت پوشه، آپلود/آپدیت/دانلود فایل JSON.
@@ -27,6 +33,13 @@ class DriveApiClient @Inject constructor() {
     private val json = "application/json; charset=utf-8".toMediaType()
 
     private fun authHeader(token: String) = "Bearer $token"
+
+    /** بررسی مرکزی پاسخ: ۴۰۱/۴۰۳ با توکن نامعتبر را از بقیه خطاها جدا می‌کند تا SyncManager بتونه retry کنه. */
+    private fun requireSuccess(resp: okhttp3.Response, actionDescription: String) {
+        if (resp.isSuccessful) return
+        if (resp.code == 401) throw DriveAuthException(resp.code)
+        throw IOException("$actionDescription ناموفق بود: ${resp.code}")
+    }
 
     /** پوشه‌ی تیمی را با نام مشخص در ریشه‌ی Drive پیدا می‌کند؛ اگر نبود می‌سازد. */
     suspend fun ensureTeamFolder(token: String): String = withContext(Dispatchers.IO) {
@@ -46,7 +59,7 @@ class DriveApiClient @Inject constructor() {
             .post(body.toString().toRequestBody(json))
             .build()
         http.newCall(request).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("ساخت پوشه‌ی تیمی ناموفق بود: ${resp.code}")
+            requireSuccess(resp, "ساخت پوشه‌ی تیمی")
             val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
             return result.get("id").asString
         }
@@ -69,7 +82,7 @@ class DriveApiClient @Inject constructor() {
             .get()
             .build()
         http.newCall(request).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("جستجوی فایل در Drive ناموفق بود: ${resp.code}")
+            requireSuccess(resp, "جستجوی فایل در Drive")
             val files = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject.getAsJsonArray("files")
             if (files == null || files.size() == 0) return null
             val first = files[0].asJsonObject
@@ -86,7 +99,7 @@ class DriveApiClient @Inject constructor() {
             .build()
         http.newCall(request).execute().use { resp ->
             if (resp.code == 404) return@withContext null
-            if (!resp.isSuccessful) throw IOException("دانلود فایل از Drive ناموفق بود: ${resp.code}")
+            requireSuccess(resp, "دانلود فایل از Drive")
             resp.body?.string()
         }
     }
@@ -113,7 +126,7 @@ class DriveApiClient @Inject constructor() {
             .patch(content.toRequestBody(json))
             .build()
         http.newCall(request).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("آپدیت فایل روی Drive ناموفق بود: ${resp.code}")
+            requireSuccess(resp, "آپدیت فایل روی Drive")
         }
     }
 
@@ -133,9 +146,34 @@ class DriveApiClient @Inject constructor() {
             .post(multipart)
             .build()
         http.newCall(request).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("ساخت فایل روی Drive ناموفق بود: ${resp.code}")
+            requireSuccess(resp, "ساخت فایل روی Drive")
             val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
             return result.get("id").asString
+        }
+    }
+
+    /**
+     * متادیتای یک پوشه را با شناسه‌اش می‌گیرد — برای اعتبارسنجی «پیوستن به تیم با Folder ID»
+     * قبل از این‌که کاربر مطمئن بشه ID درست وارد کرده و واقعاً به اون پوشه دسترسی داره.
+     * اگر پوشه وجود نداشت یا کاربر دسترسی نداشت، DriveNotFoundException پرتاب می‌کند.
+     */
+    suspend fun getFolderMetadata(token: String, folderId: String): DriveFile = withContext(Dispatchers.IO) {
+        val request = Request.Builder()
+            .url("${DriveConstants.DRIVE_API_BASE}/files/$folderId?fields=id,name,mimeType,trashed")
+            .header("Authorization", authHeader(token))
+            .get()
+            .build()
+        http.newCall(request).execute().use { resp ->
+            if (resp.code == 404) throw DriveNotFoundException("پوشه‌ای با این شناسه پیدا نشد یا به آن دسترسی نداری")
+            requireSuccess(resp, "بررسی پوشه‌ی تیمی")
+            val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
+            if (result.get("trashed")?.asBoolean == true) {
+                throw DriveNotFoundException("این پوشه در Drive حذف شده (در سطل زباله) است")
+            }
+            if (result.get("mimeType")?.asString != DriveConstants.FOLDER_MIME_TYPE) {
+                throw DriveNotFoundException("شناسه‌ی وارد‌شده مربوط به یک پوشه نیست")
+            }
+            DriveFile(result.get("id").asString, result.get("name")?.asString.orEmpty())
         }
     }
 }

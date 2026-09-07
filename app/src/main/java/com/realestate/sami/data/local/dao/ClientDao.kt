@@ -16,22 +16,32 @@ interface ClientDao {
     @Update
     suspend fun update(client: ClientEntity)
 
+    /** حذف فیزیکی — فقط برای موارد داخلی (مثلاً پاک‌سازی tombstone قدیمی)؛ برای حذف عادی از UI از softDelete استفاده کن. */
     @Delete
     suspend fun delete(client: ClientEntity)
 
-    @Query("SELECT * FROM clients WHERE id = :id")
+    /** soft-delete: رکورد فیزیکی حذف نمی‌شود تا حذف بین دستگاه‌ها sync شود؛ در همه‌ی لیست‌ها مخفی می‌شود. */
+    @Query("UPDATE clients SET isDeleted = 1, updatedAt = :deletedAt, isSynced = 0 WHERE id = :id")
+    suspend fun softDelete(id: Long, deletedAt: Long = System.currentTimeMillis())
+
+    @Query("SELECT * FROM clients WHERE id = :id AND isDeleted = 0")
     suspend fun getById(id: Long): ClientEntity?
 
-    @Query("SELECT * FROM clients ORDER BY createdAt DESC")
+    @Query("SELECT * FROM clients WHERE isDeleted = 0 ORDER BY createdAt DESC")
     fun getAll(): Flow<List<ClientEntity>>
 
-    @Query("SELECT * FROM clients WHERE status = :status ORDER BY createdAt DESC")
+    /** همه‌ی رکوردها شامل tombstone های حذف‌شده — فقط برای منطق sync، نه UI. */
+    @Query("SELECT * FROM clients")
+    suspend fun getAllIncludingDeleted(): List<ClientEntity>
+
+    @Query("SELECT * FROM clients WHERE status = :status AND isDeleted = 0 ORDER BY createdAt DESC")
     fun getByStatus(status: ClientStatus): Flow<List<ClientEntity>>
 
     @Query(
         """
         SELECT * FROM clients
-        WHERE (:query = '' OR fullName LIKE '%' || :query || '%' OR desiredRegion LIKE '%' || :query || '%')
+        WHERE isDeleted = 0
+          AND (:query = '' OR fullName LIKE '%' || :query || '%' OR desiredRegion LIKE '%' || :query || '%')
         ORDER BY createdAt DESC
         """
     )
@@ -43,7 +53,8 @@ interface ClientDao {
     @Query(
         """
         SELECT * FROM clients
-        WHERE status = 'SEARCHING'
+        WHERE isDeleted = 0
+          AND status = 'SEARCHING'
           AND desiredPropertyType = :propertyType
           AND desiredDealType = :dealType
           AND (minArea IS NULL OR minArea <= :area)

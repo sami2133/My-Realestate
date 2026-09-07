@@ -43,5 +43,8 @@ data class ClientEntity(
     val updatedAt: Long = System.currentTimeMillis(),
 
     val remoteId: String? = null,
-    val isSynced: Boolean = false
+    val isSynced: Boolean = false,
+
+    /** soft-delete: به‌جای حذف فیزیکی، این پرچم ست می‌شود تا حذف بین دستگاه‌ها هم sync شود. */
+    val isDeleted: Boolean = false
 )

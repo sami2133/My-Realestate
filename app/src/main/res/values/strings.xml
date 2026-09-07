@@ -161,4 +161,10 @@
     <string name="sync_never_synced">هنوز همگام‌سازی نشده</string>
     <string name="sync_consent_needed">برای دسترسی به Drive نیاز به تایید مجدد است</string>
     <string name="sync_description">ملک‌ها و متقاضیان با اعضای تیمی که به همین پوشه‌ی مشترک Drive دسترسی دارند به‌اشتراک گذاشته می‌شود.</string>
+    <string name="sync_team_folder_title">پوشه‌ی تیمی</string>
+    <string name="sync_team_folder_has_one">تو الان به یک پوشه‌ی تیمی وصلی. برای اینکه بقیه‌ی اعضا هم دقیقاً به همین پوشه (نه یک پوشه‌ی جدا) وصل بشن، لینکش رو براشون بفرست.</string>
+    <string name="sync_team_folder_share_button">اشتراک‌گذاری لینک پوشه‌ی تیمی</string>
+    <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
+    <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
+    <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
 </resources>

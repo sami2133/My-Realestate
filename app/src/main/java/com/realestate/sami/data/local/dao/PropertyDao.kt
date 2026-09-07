@@ -14,22 +14,32 @@ interface PropertyDao {
     @Update
     suspend fun update(property: PropertyEntity)
 
+    /** حذف فیزیکی — فقط برای موارد داخلی (مثلاً پاک‌سازی tombstone قدیمی)؛ برای حذف عادی از UI از softDelete استفاده کن. */
     @Delete
     suspend fun delete(property: PropertyEntity)
 
-    @Query("SELECT * FROM properties WHERE id = :id")
+    /** soft-delete: رکورد فیزیکی حذف نمی‌شود تا حذف بین دستگاه‌ها sync شود؛ در همه‌ی لیست‌ها مخفی می‌شود. */
+    @Query("UPDATE properties SET isDeleted = 1, updatedAt = :deletedAt, isSynced = 0 WHERE id = :id")
+    suspend fun softDelete(id: Long, deletedAt: Long = System.currentTimeMillis())
+
+    @Query("SELECT * FROM properties WHERE id = :id AND isDeleted = 0")
     suspend fun getById(id: Long): PropertyEntity?
 
-    @Query("SELECT * FROM properties ORDER BY createdAt DESC")
+    @Query("SELECT * FROM properties WHERE isDeleted = 0 ORDER BY createdAt DESC")
     fun getAll(): Flow<List<PropertyEntity>>
 
-    @Query("SELECT * FROM properties WHERE status = :status ORDER BY createdAt DESC")
+    /** همه‌ی رکوردها شامل tombstone های حذف‌شده — فقط برای منطق sync، نه UI. */
+    @Query("SELECT * FROM properties")
+    suspend fun getAllIncludingDeleted(): List<PropertyEntity>
+
+    @Query("SELECT * FROM properties WHERE status = :status AND isDeleted = 0 ORDER BY createdAt DESC")
     fun getByStatus(status: PropertyStatus): Flow<List<PropertyEntity>>
 
     @Query(
         """
         SELECT * FROM properties
-        WHERE (:query = '' OR address LIKE '%' || :query || '%' OR ownerName LIKE '%' || :query || '%')
+        WHERE isDeleted = 0
+          AND (:query = '' OR address LIKE '%' || :query || '%' OR ownerName LIKE '%' || :query || '%')
         ORDER BY createdAt DESC
         """
     )
@@ -42,7 +52,8 @@ interface PropertyDao {
     @Query(
         """
         SELECT * FROM properties
-        WHERE status = 'AVAILABLE'
+        WHERE isDeleted = 0
+          AND status = 'AVAILABLE'
           AND propertyType = :propertyType
           AND dealType = :dealType
           AND (:minArea IS NULL OR area >= :minArea)
