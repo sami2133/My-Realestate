@@ -32,11 +32,31 @@ import com.realestate.sami.util.toTomanDisplay
 fun PropertyDetailScreen(
     onBack: () -> Unit,
     onClientClick: (ClientEntity) -> Unit,
+    onEdit: (Long) -> Unit,
+    onDeleted: () -> Unit,
     viewModel: PropertyDetailViewModel = hiltViewModel()
 ) {
     val property by viewModel.property.collectAsState()
     val matchingClients by viewModel.matchingClients.collectAsState()
     val contactLogs by viewModel.contactLogs.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.delete_property_confirm_title)) },
+            text = { Text(stringResource(R.string.delete_property_confirm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    viewModel.delete(onDeleted)
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -45,6 +65,16 @@ fun PropertyDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                    }
+                },
+                actions = {
+                    property?.let { current ->
+                        IconButton(onClick = { onEdit(current.id) }) {
+                            Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.action_edit))
+                        }
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_delete))
+                        }
                     }
                 }
             )

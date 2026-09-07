@@ -66,4 +66,14 @@ class PropertyDetailViewModel @Inject constructor(
             )
         }
     }
+
+    /** حذف نرم (soft delete) ملک جاری؛ پس از اتمام، callback برای بازگشت از صفحه فراخوانی می‌شود. */
+    fun delete(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            _property.value?.let {
+                propertyRepository.delete(it)
+                onDeleted()
+            }
+        }
+    }
 }

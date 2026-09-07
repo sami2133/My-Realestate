@@ -66,4 +66,14 @@ class ClientDetailViewModel @Inject constructor(
             )
         }
     }
+
+    /** حذف نرم (soft delete) متقاضی جاری؛ پس از اتمام، callback برای بازگشت از صفحه فراخوانی می‌شود. */
+    fun delete(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            _client.value?.let {
+                clientRepository.delete(it)
+                onDeleted()
+            }
+        }
+    }
 }

@@ -23,6 +23,9 @@ import com.realestate.sami.ui.screens.*
 sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     data object PropertyList : Screen("property_list", R.string.nav_properties)
     data object AddProperty : Screen("add_property", R.string.nav_add_property)
+    data object EditProperty : Screen("edit_property/{propertyId}", R.string.edit_property_title) {
+        fun buildRoute(id: Long) = "edit_property/$id"
+    }
     data object PropertyDetail : Screen("property_detail/{propertyId}", R.string.nav_property_detail) {
         fun buildRoute(id: Long) = "property_detail/$id"
     }
@@ -30,6 +33,9 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     data object LocationPicker : Screen("location_picker", R.string.map_picker_title)
     data object ClientList : Screen("client_list", R.string.nav_clients)
     data object AddClient : Screen("add_client", R.string.nav_add_client)
+    data object EditClient : Screen("edit_client/{clientId}", R.string.edit_client_title) {
+        fun buildRoute(id: Long) = "edit_client/$id"
+    }
     data object ClientDetail : Screen("client_detail/{clientId}", R.string.nav_client_detail) {
         fun buildRoute(id: Long) = "client_detail/$id"
     }
@@ -97,12 +103,33 @@ fun AppNavigation() {
                 )
             }
             composable(
+                Screen.EditProperty.route,
+                arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
+            ) { entry ->
+                val propertyId = entry.arguments?.getLong("propertyId")
+                val pickedLat by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lat", null)
+                    .collectAsState()
+                val pickedLng by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lng", null)
+                    .collectAsState()
+                AddPropertyScreen(
+                    propertyId = propertyId,
+                    onSaved = { navController.popBackStack() },
+                    onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
+                    pickedLatitude = pickedLat,
+                    pickedLongitude = pickedLng
+                )
+            }
+            composable(
                 Screen.PropertyDetail.route,
                 arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
             ) {
                 PropertyDetailScreen(
                     onBack = { navController.popBackStack() },
-                    onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) }
+                    onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) },
+                    onEdit = { id -> navController.navigate(Screen.EditProperty.buildRoute(id)) },
+                    onDeleted = { navController.popBackStack() }
                 )
             }
             composable(Screen.PropertiesMap.route) {
@@ -132,12 +159,21 @@ fun AppNavigation() {
                 AddClientScreen(onSaved = { navController.popBackStack() })
             }
             composable(
+                Screen.EditClient.route,
+                arguments = listOf(navArgument("clientId") { type = NavType.LongType })
+            ) { entry ->
+                val clientId = entry.arguments?.getLong("clientId")
+                AddClientScreen(clientId = clientId, onSaved = { navController.popBackStack() })
+            }
+            composable(
                 Screen.ClientDetail.route,
                 arguments = listOf(navArgument("clientId") { type = NavType.LongType })
             ) {
                 ClientDetailScreen(
                     onBack = { navController.popBackStack() },
-                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
+                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) },
+                    onEdit = { id -> navController.navigate(Screen.EditClient.buildRoute(id)) },
+                    onDeleted = { navController.popBackStack() }
                 )
             }
             composable(Screen.Sync.route) {

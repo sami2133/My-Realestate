@@ -18,12 +18,23 @@ import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
 
+/**
+ * فرم ثبت/ویرایش متقاضی. وقتی [clientId] مقدار داشته باشد، صفحه در حالت ویرایش باز می‌شود.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddClientScreen(
+    clientId: Long? = null,
     onSaved: () -> Unit,
     viewModel: ClientViewModel = hiltViewModel()
 ) {
+    val isEditMode = clientId != null
+    val existingClient by viewModel.editingClient.collectAsState()
+
+    LaunchedEffect(clientId) {
+        if (clientId != null) viewModel.loadForEdit(clientId) else viewModel.clearEditing()
+    }
+
     var fullName by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var region by remember { mutableStateOf("") }
@@ -38,7 +49,36 @@ fun AddClientScreen(
     var needsParking by remember { mutableStateOf(false) }
     var needsElevator by remember { mutableStateOf(false) }
 
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.add_client_title)) }) }) { padding ->
+    LaunchedEffect(existingClient) {
+        existingClient?.let { c ->
+            fullName = c.fullName
+            phone = c.phone
+            region = c.desiredRegion
+            minArea = c.minArea?.toPlainInputString() ?: ""
+            maxArea = c.maxArea?.toPlainInputString() ?: ""
+            minRooms = c.minRooms?.toString() ?: ""
+            maxTotalPrice = c.maxTotalPrice?.toString() ?: ""
+            maxDepositPrice = c.maxDepositPrice?.toString() ?: ""
+            maxRentPrice = c.maxRentPrice?.toString() ?: ""
+            propertyType = c.desiredPropertyType
+            dealType = c.desiredDealType
+            needsParking = c.needsParking
+            needsElevator = c.needsElevator
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        if (isEditMode) stringResource(R.string.edit_client_title)
+                        else stringResource(R.string.add_client_title)
+                    )
+                }
+            )
+        }
+    ) { padding ->
         Column(
             Modifier.padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -76,7 +116,14 @@ fun AddClientScreen(
             Spacer(Modifier.height(8.dp))
             Button(
                 onClick = {
-                    val entity = ClientEntity(
+                    val base = existingClient ?: ClientEntity(
+                        fullName = "",
+                        phone = "",
+                        desiredPropertyType = PropertyType.APARTMENT,
+                        desiredDealType = DealType.SALE,
+                        desiredRegion = ""
+                    )
+                    val entity = base.copy(
                         fullName = fullName,
                         phone = phone,
                         desiredPropertyType = propertyType,
@@ -96,8 +143,14 @@ fun AddClientScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = fullName.isNotBlank() && phone.isNotBlank()
             ) {
-                Text(stringResource(R.string.add_client_save))
+                Text(
+                    if (isEditMode) stringResource(R.string.edit_client_save)
+                    else stringResource(R.string.add_client_save)
+                )
             }
         }
     }
 }
+
+private fun Double.toPlainInputString(): String =
+    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()

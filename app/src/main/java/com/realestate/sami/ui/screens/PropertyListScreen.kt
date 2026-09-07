@@ -6,8 +6,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +21,7 @@ import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.ui.screens.common.DealTypeChip
 import com.realestate.sami.ui.screens.common.color
+import com.realestate.sami.ui.viewmodel.PropertySortOption
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
 import com.realestate.sami.util.toTomanShort
 
@@ -31,10 +34,16 @@ fun PropertyListScreen(
 ) {
     val properties by viewModel.properties.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
+    val sortOption by viewModel.sortOption.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.property_list_title), style = MaterialTheme.typography.titleLarge) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.property_list_title), style = MaterialTheme.typography.titleLarge) },
+                actions = {
+                    PropertySortMenu(current = sortOption, onSelect = viewModel::onSortOptionChanged)
+                }
+            )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -65,6 +74,32 @@ fun PropertyListScreen(
                     }
                     item { Spacer(Modifier.height(72.dp)) }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PropertySortMenu(current: PropertySortOption, onSelect: (PropertySortOption) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val labels = mapOf(
+        PropertySortOption.NEWEST to stringResource(R.string.sort_newest),
+        PropertySortOption.OLDEST to stringResource(R.string.sort_oldest),
+        PropertySortOption.PRICE_LOW_TO_HIGH to stringResource(R.string.property_sort_price_low_to_high),
+        PropertySortOption.PRICE_HIGH_TO_LOW to stringResource(R.string.property_sort_price_high_to_low),
+        PropertySortOption.AREA_LARGE_TO_SMALL to stringResource(R.string.property_sort_area_large_to_small)
+    )
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Filled.Sort, contentDescription = stringResource(R.string.action_sort))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            labels.forEach { (option, label) ->
+                DropdownMenuItem(
+                    text = { Text(label) },
+                    trailingIcon = { if (option == current) Icon(Icons.Filled.Check, contentDescription = null) },
+                    onClick = { onSelect(option); expanded = false }
+                )
             }
         }
     }

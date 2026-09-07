@@ -7,6 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,11 +29,31 @@ import com.realestate.sami.util.toTomanDisplay
 fun ClientDetailScreen(
     onBack: () -> Unit,
     onPropertyClick: (PropertyEntity) -> Unit,
+    onEdit: (Long) -> Unit,
+    onDeleted: () -> Unit,
     viewModel: ClientDetailViewModel = hiltViewModel()
 ) {
     val client by viewModel.client.collectAsState()
     val matchingProperties by viewModel.matchingProperties.collectAsState()
     val contactLogs by viewModel.contactLogs.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.delete_client_confirm_title)) },
+            text = { Text(stringResource(R.string.delete_client_confirm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    viewModel.delete(onDeleted)
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -40,6 +62,16 @@ fun ClientDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                    }
+                },
+                actions = {
+                    client?.let { current ->
+                        IconButton(onClick = { onEdit(current.id) }) {
+                            Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.action_edit))
+                        }
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_delete))
+                        }
                     }
                 }
             )

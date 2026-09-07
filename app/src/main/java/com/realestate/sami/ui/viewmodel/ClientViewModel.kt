@@ -19,12 +19,33 @@ class ClientViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    val clients: StateFlow<List<ClientEntity>> = _searchQuery
-        .flatMapLatest { query -> repository.search(query) }
+    private val _sortOption = MutableStateFlow(ClientSortOption.NEWEST)
+    val sortOption: StateFlow<ClientSortOption> = _sortOption
+
+    /** رکورد در حال ویرایش (وقتی از صفحه ثبت متقاضی در حالت ویرایش استفاده می‌شود). */
+    private val _editingClient = MutableStateFlow<ClientEntity?>(null)
+    val editingClient: StateFlow<ClientEntity?> = _editingClient
+
+    val clients: StateFlow<List<ClientEntity>> = combine(
+        _searchQuery.flatMapLatest { query -> repository.search(query) },
+        _sortOption
+    ) { list, sort -> list.sortedWith(sort.comparator()) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun onSearchChanged(query: String) {
         _searchQuery.value = query
+    }
+
+    fun onSortOptionChanged(option: ClientSortOption) {
+        _sortOption.value = option
+    }
+
+    fun loadForEdit(id: Long) {
+        viewModelScope.launch { _editingClient.value = repository.getById(id) }
+    }
+
+    fun clearEditing() {
+        _editingClient.value = null
     }
 
     fun save(client: ClientEntity, onSaved: (Long) -> Unit = {}) {
@@ -40,4 +61,13 @@ class ClientViewModel @Inject constructor(
 
     /** بعد از ثبت یک متقاضی، ملک‌های سازگار با نیاز او را برمی‌گرداند. */
     fun matchingPropertiesFor(client: ClientEntity) = matchingEngine.matchesForClient(client)
+}
+
+private fun ClientSortOption.comparator(): Comparator<ClientEntity> = when (this) {
+    ClientSortOption.NEWEST -> compareByDescending { it.createdAt }
+    ClientSortOption.OLDEST -> compareBy { it.createdAt }
+    ClientSortOption.NAME_A_TO_Z -> compareBy { it.fullName }
+    ClientSortOption.BUDGET_HIGH_TO_LOW -> compareByDescending {
+        it.maxTotalPrice ?: it.maxDepositPrice ?: it.maxRentPrice ?: 0L
+    }
 }

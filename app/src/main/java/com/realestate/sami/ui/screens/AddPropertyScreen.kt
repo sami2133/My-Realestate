@@ -32,15 +32,27 @@ import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
 
+/**
+ * فرم ثبت/ویرایش ملک. وقتی [propertyId] مقدار داشته باشد، صفحه در حالت ویرایش باز می‌شود:
+ * رکورد موجود از دیتابیس خوانده و فرم با مقادیرش پر می‌شود؛ در غیر این صورت فرم برای ثبت ملک جدید خالی است.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPropertyScreen(
+    propertyId: Long? = null,
     onSaved: () -> Unit,
     onPickLocationOnMap: () -> Unit,
     pickedLatitude: Double? = null,
     pickedLongitude: Double? = null,
     viewModel: PropertyViewModel = hiltViewModel()
 ) {
+    val isEditMode = propertyId != null
+    val existingProperty by viewModel.editingProperty.collectAsState()
+
+    LaunchedEffect(propertyId) {
+        if (propertyId != null) viewModel.loadForEdit(propertyId) else viewModel.clearEditing()
+    }
+
     var ownerName by remember { mutableStateOf("") }
     var ownerPhone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -55,12 +67,55 @@ fun AddPropertyScreen(
     var hasStorage by remember { mutableStateOf(false) }
     var hasElevator by remember { mutableStateOf(false) }
     var imageUris by remember { mutableStateOf(listOf<String>()) }
+    var latitude by remember { mutableStateOf<Double?>(null) }
+    var longitude by remember { mutableStateOf<Double?>(null) }
+
+    // به‌محض بارگذاری رکورد موجود (حالت ویرایش)، فرم را یک‌بار با مقادیرش پر کن
+    LaunchedEffect(existingProperty) {
+        existingProperty?.let { p ->
+            ownerName = p.ownerName
+            ownerPhone = p.ownerPhone
+            address = p.address
+            area = p.area.toPlainInputString()
+            rooms = p.rooms.toString()
+            totalPrice = p.totalPrice?.toString() ?: ""
+            depositPrice = p.depositPrice?.toString() ?: ""
+            rentPrice = p.rentPrice?.toString() ?: ""
+            propertyType = p.propertyType
+            dealType = p.dealType
+            hasParking = p.hasParking
+            hasStorage = p.hasStorage
+            hasElevator = p.hasElevator
+            imageUris = p.imageUris.split(",").filter { it.isNotBlank() }
+            latitude = p.latitude
+            longitude = p.longitude
+        }
+    }
+
+    // موقعیتی که کاربر به‌تازگی از روی نقشه انتخاب کرده جایگزین موقعیت قبلی می‌شود
+    LaunchedEffect(pickedLatitude, pickedLongitude) {
+        if (pickedLatitude != null && pickedLongitude != null) {
+            latitude = pickedLatitude
+            longitude = pickedLongitude
+        }
+    }
 
     val imagePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia()
     ) { uris -> imageUris = imageUris + uris.map { it.toString() } }
 
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.add_property_title)) }) }) { padding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        if (isEditMode) stringResource(R.string.edit_property_title)
+                        else stringResource(R.string.add_property_title)
+                    )
+                }
+            )
+        }
+    ) { padding ->
         Column(
             Modifier
                 .padding(padding)
@@ -101,7 +156,7 @@ fun AddPropertyScreen(
             OutlinedTextField(address, { address = it }, label = { Text(stringResource(R.string.label_address)) }, modifier = Modifier.fillMaxWidth())
             OutlinedButton(onClick = onPickLocationOnMap, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    if (pickedLatitude != null) stringResource(R.string.add_property_location_selected)
+                    if (latitude != null) stringResource(R.string.add_property_location_selected)
                     else stringResource(R.string.add_property_pick_location)
                 )
             }
@@ -130,14 +185,25 @@ fun AddPropertyScreen(
             Spacer(Modifier.height(8.dp))
             Button(
                 onClick = {
-                    val entity = PropertyEntity(
+                    // در حالت ویرایش، رکورد موجود را با مقادیر جدید copy می‌کنیم تا id و فیلدهای
+                    // بدون UI (وضعیت، تاریخ ثبت، پرچم‌های sync و ...) دست‌نخورده باقی بمانند.
+                    val base = existingProperty ?: PropertyEntity(
+                        ownerName = "",
+                        ownerPhone = "",
+                        propertyType = PropertyType.APARTMENT,
+                        dealType = DealType.SALE,
+                        address = "",
+                        area = 0.0,
+                        rooms = 0
+                    )
+                    val entity = base.copy(
                         ownerName = ownerName,
                         ownerPhone = ownerPhone,
                         propertyType = propertyType,
                         dealType = dealType,
                         address = address,
-                        latitude = pickedLatitude,
-                        longitude = pickedLongitude,
+                        latitude = latitude,
+                        longitude = longitude,
                         area = area.parseNumberInput() ?: 0.0,
                         rooms = rooms.parseIntInput() ?: 0,
                         hasParking = hasParking,
@@ -153,11 +219,18 @@ fun AddPropertyScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = ownerName.isNotBlank() && ownerPhone.isNotBlank() && address.isNotBlank()
             ) {
-                Text(stringResource(R.string.add_property_save))
+                Text(
+                    if (isEditMode) stringResource(R.string.edit_property_save)
+                    else stringResource(R.string.add_property_save)
+                )
             }
         }
     }
 }
+
+/** تبدیل متراژ به رشته‌ی قابل‌ویرایش در فیلد فرم، بدون ".0" اضافه برای اعداد صحیح. */
+private fun Double.toPlainInputString(): String =
+    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 @Composable
 private fun PhotoPickerRow(
@@ -202,6 +275,13 @@ private fun PhotoPickerRow(
     }
 }
 
+/**
+ * منوی کشویی عمومی برای انتخاب یک مقدار از بین چند گزینه (مثل نوع ملک/نوع معامله).
+ *
+ * نکته‌ی مهم پیاده‌سازی: بدون Modifier.menuAnchor() روی TextField داخلِ
+ * ExposedDropdownMenuBox، منو به فیلد "لنگر" نمی‌شود و در برخی دستگاه‌ها/نسخه‌ها
+ * اصلاً باز نمی‌شود یا در جای اشتباه رندر می‌شود — همان باگ «منو نمایش داده نمی‌شود».
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> DropdownSelector(
@@ -218,7 +298,10 @@ fun <T> DropdownSelector(
             value = display(selected),
             onValueChange = {},
             label = { Text(label) },
-            modifier = Modifier.fillMaxWidth()
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->

@@ -167,4 +167,33 @@
     <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
     <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
     <string name="sync_team_folder_join_button">Join existing team</string>
+
+    <!-- Common actions: edit, delete, sort -->
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_sort">Sort</string>
+
+    <!-- Edit property -->
+    <string name="edit_property_title">Edit property</string>
+    <string name="edit_property_save">Save changes</string>
+    <string name="delete_property_confirm_title">Delete this property?</string>
+    <string name="delete_property_confirm_message">This property will be removed from the list. This cannot be undone.</string>
+
+    <!-- Edit client -->
+    <string name="edit_client_title">Edit client</string>
+    <string name="edit_client_save">Save changes</string>
+    <string name="delete_client_confirm_title">Delete this client?</string>
+    <string name="delete_client_confirm_message">This client will be removed from the list. This cannot be undone.</string>
+
+    <!-- Property list sorting -->
+    <string name="sort_newest">Newest</string>
+    <string name="sort_oldest">Oldest</string>
+    <string name="property_sort_price_low_to_high">Price: low to high</string>
+    <string name="property_sort_price_high_to_low">Price: high to low</string>
+    <string name="property_sort_area_large_to_small">Area: large to small</string>
+
+    <!-- Client list sorting -->
+    <string name="client_sort_name_a_to_z">Name: A to Z</string>
+    <string name="client_sort_budget_high_to_low">Budget: high to low</string>
 </resources>

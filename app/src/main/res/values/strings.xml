@@ -167,4 +167,33 @@
     <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
     <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
+
+    <!-- اکشن‌های عمومی: ویرایش، حذف، ترتیب -->
+    <string name="action_edit">ویرایش</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_cancel">انصراف</string>
+    <string name="action_sort">ترتیب نمایش</string>
+
+    <!-- ویرایش ملک -->
+    <string name="edit_property_title">ویرایش ملک</string>
+    <string name="edit_property_save">ذخیره تغییرات</string>
+    <string name="delete_property_confirm_title">حذف این ملک؟</string>
+    <string name="delete_property_confirm_message">این ملک از لیست حذف می‌شود. این عملیات قابل بازگشت نیست.</string>
+
+    <!-- ویرایش متقاضی -->
+    <string name="edit_client_title">ویرایش متقاضی</string>
+    <string name="edit_client_save">ذخیره تغییرات</string>
+    <string name="delete_client_confirm_title">حذف این متقاضی؟</string>
+    <string name="delete_client_confirm_message">این متقاضی از لیست حذف می‌شود. این عملیات قابل بازگشت نیست.</string>
+
+    <!-- ترتیب لیست ملک‌ها -->
+    <string name="sort_newest">جدیدترین</string>
+    <string name="sort_oldest">قدیمی‌ترین</string>
+    <string name="property_sort_price_low_to_high">قیمت: کم به زیاد</string>
+    <string name="property_sort_price_high_to_low">قیمت: زیاد به کم</string>
+    <string name="property_sort_area_large_to_small">متراژ: زیاد به کم</string>
+
+    <!-- ترتیب لیست متقاضیان -->
+    <string name="client_sort_name_a_to_z">نام: الف تا ی</string>
+    <string name="client_sort_budget_high_to_low">بودجه: زیاد به کم</string>
 </resources>
