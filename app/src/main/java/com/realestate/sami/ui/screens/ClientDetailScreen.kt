@@ -115,6 +115,7 @@ private fun InfoRowClient(label: String, value: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StatusSelectorClient(current: ClientStatus, onSelect: (ClientStatus) -> Unit) {
     val labels = mapOf(
