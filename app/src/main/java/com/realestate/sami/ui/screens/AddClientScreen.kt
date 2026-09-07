@@ -6,15 +6,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.ClientViewModel
-import com.realestate.sami.util.parseTomanInput
-import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseIntInput
+import com.realestate.sami.util.parseNumberInput
+import com.realestate.sami.util.parseTomanInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,38 +38,38 @@ fun AddClientScreen(
     var needsParking by remember { mutableStateOf(false) }
     var needsElevator by remember { mutableStateOf(false) }
 
-    Scaffold(topBar = { TopAppBar(title = { Text("ثبت متقاضی جدید") }) }) { padding ->
+    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.add_client_title)) }) }) { padding ->
         Column(
             Modifier.padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text("اطلاعات متقاضی", style = MaterialTheme.typography.titleMedium)
-            OutlinedTextField(fullName, { fullName = it }, label = { Text("نام و نام خانوادگی") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(phone, { phone = it }, label = { Text("شماره تماس") }, modifier = Modifier.fillMaxWidth())
+            Text(stringResource(R.string.add_client_info_section), style = MaterialTheme.typography.titleMedium)
+            OutlinedTextField(fullName, { fullName = it }, label = { Text(stringResource(R.string.add_client_full_name)) }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(phone, { phone = it }, label = { Text(stringResource(R.string.label_phone)) }, modifier = Modifier.fillMaxWidth())
 
             Divider()
-            Text("مشخصات ملک مورد نظر", style = MaterialTheme.typography.titleMedium)
-            DropdownSelector("نوع ملک", PropertyType.entries.toList(), propertyType, { propertyType = it }) { it.toPersianLabel() }
-            DropdownSelector("نوع معامله", DealType.entries.toList(), dealType, { dealType = it }) { it.toPersianLabel() }
-            OutlinedTextField(region, { region = it }, label = { Text("منطقه/محله مورد نظر") }, modifier = Modifier.fillMaxWidth())
+            Text(stringResource(R.string.add_client_desired_section), style = MaterialTheme.typography.titleMedium)
+            DropdownSelector(stringResource(R.string.add_property_type_label), PropertyType.entries.toList(), propertyType, { propertyType = it }) { it.toPersianLabel() }
+            DropdownSelector(stringResource(R.string.add_property_deal_type_label), DealType.entries.toList(), dealType, { dealType = it }) { it.toPersianLabel() }
+            OutlinedTextField(region, { region = it }, label = { Text(stringResource(R.string.add_client_region)) }, modifier = Modifier.fillMaxWidth())
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(minArea, { minArea = it }, label = { Text("حداقل متراژ") }, modifier = Modifier.weight(1f))
-                OutlinedTextField(maxArea, { maxArea = it }, label = { Text("حداکثر متراژ") }, modifier = Modifier.weight(1f))
+                OutlinedTextField(minArea, { minArea = it }, label = { Text(stringResource(R.string.add_client_min_area)) }, modifier = Modifier.weight(1f))
+                OutlinedTextField(maxArea, { maxArea = it }, label = { Text(stringResource(R.string.add_client_max_area)) }, modifier = Modifier.weight(1f))
             }
-            OutlinedTextField(minRooms, { minRooms = it }, label = { Text("حداقل تعداد اتاق") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(minRooms, { minRooms = it }, label = { Text(stringResource(R.string.add_client_min_rooms)) }, modifier = Modifier.fillMaxWidth())
 
-            CheckboxRow("نیاز به پارکینگ دارد", needsParking) { needsParking = it }
-            CheckboxRow("نیاز به آسانسور دارد", needsElevator) { needsElevator = it }
+            CheckboxRow(stringResource(R.string.add_client_needs_parking), needsParking) { needsParking = it }
+            CheckboxRow(stringResource(R.string.add_client_needs_elevator), needsElevator) { needsElevator = it }
 
             Divider()
-            Text("سقف بودجه", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.add_client_budget_section), style = MaterialTheme.typography.titleMedium)
             when (dealType) {
                 DealType.SALE, DealType.EXCHANGE ->
-                    OutlinedTextField(maxTotalPrice, { maxTotalPrice = it }, label = { Text("حداکثر قیمت کل") }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(maxTotalPrice, { maxTotalPrice = it }, label = { Text(stringResource(R.string.add_client_max_total_price)) }, modifier = Modifier.fillMaxWidth())
                 DealType.RENT, DealType.MORTGAGE -> {
-                    OutlinedTextField(maxDepositPrice, { maxDepositPrice = it }, label = { Text("حداکثر ودیعه/رهن") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(maxRentPrice, { maxRentPrice = it }, label = { Text("حداکثر اجاره ماهانه") }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(maxDepositPrice, { maxDepositPrice = it }, label = { Text(stringResource(R.string.add_client_max_deposit)) }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(maxRentPrice, { maxRentPrice = it }, label = { Text(stringResource(R.string.add_client_max_rent)) }, modifier = Modifier.fillMaxWidth())
                 }
             }
 
@@ -94,7 +96,7 @@ fun AddClientScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = fullName.isNotBlank() && phone.isNotBlank()
             ) {
-                Text("ذخیره متقاضی")
+                Text(stringResource(R.string.add_client_save))
             }
         }
     }

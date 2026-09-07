@@ -1,28 +1,34 @@
 package com.realestate.sami.ui.navigation
 
-import androidx.compose.foundation.layout.padding
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import com.realestate.sami.R
 import com.realestate.sami.ui.screens.*
 
-sealed class Screen(val route: String, val label: String) {
-    data object PropertyList : Screen("property_list", "ملک‌ها")
-    data object AddProperty : Screen("add_property", "ثبت ملک")
-    data object PropertyDetail : Screen("property_detail/{propertyId}", "جزئیات ملک") {
+sealed class Screen(val route: String, @StringRes val labelRes: Int) {
+    data object PropertyList : Screen("property_list", R.string.nav_properties)
+    data object AddProperty : Screen("add_property", R.string.nav_add_property)
+    data object PropertyDetail : Screen("property_detail/{propertyId}", R.string.nav_property_detail) {
         fun buildRoute(id: Long) = "property_detail/$id"
     }
-    data object ClientList : Screen("client_list", "متقاضیان")
-    data object AddClient : Screen("add_client", "ثبت متقاضی")
-    data object ClientDetail : Screen("client_detail/{clientId}", "جزئیات متقاضی") {
+    data object PropertiesMap : Screen("properties_map", R.string.nav_map)
+    data object LocationPicker : Screen("location_picker", R.string.map_picker_title)
+    data object ClientList : Screen("client_list", R.string.nav_clients)
+    data object AddClient : Screen("add_client", R.string.nav_add_client)
+    data object ClientDetail : Screen("client_detail/{clientId}", R.string.nav_client_detail) {
         fun buildRoute(id: Long) = "client_detail/$id"
     }
 }
@@ -30,7 +36,7 @@ sealed class Screen(val route: String, val label: String) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val bottomItems = listOf(Screen.PropertyList, Screen.ClientList)
+    val bottomItems = listOf(Screen.PropertyList, Screen.PropertiesMap, Screen.ClientList)
 
     Scaffold(
         bottomBar = {
@@ -39,10 +45,15 @@ fun AppNavigation() {
                 val currentDestination = backStackEntry?.destination
 
                 bottomItems.forEach { screen ->
-                    val icon = if (screen == Screen.PropertyList) Icons.Filled.Home else Icons.Filled.Person
+                    val icon = when (screen) {
+                        Screen.PropertyList -> Icons.Filled.Home
+                        Screen.PropertiesMap -> Icons.Filled.Map
+                        else -> Icons.Filled.People
+                    }
+                    val label = stringResource(screen.labelRes)
                     NavigationBarItem(
-                        icon = { Icon(icon, contentDescription = screen.label) },
-                        label = { Text(screen.label) },
+                        icon = { Icon(icon, contentDescription = label) },
+                        label = { Text(label) },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
                             navController.navigate(screen.route) {
@@ -67,10 +78,18 @@ fun AppNavigation() {
                     onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
                 )
             }
-            composable(Screen.AddProperty.route) {
+            composable(Screen.AddProperty.route) { entry ->
+                val pickedLat by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lat", null)
+                    .collectAsState()
+                val pickedLng by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lng", null)
+                    .collectAsState()
                 AddPropertyScreen(
                     onSaved = { navController.popBackStack() },
-                    onPickLocationOnMap = { /* TODO فاز ۳: یکپارچه‌سازی نقشه */ }
+                    onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
+                    pickedLatitude = pickedLat,
+                    pickedLongitude = pickedLng
                 )
             }
             composable(
@@ -80,6 +99,23 @@ fun AppNavigation() {
                 PropertyDetailScreen(
                     onBack = { navController.popBackStack() },
                     onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) }
+                )
+            }
+            composable(Screen.PropertiesMap.route) {
+                PropertiesMapScreen(
+                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
+                )
+            }
+            composable(Screen.LocationPicker.route) {
+                LocationPickerScreen(
+                    initialLatitude = null,
+                    initialLongitude = null,
+                    onBack = { navController.popBackStack() },
+                    onConfirm = { lat, lng ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_lat", lat)
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_lng", lng)
+                        navController.popBackStack()
+                    }
                 )
             }
             composable(Screen.ClientList.route) {

@@ -12,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.ui.screens.common.DealTypeChip
 import com.realestate.sami.ui.screens.common.color
@@ -32,23 +34,27 @@ fun PropertyListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("ملک‌های ثبت‌شده", style = MaterialTheme.typography.titleLarge) })
+            TopAppBar(title = { Text(stringResource(R.string.property_list_title), style = MaterialTheme.typography.titleLarge) })
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(onClick = onAddClick, icon = { Icon(Icons.Filled.Add, null) }, text = { Text("ثبت ملک") })
+            ExtendedFloatingActionButton(
+                onClick = onAddClick,
+                icon = { Icon(Icons.Filled.Add, null) },
+                text = { Text(stringResource(R.string.nav_add_property)) }
+            )
         }
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             OutlinedTextField(
                 value = query,
                 onValueChange = viewModel::onSearchChanged,
-                label = { Text("جستجو بر اساس آدرس یا نام مالک") },
+                label = { Text(stringResource(R.string.property_list_search_hint)) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
             if (properties.isEmpty()) {
-                EmptyState(text = "هنوز ملکی ثبت نشده است.\nبرای شروع، از دکمه پایین یک ملک اضافه کن.")
+                EmptyState(text = stringResource(R.string.property_list_empty))
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
@@ -93,14 +99,14 @@ private fun PropertyCard(property: PropertyEntity, onClick: () -> Unit) {
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "${property.area.toInt()} متر • ${property.rooms} خواب",
+                    stringResource(R.string.property_card_area_rooms, property.area.toInt(), property.rooms),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(8.dp))
                 val priceText = property.totalPrice?.toTomanShort()
-                    ?: property.rentPrice?.let { "اجاره ${it.toTomanShort()}" }
-                    ?: "قیمت ثبت نشده"
+                    ?: property.rentPrice?.let { stringResource(R.string.property_card_rent_prefix, it.toTomanShort()) }
+                    ?: stringResource(R.string.price_not_set)
                 Text(priceText, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
             }
         }

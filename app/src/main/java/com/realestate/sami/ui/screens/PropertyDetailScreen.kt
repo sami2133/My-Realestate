@@ -9,22 +9,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.PropertyStatus
 import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.PropertyDetailViewModel
-import com.realestate.sami.util.toTomanDisplay
 import com.realestate.sami.util.toPersianDateString
+import com.realestate.sami.util.toTomanDisplay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,10 +40,10 @@ fun PropertyDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(property?.address ?: "جزئیات ملک", maxLines = 1) },
+                title = { Text(property?.address ?: stringResource(R.string.property_detail_title_fallback), maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "بازگشت")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -91,39 +91,43 @@ fun PropertyDetailScreen(
                 Text(
                     when {
                         current.totalPrice != null -> current.totalPrice.toTomanDisplay()
-                        current.rentPrice != null -> "رهن ${current.depositPrice?.toTomanDisplay() ?: "-"} / اجاره ${current.rentPrice.toTomanDisplay()}"
-                        else -> "قیمت ثبت نشده"
+                        current.rentPrice != null -> stringResource(
+                            R.string.property_detail_deposit_rent_format,
+                            current.depositPrice?.toTomanDisplay() ?: "-",
+                            current.rentPrice.toTomanDisplay()
+                        )
+                        else -> stringResource(R.string.price_not_set)
                     },
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                SectionCard(title = "مشخصات") {
-                    InfoRow("متراژ", "${current.area.toInt()} متر مربع")
-                    InfoRow("تعداد اتاق", "${current.rooms}")
-                    InfoRow("پارکینگ", if (current.hasParking) "دارد" else "ندارد")
-                    InfoRow("انباری", if (current.hasStorage) "دارد" else "ندارد")
-                    InfoRow("آسانسور", if (current.hasElevator) "دارد" else "ندارد")
-                    InfoRow("آدرس", current.address)
-                    InfoRow("تاریخ ثبت", current.createdAt.toPersianDateString())
+                SectionCard(title = stringResource(R.string.property_detail_specs_section)) {
+                    InfoRow(stringResource(R.string.label_area), stringResource(R.string.property_detail_area_value, current.area.toInt()))
+                    InfoRow(stringResource(R.string.label_rooms), "${current.rooms}")
+                    InfoRow(stringResource(R.string.amenity_parking), if (current.hasParking) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
+                    InfoRow(stringResource(R.string.amenity_storage), if (current.hasStorage) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
+                    InfoRow(stringResource(R.string.amenity_elevator), if (current.hasElevator) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
+                    InfoRow(stringResource(R.string.label_address), current.address)
+                    InfoRow(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
                 }
 
-                SectionCard(title = "معرف / مالک") {
-                    InfoRow("نام", current.ownerName)
+                SectionCard(title = stringResource(R.string.property_detail_owner_section)) {
+                    InfoRow(stringResource(R.string.label_name), current.ownerName)
                     Spacer(Modifier.height(8.dp))
                     PhoneActionRow(current.ownerPhone)
                 }
 
-                SectionCard(title = "وضعیت ملک") {
+                SectionCard(title = stringResource(R.string.property_detail_status_section)) {
                     StatusSelector(
                         current = current.status,
                         onSelect = viewModel::updateStatus
                     )
                 }
 
-                SectionCard(title = "متقاضیان سازگار (${matchingClients.size})") {
+                SectionCard(title = stringResource(R.string.property_detail_matches_section, matchingClients.size)) {
                     if (matchingClients.isEmpty()) {
-                        Text("در حال حاضر متقاضی سازگاری پیدا نشد.", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.property_detail_no_matches), style = MaterialTheme.typography.bodySmall)
                     } else {
                         matchingClients.forEach { client ->
                             ListItem(
@@ -161,10 +165,10 @@ private fun InfoRow(label: String, value: String) {
 @Composable
 private fun StatusSelector(current: PropertyStatus, onSelect: (PropertyStatus) -> Unit) {
     val labels = mapOf(
-        PropertyStatus.AVAILABLE to "قابل معرفی",
-        PropertyStatus.RESERVED to "رزرو شده",
-        PropertyStatus.SOLD_OR_RENTED to "فروخته/اجاره شده",
-        PropertyStatus.ARCHIVED to "بایگانی"
+        PropertyStatus.AVAILABLE to stringResource(R.string.property_status_available),
+        PropertyStatus.RESERVED to stringResource(R.string.property_status_reserved),
+        PropertyStatus.SOLD_OR_RENTED to stringResource(R.string.property_status_sold),
+        PropertyStatus.ARCHIVED to stringResource(R.string.property_status_archived)
     )
     androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(labels.entries.toList()) { (status, label) ->

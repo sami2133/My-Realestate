@@ -11,14 +11,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ClientStatus
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.ClientDetailViewModel
-import com.realestate.sami.util.toTomanDisplay
 import com.realestate.sami.util.toPersianDateString
+import com.realestate.sami.util.toTomanDisplay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,10 +36,10 @@ fun ClientDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(client?.fullName ?: "جزئیات متقاضی") },
+                title = { Text(client?.fullName ?: stringResource(R.string.client_detail_title_fallback)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "بازگشت")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -53,36 +55,39 @@ fun ClientDetailScreen(
                 Text(current.desiredPropertyType.toPersianLabel(), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
-            SectionCard(title = "اطلاعات تماس") {
-                InfoRowClient("نام", current.fullName)
-                InfoRowClient("تاریخ ثبت", current.createdAt.toPersianDateString())
+            SectionCard(title = stringResource(R.string.client_detail_contact_section)) {
+                InfoRowClient(stringResource(R.string.label_name), current.fullName)
+                InfoRowClient(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
                 Spacer(Modifier.height(8.dp))
                 PhoneActionRow(current.phone)
             }
 
-            SectionCard(title = "معیارهای جستجو") {
-                InfoRowClient("منطقه مورد نظر", current.desiredRegion)
+            SectionCard(title = stringResource(R.string.client_detail_criteria_section)) {
+                InfoRowClient(stringResource(R.string.client_detail_region), current.desiredRegion)
                 if (current.minArea != null || current.maxArea != null) {
-                    InfoRowClient("متراژ", "${current.minArea?.toInt() ?: "-"} تا ${current.maxArea?.toInt() ?: "-"} متر")
+                    InfoRowClient(
+                        stringResource(R.string.label_area),
+                        stringResource(R.string.client_detail_area_range, current.minArea?.toInt()?.toString() ?: "-", current.maxArea?.toInt()?.toString() ?: "-")
+                    )
                 }
-                if (current.minRooms != null) InfoRowClient("حداقل اتاق", "${current.minRooms}")
-                current.maxTotalPrice?.let { InfoRowClient("سقف قیمت", it.toTomanDisplay()) }
-                current.maxDepositPrice?.let { InfoRowClient("سقف ودیعه", it.toTomanDisplay()) }
-                current.maxRentPrice?.let { InfoRowClient("سقف اجاره ماهانه", it.toTomanDisplay()) }
+                if (current.minRooms != null) InfoRowClient(stringResource(R.string.client_detail_min_rooms), "${current.minRooms}")
+                current.maxTotalPrice?.let { InfoRowClient(stringResource(R.string.client_detail_budget_total), it.toTomanDisplay()) }
+                current.maxDepositPrice?.let { InfoRowClient(stringResource(R.string.client_detail_budget_deposit), it.toTomanDisplay()) }
+                current.maxRentPrice?.let { InfoRowClient(stringResource(R.string.client_detail_budget_rent), it.toTomanDisplay()) }
             }
 
-            SectionCard(title = "وضعیت پیگیری") {
+            SectionCard(title = stringResource(R.string.client_detail_status_section)) {
                 StatusSelectorClient(current.status, viewModel::updateStatus)
             }
 
-            SectionCard(title = "ملک‌های سازگار (${matchingProperties.size})") {
+            SectionCard(title = stringResource(R.string.client_detail_matches_section, matchingProperties.size)) {
                 if (matchingProperties.isEmpty()) {
-                    Text("در حال حاضر ملک سازگاری پیدا نشد.", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.client_detail_no_matches), style = MaterialTheme.typography.bodySmall)
                 } else {
                     matchingProperties.forEach { prop ->
                         ListItem(
                             headlineContent = { Text(prop.address) },
-                            supportingContent = { Text("${prop.area.toInt()} متر • ${prop.rooms} خواب") },
+                            supportingContent = { Text(stringResource(R.string.property_row_area_rooms, prop.area.toInt(), prop.rooms)) },
                             trailingContent = {
                                 Text(prop.totalPrice?.toTomanDisplay() ?: prop.rentPrice?.toTomanDisplay().orEmpty())
                             },
@@ -113,15 +118,16 @@ private fun InfoRowClient(label: String, value: String) {
 @Composable
 private fun StatusSelectorClient(current: ClientStatus, onSelect: (ClientStatus) -> Unit) {
     val labels = mapOf(
-        ClientStatus.SEARCHING to "در حال جستجو",
-        ClientStatus.PAUSED to "متوقف‌شده",
-        ClientStatus.MATCHED to "تطبیق یافته",
-        ClientStatus.CLOSED to "بسته‌شده"
+        ClientStatus.SEARCHING to stringResource(R.string.client_status_searching),
+        ClientStatus.PAUSED to stringResource(R.string.client_status_paused),
+        ClientStatus.MATCHED to stringResource(R.string.client_status_matched),
+        ClientStatus.CLOSED to stringResource(R.string.client_status_closed)
     )
     androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(labels.entries.toList()) { (status, label) ->
+            val selected = status == current
             FilterChip(
-                selected = status == current,
+                selected = selected,
                 onClick = { onSelect(status) },
                 label = { Text(label, style = MaterialTheme.typography.labelMedium) }
             )

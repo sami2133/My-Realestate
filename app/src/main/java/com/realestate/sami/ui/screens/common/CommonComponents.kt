@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
@@ -15,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ContactLogEntity
+import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.ui.theme.*
 import com.realestate.sami.util.toPersianDateString
 
@@ -54,7 +55,7 @@ fun PhoneActionRow(phone: String, modifier: Modifier = Modifier) {
         ) {
             Icon(Icons.Filled.Call, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(6.dp))
-            Text("تماس")
+            Text(stringResource(R.string.action_call))
         }
         OutlinedButton(
             onClick = {
@@ -65,7 +66,7 @@ fun PhoneActionRow(phone: String, modifier: Modifier = Modifier) {
         ) {
             Icon(Icons.Filled.Sms, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(6.dp))
-            Text("پیامک")
+            Text(stringResource(R.string.action_sms))
         }
     }
 }
@@ -79,13 +80,13 @@ fun ContactLogSection(
     var noteText by remember { mutableStateOf("") }
 
     Column {
-        Text("تاریخچه پیگیری", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.contact_log_section_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = noteText,
                 onValueChange = { noteText = it },
-                placeholder = { Text("یادداشت تماس جدید...") },
+                placeholder = { Text(stringResource(R.string.contact_log_placeholder)) },
                 modifier = Modifier.weight(1f),
                 singleLine = true
             )
@@ -97,11 +98,15 @@ fun ContactLogSection(
                         noteText = ""
                     }
                 }
-            ) { Text("ثبت") }
+            ) { Text(stringResource(R.string.action_submit)) }
         }
         Spacer(Modifier.height(12.dp))
         if (logs.isEmpty()) {
-            Text("هنوز تماسی ثبت نشده.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                stringResource(R.string.contact_log_empty),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         } else {
             logs.forEach { log ->
                 Row(

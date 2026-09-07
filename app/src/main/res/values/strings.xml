@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">املاک سامی</string>
+
+    <!-- ناوبری -->
+    <string name="nav_properties">ملک‌ها</string>
+    <string name="nav_add_property">ثبت ملک</string>
+    <string name="nav_property_detail">جزئیات ملک</string>
+    <string name="nav_clients">متقاضیان</string>
+    <string name="nav_add_client">ثبت متقاضی</string>
+    <string name="nav_client_detail">جزئیات متقاضی</string>
+
+    <!-- اکشن‌ها و برچسب‌های مشترک -->
+    <string name="action_call">تماس</string>
+    <string name="action_sms">پیامک</string>
+    <string name="action_submit">ثبت</string>
+    <string name="action_back">بازگشت</string>
+    <string name="label_name">نام</string>
+    <string name="label_phone">شماره تماس</string>
+    <string name="label_address">آدرس</string>
+    <string name="label_registered_at">تاریخ ثبت</string>
+    <string name="label_area">متراژ</string>
+    <string name="label_rooms">تعداد اتاق</string>
+    <string name="value_yes">دارد</string>
+    <string name="value_no">ندارد</string>
+    <string name="cd_add_photo">افزودن عکس</string>
+    <string name="cd_remove_photo">حذف عکس</string>
+
+    <!-- امکانات ملک -->
+    <string name="amenity_parking">پارکینگ</string>
+    <string name="amenity_storage">انباری</string>
+    <string name="amenity_elevator">آسانسور</string>
+
+    <!-- انواع ملک -->
+    <string name="property_type_apartment">آپارتمان</string>
+    <string name="property_type_villa">ویلایی</string>
+    <string name="property_type_land">زمین</string>
+    <string name="property_type_commercial">تجاری</string>
+    <string name="property_type_office">اداری</string>
+
+    <!-- انواع معامله -->
+    <string name="deal_type_sale">خرید و فروش</string>
+    <string name="deal_type_rent">اجاره</string>
+    <string name="deal_type_mortgage">رهن کامل</string>
+    <string name="deal_type_exchange">مبادله</string>
+
+    <!-- وضعیت ملک -->
+    <string name="property_status_available">قابل معرفی</string>
+    <string name="property_status_reserved">رزرو شده</string>
+    <string name="property_status_sold">فروخته/اجاره شده</string>
+    <string name="property_status_archived">بایگانی</string>
+
+    <!-- وضعیت متقاضی -->
+    <string name="client_status_searching">در حال جستجو</string>
+    <string name="client_status_paused">متوقف‌شده</string>
+    <string name="client_status_matched">تطبیق یافته</string>
+    <string name="client_status_closed">بسته‌شده</string>
+
+    <!-- لیست ملک -->
+    <string name="property_list_title">ملک‌های ثبت‌شده</string>
+    <string name="property_list_search_hint">جستجو بر اساس آدرس یا نام مالک</string>
+    <string name="property_list_empty">هنوز ملکی ثبت نشده است.\nبرای شروع، از دکمه پایین یک ملک اضافه کن.</string>
+    <string name="property_card_area_rooms">%1$d متر • %2$d خواب</string>
+    <string name="property_card_rent_prefix">اجاره %1$s</string>
+    <string name="price_not_set">قیمت ثبت نشده</string>
+
+    <!-- ثبت ملک -->
+    <string name="add_property_title">ثبت ملک جدید</string>
+    <string name="add_property_owner_section">اطلاعات معرف / مالک</string>
+    <string name="add_property_owner_name">نام معرف/مالک</string>
+    <string name="add_property_photos_section">عکس‌های ملک</string>
+    <string name="add_property_specs_section">مشخصات ملک</string>
+    <string name="add_property_type_label">نوع ملک</string>
+    <string name="add_property_deal_type_label">نوع معامله</string>
+    <string name="add_property_pick_location">انتخاب موقعیت روی نقشه</string>
+    <string name="add_property_location_selected">موقعیت روی نقشه ثبت شد</string>
+    <string name="add_property_area_hint">متراژ (متر)</string>
+    <string name="add_property_amenities_section">امکانات</string>
+    <string name="add_property_pricing_section">قیمت‌گذاری</string>
+    <string name="add_property_total_price">قیمت کل (تومان)</string>
+    <string name="add_property_deposit_price">مبلغ ودیعه/رهن</string>
+    <string name="add_property_rent_price">اجاره ماهانه</string>
+    <string name="add_property_exchange_value">ارزش تقریبی</string>
+    <string name="add_property_save">ذخیره ملک</string>
+
+    <!-- ثبت متقاضی -->
+    <string name="add_client_title">ثبت متقاضی جدید</string>
+    <string name="add_client_info_section">اطلاعات متقاضی</string>
+    <string name="add_client_full_name">نام و نام خانوادگی</string>
+    <string name="add_client_desired_section">مشخصات ملک مورد نظر</string>
+    <string name="add_client_region">منطقه/محله مورد نظر</string>
+    <string name="add_client_min_area">حداقل متراژ</string>
+    <string name="add_client_max_area">حداکثر متراژ</string>
+    <string name="add_client_min_rooms">حداقل تعداد اتاق</string>
+    <string name="add_client_needs_parking">نیاز به پارکینگ دارد</string>
+    <string name="add_client_needs_elevator">نیاز به آسانسور دارد</string>
+    <string name="add_client_budget_section">سقف بودجه</string>
+    <string name="add_client_max_total_price">حداکثر قیمت کل</string>
+    <string name="add_client_max_deposit">حداکثر ودیعه/رهن</string>
+    <string name="add_client_max_rent">حداکثر اجاره ماهانه</string>
+    <string name="add_client_save">ذخیره متقاضی</string>
+
+    <!-- لیست متقاضیان -->
+    <string name="client_list_title">متقاضیان</string>
+    <string name="client_list_search_hint">جستجو بر اساس نام یا منطقه</string>
+    <string name="client_list_empty">هنوز متقاضی‌ای ثبت نشده است.\nبرای شروع، از دکمه پایین یک متقاضی اضافه کن.</string>
+
+    <!-- جزئیات ملک -->
+    <string name="property_detail_title_fallback">جزئیات ملک</string>
+    <string name="property_detail_deposit_rent_format">رهن %1$s / اجاره %2$s</string>
+    <string name="property_detail_specs_section">مشخصات</string>
+    <string name="property_detail_area_value">%1$d متر مربع</string>
+    <string name="property_detail_owner_section">معرف / مالک</string>
+    <string name="property_detail_status_section">وضعیت ملک</string>
+    <string name="property_detail_matches_section">متقاضیان سازگار (%1$d)</string>
+    <string name="property_detail_no_matches">در حال حاضر متقاضی سازگاری پیدا نشد.</string>
+
+    <!-- جزئیات متقاضی -->
+    <string name="client_detail_title_fallback">جزئیات متقاضی</string>
+    <string name="client_detail_contact_section">اطلاعات تماس</string>
+    <string name="client_detail_criteria_section">معیارهای جستجو</string>
+    <string name="client_detail_region">منطقه مورد نظر</string>
+    <string name="client_detail_area_range">%1$s تا %2$s متر</string>
+    <string name="client_detail_min_rooms">حداقل اتاق</string>
+    <string name="client_detail_budget_total">سقف قیمت</string>
+    <string name="client_detail_budget_deposit">سقف ودیعه</string>
+    <string name="client_detail_budget_rent">سقف اجاره ماهانه</string>
+    <string name="client_detail_status_section">وضعیت پیگیری</string>
+    <string name="client_detail_matches_section">ملک‌های سازگار (%1$d)</string>
+    <string name="client_detail_no_matches">در حال حاضر ملک سازگاری پیدا نشد.</string>
+    <string name="property_row_area_rooms">%1$d متر • %2$d خواب</string>
+
+    <!-- تاریخچه تماس -->
+    <string name="contact_log_section_title">تاریخچه پیگیری</string>
+    <string name="contact_log_placeholder">یادداشت تماس جدید...</string>
+    <string name="contact_log_empty">هنوز تماسی ثبت نشده.</string>
+
+    <!-- نقشه (فاز ۳) -->
+    <string name="map_picker_title">انتخاب موقعیت ملک</string>
+    <string name="map_picker_confirm">تایید این موقعیت</string>
+    <string name="map_picker_hint">نقشه رو جابه‌جا کن تا پین روی محل دقیق ملک بیاد</string>
+    <string name="map_picker_use_my_location">موقعیت فعلی من</string>
+    <string name="properties_map_title">نقشه ملک‌ها</string>
+    <string name="properties_map_empty">ملکی با موقعیت ثبت‌شده روی نقشه وجود ندارد.</string>
+    <string name="nav_map">نقشه</string>
+</resources>

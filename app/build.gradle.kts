@@ -97,6 +97,12 @@ dependencies {
     // Coil (image loading, for property photos)
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // نقشه (فاز ۳) — Google Maps Compose برای انتخاب موقعیت ملک و نمایش خوشه‌ای ملک‌ها
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+    implementation("com.google.maps.android:maps-compose-utils:4.4.1")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
     // Firebase (Phase 3: cloud sync) - BOM keeps versions aligned
 //    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
 //    implementation("com.google.firebase:firebase-firestore-ktx")

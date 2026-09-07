@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sami Real Estate</string>
+
+    <!-- Navigation -->
+    <string name="nav_properties">Properties</string>
+    <string name="nav_add_property">Add Property</string>
+    <string name="nav_property_detail">Property Details</string>
+    <string name="nav_clients">Clients</string>
+    <string name="nav_add_client">Add Client</string>
+    <string name="nav_client_detail">Client Details</string>
+
+    <!-- Common actions and labels -->
+    <string name="action_call">Call</string>
+    <string name="action_sms">Text</string>
+    <string name="action_submit">Save</string>
+    <string name="action_back">Back</string>
+    <string name="label_name">Name</string>
+    <string name="label_phone">Phone Number</string>
+    <string name="label_address">Address</string>
+    <string name="label_registered_at">Registered On</string>
+    <string name="label_area">Area</string>
+    <string name="label_rooms">Rooms</string>
+    <string name="value_yes">Yes</string>
+    <string name="value_no">No</string>
+    <string name="cd_add_photo">Add photo</string>
+    <string name="cd_remove_photo">Remove photo</string>
+
+    <!-- Amenities -->
+    <string name="amenity_parking">Parking</string>
+    <string name="amenity_storage">Storage</string>
+    <string name="amenity_elevator">Elevator</string>
+
+    <!-- Property types -->
+    <string name="property_type_apartment">Apartment</string>
+    <string name="property_type_villa">Villa</string>
+    <string name="property_type_land">Land</string>
+    <string name="property_type_commercial">Commercial</string>
+    <string name="property_type_office">Office</string>
+
+    <!-- Deal types -->
+    <string name="deal_type_sale">Sale</string>
+    <string name="deal_type_rent">Rent</string>
+    <string name="deal_type_mortgage">Full Mortgage</string>
+    <string name="deal_type_exchange">Exchange</string>
+
+    <!-- Property status -->
+    <string name="property_status_available">Available</string>
+    <string name="property_status_reserved">Reserved</string>
+    <string name="property_status_sold">Sold/Rented</string>
+    <string name="property_status_archived">Archived</string>
+
+    <!-- Client status -->
+    <string name="client_status_searching">Searching</string>
+    <string name="client_status_paused">Paused</string>
+    <string name="client_status_matched">Matched</string>
+    <string name="client_status_closed">Closed</string>
+
+    <!-- Property list -->
+    <string name="property_list_title">Listed Properties</string>
+    <string name="property_list_search_hint">Search by address or owner name</string>
+    <string name="property_list_empty">No properties yet.\nTap the button below to add one.</string>
+    <string name="property_card_area_rooms">%1$d m² • %2$d rooms</string>
+    <string name="property_card_rent_prefix">Rent %1$s</string>
+    <string name="price_not_set">Price not set</string>
+
+    <!-- Add property -->
+    <string name="add_property_title">Add New Property</string>
+    <string name="add_property_owner_section">Referrer / Owner Info</string>
+    <string name="add_property_owner_name">Referrer/Owner Name</string>
+    <string name="add_property_photos_section">Property Photos</string>
+    <string name="add_property_specs_section">Property Details</string>
+    <string name="add_property_type_label">Property Type</string>
+    <string name="add_property_deal_type_label">Deal Type</string>
+    <string name="add_property_pick_location">Pick Location on Map</string>
+    <string name="add_property_location_selected">Map location saved</string>
+    <string name="add_property_area_hint">Area (m²)</string>
+    <string name="add_property_amenities_section">Amenities</string>
+    <string name="add_property_pricing_section">Pricing</string>
+    <string name="add_property_total_price">Total Price (Toman)</string>
+    <string name="add_property_deposit_price">Deposit Amount</string>
+    <string name="add_property_rent_price">Monthly Rent</string>
+    <string name="add_property_exchange_value">Approximate Value</string>
+    <string name="add_property_save">Save Property</string>
+
+    <!-- Add client -->
+    <string name="add_client_title">Add New Client</string>
+    <string name="add_client_info_section">Client Info</string>
+    <string name="add_client_full_name">Full Name</string>
+    <string name="add_client_desired_section">Desired Property Details</string>
+    <string name="add_client_region">Desired Area/Neighborhood</string>
+    <string name="add_client_min_area">Minimum Area</string>
+    <string name="add_client_max_area">Maximum Area</string>
+    <string name="add_client_min_rooms">Minimum Rooms</string>
+    <string name="add_client_needs_parking">Needs Parking</string>
+    <string name="add_client_needs_elevator">Needs Elevator</string>
+    <string name="add_client_budget_section">Budget Ceiling</string>
+    <string name="add_client_max_total_price">Max Total Price</string>
+    <string name="add_client_max_deposit">Max Deposit</string>
+    <string name="add_client_max_rent">Max Monthly Rent</string>
+    <string name="add_client_save">Save Client</string>
+
+    <!-- Client list -->
+    <string name="client_list_title">Clients</string>
+    <string name="client_list_search_hint">Search by name or area</string>
+    <string name="client_list_empty">No clients yet.\nTap the button below to add one.</string>
+
+    <!-- Property detail -->
+    <string name="property_detail_title_fallback">Property Details</string>
+    <string name="property_detail_deposit_rent_format">Deposit %1$s / Rent %2$s</string>
+    <string name="property_detail_specs_section">Specifications</string>
+    <string name="property_detail_area_value">%1$d m²</string>
+    <string name="property_detail_owner_section">Referrer / Owner</string>
+    <string name="property_detail_status_section">Property Status</string>
+    <string name="property_detail_matches_section">Matching Clients (%1$d)</string>
+    <string name="property_detail_no_matches">No matching clients found yet.</string>
+
+    <!-- Client detail -->
+    <string name="client_detail_title_fallback">Client Details</string>
+    <string name="client_detail_contact_section">Contact Info</string>
+    <string name="client_detail_criteria_section">Search Criteria</string>
+    <string name="client_detail_region">Desired Area</string>
+    <string name="client_detail_area_range">%1$s to %2$s m²</string>
+    <string name="client_detail_min_rooms">Min Rooms</string>
+    <string name="client_detail_budget_total">Max Price</string>
+    <string name="client_detail_budget_deposit">Max Deposit</string>
+    <string name="client_detail_budget_rent">Max Monthly Rent</string>
+    <string name="client_detail_status_section">Follow-up Status</string>
+    <string name="client_detail_matches_section">Matching Properties (%1$d)</string>
+    <string name="client_detail_no_matches">No matching properties found yet.</string>
+    <string name="property_row_area_rooms">%1$d m² • %2$d rooms</string>
+
+    <!-- Contact log -->
+    <string name="contact_log_section_title">Follow-up History</string>
+    <string name="contact_log_placeholder">New contact note...</string>
+    <string name="contact_log_empty">No contact logged yet.</string>
+
+    <!-- Map (Phase 3) -->
+    <string name="map_picker_title">Pick Property Location</string>
+    <string name="map_picker_confirm">Confirm This Location</string>
+    <string name="map_picker_hint">Move the map so the pin sits on the exact property location</string>
+    <string name="map_picker_use_my_location">My Current Location</string>
+    <string name="properties_map_title">Properties Map</string>
+    <string name="properties_map_empty">No properties with a saved location yet.</string>
+    <string name="nav_map">Map</string>
+</resources>
