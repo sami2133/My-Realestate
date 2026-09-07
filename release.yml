@@ -24,11 +24,6 @@ jobs:
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/release.keystore.jks
 
-      # اگر از Firebase استفاده می‌کنید، این مرحله را از حالت کامنت خارج کنید
-      # و Secret به نام GOOGLE_SERVICES_JSON_BASE64 بسازید
-      # - name: Decode google-services.json
-      #   run: echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -38,6 +33,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
         run: ./gradlew assembleRelease bundleRelease
 
       - name: Create GitHub Release with artifacts
