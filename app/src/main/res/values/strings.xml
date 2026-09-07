@@ -148,4 +148,17 @@
     <string name="map_type_satellite">ماهواره‌ای</string>
     <string name="map_type_terrain">توپوگرافی</string>
     <string name="map_type_hybrid">ترکیبی</string>
+    <string name="nav_sync">تیم</string>
+    <string name="sync_title">همگام‌سازی تیمی</string>
+    <string name="sync_sign_in_button">ورود با حساب گوگل</string>
+    <string name="sync_sign_out_button">خروج از حساب</string>
+    <string name="sync_signed_in_as">وارد شده با: %1$s</string>
+    <string name="sync_now_button">همگام‌سازی الان</string>
+    <string name="sync_in_progress">در حال همگام‌سازی…</string>
+    <string name="sync_success">همگام‌سازی با موفقیت انجام شد</string>
+    <string name="sync_error_prefix">خطا: %1$s</string>
+    <string name="sync_last_synced">آخرین همگام‌سازی: %1$s</string>
+    <string name="sync_never_synced">هنوز همگام‌سازی نشده</string>
+    <string name="sync_consent_needed">برای دسترسی به Drive نیاز به تایید مجدد است</string>
+    <string name="sync_description">ملک‌ها و متقاضیان با اعضای تیمی که به همین پوشه‌ی مشترک Drive دسترسی دارند به‌اشتراک گذاشته می‌شود.</string>
 </resources>

@@ -148,4 +148,17 @@
     <string name="map_type_satellite">Satellite</string>
     <string name="map_type_terrain">Terrain</string>
     <string name="map_type_hybrid">Hybrid</string>
+    <string name="nav_sync">Team</string>
+    <string name="sync_title">Team Sync</string>
+    <string name="sync_sign_in_button">Sign in with Google</string>
+    <string name="sync_sign_out_button">Sign out</string>
+    <string name="sync_signed_in_as">Signed in as: %1$s</string>
+    <string name="sync_now_button">Sync now</string>
+    <string name="sync_in_progress">Syncing…</string>
+    <string name="sync_success">Sync completed successfully</string>
+    <string name="sync_error_prefix">Error: %1$s</string>
+    <string name="sync_last_synced">Last synced: %1$s</string>
+    <string name="sync_never_synced">Not synced yet</string>
+    <string name="sync_consent_needed">Drive access needs to be re-confirmed</string>
+    <string name="sync_description">Properties and clients are shared with team members who have access to the same shared Drive folder.</string>
 </resources>

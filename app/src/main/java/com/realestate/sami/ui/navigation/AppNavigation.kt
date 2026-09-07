@@ -3,6 +3,7 @@ package com.realestate.sami.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.People
@@ -32,12 +33,13 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     data object ClientDetail : Screen("client_detail/{clientId}", R.string.nav_client_detail) {
         fun buildRoute(id: Long) = "client_detail/$id"
     }
+    data object Sync : Screen("sync", R.string.nav_sync)
 }
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val bottomItems = listOf(Screen.PropertyList, Screen.PropertiesMap, Screen.ClientList)
+    val bottomItems = listOf(Screen.PropertyList, Screen.PropertiesMap, Screen.ClientList, Screen.Sync)
 
     Scaffold(
         bottomBar = {
@@ -49,6 +51,7 @@ fun AppNavigation() {
                     val icon = when (screen) {
                         Screen.PropertyList -> Icons.Filled.Home
                         Screen.PropertiesMap -> Icons.Filled.Map
+                        Screen.Sync -> Icons.Filled.Groups
                         else -> Icons.Filled.People
                     }
                     val label = stringResource(screen.labelRes)
@@ -136,6 +139,9 @@ fun AppNavigation() {
                     onBack = { navController.popBackStack() },
                     onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
                 )
+            }
+            composable(Screen.Sync.route) {
+                SyncSettingsScreen()
             }
         }
     }

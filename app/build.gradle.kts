@@ -108,6 +108,15 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
+    // همگام‌سازی تیمی فاز ۴ — Google Sign-In + Google Drive REST API (بدون نیاز به Firebase)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.11.0")
+
+    // WorkManager + Hilt برای زمان‌بندی همگام‌سازی دوره‌ای در پس‌زمینه
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
+
     // Firebase (Phase 3: cloud sync) - BOM keeps versions aligned
 //    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
 //    implementation("com.google.firebase:firebase-firestore-ktx")
