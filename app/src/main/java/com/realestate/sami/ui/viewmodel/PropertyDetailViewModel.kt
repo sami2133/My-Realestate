@@ -1,0 +1,69 @@
+package com.realestate.sami.ui.viewmodel
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.realestate.sami.data.local.entity.ClientEntity
+import com.realestate.sami.data.local.entity.ContactLogEntity
+import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyStatus
+import com.realestate.sami.data.local.entity.RelatedType
+import com.realestate.sami.data.repository.ContactLogRepository
+import com.realestate.sami.data.repository.PropertyRepository
+import com.realestate.sami.domain.matching.MatchingEngine
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class PropertyDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val propertyRepository: PropertyRepository,
+    private val contactLogRepository: ContactLogRepository,
+    private val matchingEngine: MatchingEngine
+) : ViewModel() {
+
+    private val propertyId: Long = checkNotNull(savedStateHandle["propertyId"])
+
+    private val _property = MutableStateFlow<PropertyEntity?>(null)
+    val property: StateFlow<PropertyEntity?> = _property
+
+    val matchingClients: StateFlow<List<ClientEntity>> = _property
+        .filterNotNull()
+        .flatMapLatest { matchingEngine.matchesForProperty(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val contactLogs: StateFlow<List<ContactLogEntity>> =
+        contactLogRepository.getForEntity(propertyId, RelatedType.PROPERTY)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        viewModelScope.launch {
+            _property.value = propertyRepository.getById(propertyId)
+        }
+    }
+
+    fun updateStatus(status: PropertyStatus) {
+        viewModelScope.launch {
+            _property.value?.let {
+                val updated = it.copy(status = status)
+                propertyRepository.save(updated)
+                _property.value = updated
+            }
+        }
+    }
+
+    fun addContactLog(note: String, followUpDate: Long?) {
+        viewModelScope.launch {
+            contactLogRepository.add(
+                ContactLogEntity(
+                    relatedId = propertyId,
+                    relatedType = RelatedType.PROPERTY,
+                    note = note,
+                    followUpDate = followUpDate
+                )
+            )
+        }
+    }
+}
