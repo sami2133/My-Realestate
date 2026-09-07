@@ -143,4 +143,9 @@
     <string name="properties_map_title">نقشه ملک‌ها</string>
     <string name="properties_map_empty">ملکی با موقعیت ثبت‌شده روی نقشه وجود ندارد.</string>
     <string name="nav_map">نقشه</string>
+    <string name="map_type_switcher_cd">تغییر نوع نقشه</string>
+    <string name="map_type_normal">عادی</string>
+    <string name="map_type_satellite">ماهواره‌ای</string>
+    <string name="map_type_terrain">توپوگرافی</string>
+    <string name="map_type_hybrid">ترکیبی</string>
 </resources>

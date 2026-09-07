@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.maps.android.compose.MapType
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ContactLogEntity
 import com.realestate.sami.data.local.entity.DealType
@@ -121,6 +124,56 @@ fun ContactLogSection(
                     )
                 }
                 Divider()
+            }
+        }
+    }
+}
+
+/** برچسب فارسیِ هر نوع نقشه، برای نمایش در منوی سوییچر. */
+@Composable
+private fun MapType.label(): String = when (this) {
+    MapType.NORMAL -> stringResource(R.string.map_type_normal)
+    MapType.SATELLITE -> stringResource(R.string.map_type_satellite)
+    MapType.TERRAIN -> stringResource(R.string.map_type_terrain)
+    MapType.HYBRID -> stringResource(R.string.map_type_hybrid)
+    MapType.NONE -> stringResource(R.string.map_type_normal)
+}
+
+/**
+ * دکمه‌ی شناور که با کلیک، منوی انتخاب نوع نقشه (عادی/ماهواره‌ای/توپوگرافی/ترکیبی) را باز می‌کند.
+ * روی گوشه‌ای از نقشه (مثلاً بالا-راست) قرار بگیرد.
+ */
+@Composable
+fun MapTypeSwitcher(
+    currentType: MapType,
+    onTypeSelected: (MapType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        FloatingActionButton(
+            onClick = { expanded = true },
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp)
+        ) {
+            Icon(Icons.Filled.Layers, contentDescription = stringResource(R.string.map_type_switcher_cd))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            listOf(MapType.NORMAL, MapType.SATELLITE, MapType.TERRAIN, MapType.HYBRID).forEach { type ->
+                DropdownMenuItem(
+                    text = { Text(type.label()) },
+                    trailingIcon = {
+                        if (type == currentType) {
+                            Icon(Icons.Filled.Check, contentDescription = null)
+                        }
+                    },
+                    onClick = {
+                        onTypeSelected(type)
+                        expanded = false
+                    }
+                )
             }
         }
     }

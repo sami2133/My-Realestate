@@ -22,9 +22,11 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.realestate.sami.R
+import com.realestate.sami.ui.screens.common.MapTypeSwitcher
 
 /** مرکز پیش‌فرض نقشه: تهران — وقتی هنوز موقعیتی انتخاب نشده. */
 private val DEFAULT_LOCATION = LatLng(35.6892, 51.3890)
@@ -45,6 +47,8 @@ fun LocationPickerScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(startPoint, 15f)
     }
+
+    var mapType by remember { mutableStateOf(MapType.NORMAL) }
 
     var hasLocationPermission by remember {
         mutableStateOf(
@@ -92,8 +96,14 @@ fun LocationPickerScreen(
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
-                properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
+                properties = MapProperties(isMyLocationEnabled = hasLocationPermission, mapType = mapType),
                 uiSettings = MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = true)
+            )
+
+            MapTypeSwitcher(
+                currentType = mapType,
+                onTypeSelected = { mapType = it },
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
 
             // پین ثابت وسط صفحه — نقشه زیرش حرکت می‌کند، خود پین ثابت می‌ماند

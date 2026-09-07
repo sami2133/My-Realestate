@@ -143,4 +143,9 @@
     <string name="properties_map_title">Properties Map</string>
     <string name="properties_map_empty">No properties with a saved location yet.</string>
     <string name="nav_map">Map</string>
+    <string name="map_type_switcher_cd">Change map type</string>
+    <string name="map_type_normal">Normal</string>
+    <string name="map_type_satellite">Satellite</string>
+    <string name="map_type_terrain">Terrain</string>
+    <string name="map_type_hybrid">Hybrid</string>
 </resources>

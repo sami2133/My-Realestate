@@ -11,10 +11,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.ui.screens.common.MapTypeSwitcher
 import com.realestate.sami.ui.screens.common.color
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
 import com.realestate.sami.util.toTomanShort
@@ -30,6 +33,7 @@ fun PropertiesMapScreen(
 ) {
     val properties by viewModel.properties.collectAsState()
     val located = properties.filter { it.latitude != null && it.longitude != null }
+    var mapType by remember { mutableStateOf(MapType.NORMAL) }
 
     val cameraPositionState = rememberCameraPositionState {
         val first = located.firstOrNull()
@@ -45,7 +49,8 @@ fun PropertiesMapScreen(
         Box(Modifier.padding(padding).fillMaxSize()) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(mapType = mapType)
             ) {
                 located.forEach { property ->
                     MarkerInfoWindowContent(
@@ -67,6 +72,12 @@ fun PropertiesMapScreen(
                     }
                 }
             }
+
+            MapTypeSwitcher(
+                currentType = mapType,
+                onTypeSelected = { mapType = it },
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+            )
 
             if (located.isEmpty()) {
                 Surface(
