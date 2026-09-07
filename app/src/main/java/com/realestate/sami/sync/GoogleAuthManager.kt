@@ -65,7 +65,12 @@ class GoogleAuthManager @Inject constructor() {
                 val token = GoogleAuthUtil.getToken(context, androidAccount, DriveConstants.DRIVE_SCOPE_OAUTH)
                 AccessTokenResult.Success(token)
             } catch (e: UserRecoverableAuthException) {
-                AccessTokenResult.ConsentRequired(e.intent)
+                val recoveryIntent = e.intent
+                if (recoveryIntent != null) {
+                    AccessTokenResult.ConsentRequired(recoveryIntent)
+                } else {
+                    AccessTokenResult.Failure("نیاز به تایید مجدد دسترسی به Drive - لطفاً دوباره امتحان کن")
+                }
             } catch (e: Exception) {
                 AccessTokenResult.Failure(e.message ?: "خطا در دریافت مجوز دسترسی به Drive")
             }
