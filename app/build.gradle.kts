@@ -26,6 +26,11 @@ android {
         versionName = "0.1.0-phase1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        manifestPlaceholders["MAPS_API_KEY"] =
+                System.getenv("MAPS_API_KEY")
+                    ?: localProps.getProperty("MAPS_API_KEY")
+                    ?: ""
     }
     
     signingConfigs {
