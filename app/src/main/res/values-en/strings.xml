@@ -196,4 +196,15 @@
     <!-- Client list sorting -->
     <string name="client_sort_name_a_to_z">Name: A to Z</string>
     <string name="client_sort_budget_high_to_low">Budget: high to low</string>
+
+    <!-- Property list filter -->
+    <string name="action_filter">Filter</string>
+    <string name="filter_dialog_title">Filter properties</string>
+    <string name="filter_option_all">All</string>
+    <string name="filter_price_range_section">Price range (Toman)</string>
+    <string name="filter_min_price">Min price</string>
+    <string name="filter_max_price">Max price</string>
+    <string name="filter_clear">Clear filter</string>
+    <string name="filter_apply">Apply filter</string>
+    <string name="property_list_empty_filtered">No properties match this filter.\nChange or clear the filter.</string>
 </resources>

@@ -196,4 +196,15 @@
     <!-- ترتیب لیست متقاضیان -->
     <string name="client_sort_name_a_to_z">نام: الف تا ی</string>
     <string name="client_sort_budget_high_to_low">بودجه: زیاد به کم</string>
+
+    <!-- فیلتر لیست ملک‌ها -->
+    <string name="action_filter">فیلتر</string>
+    <string name="filter_dialog_title">فیلتر ملک‌ها</string>
+    <string name="filter_option_all">همه</string>
+    <string name="filter_price_range_section">بازه قیمت (تومان)</string>
+    <string name="filter_min_price">حداقل قیمت</string>
+    <string name="filter_max_price">حداکثر قیمت</string>
+    <string name="filter_clear">پاک کردن فیلتر</string>
+    <string name="filter_apply">اعمال فیلتر</string>
+    <string name="property_list_empty_filtered">با این فیلتر ملکی پیدا نشد.\nفیلتر را تغییر بده یا پاک کن.</string>
 </resources>

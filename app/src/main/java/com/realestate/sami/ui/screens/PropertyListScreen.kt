@@ -3,10 +3,14 @@ package com.realestate.sami.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Sort
@@ -16,13 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
+import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.screens.common.DealTypeChip
 import com.realestate.sami.ui.screens.common.color
+import com.realestate.sami.ui.viewmodel.PropertyFilter
 import com.realestate.sami.ui.viewmodel.PropertySortOption
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
+import com.realestate.sami.util.parseTomanInput
 import com.realestate.sami.util.toTomanShort
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,12 +44,14 @@ fun PropertyListScreen(
     val properties by viewModel.properties.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
     val sortOption by viewModel.sortOption.collectAsState()
+    val filter by viewModel.filter.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.property_list_title), style = MaterialTheme.typography.titleLarge) },
                 actions = {
+                    PropertyFilterButton(filter = filter, onApply = viewModel::onFilterChanged)
                     PropertySortMenu(current = sortOption, onSelect = viewModel::onSortOptionChanged)
                 }
             )
@@ -63,7 +74,10 @@ fun PropertyListScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
             if (properties.isEmpty()) {
-                EmptyState(text = stringResource(R.string.property_list_empty))
+                EmptyState(
+                    text = if (filter.isActive) stringResource(R.string.property_list_empty_filtered)
+                    else stringResource(R.string.property_list_empty)
+                )
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
@@ -100,6 +114,136 @@ private fun PropertySortMenu(current: PropertySortOption, onSelect: (PropertySor
                     trailingIcon = { if (option == current) Icon(Icons.Filled.Check, contentDescription = null) },
                     onClick = { onSelect(option); expanded = false }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PropertyFilterButton(filter: PropertyFilter, onApply: (PropertyFilter) -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+    BadgedBox(badge = { if (filter.isActive) Badge() }) {
+        IconButton(onClick = { showDialog = true }) {
+            Icon(Icons.Filled.FilterList, contentDescription = stringResource(R.string.action_filter))
+        }
+    }
+    if (showDialog) {
+        PropertyFilterDialog(
+            initialFilter = filter,
+            onDismiss = { showDialog = false },
+            onApply = { newFilter ->
+                onApply(newFilter)
+                showDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun PropertyFilterDialog(
+    initialFilter: PropertyFilter,
+    onDismiss: () -> Unit,
+    onApply: (PropertyFilter) -> Unit
+) {
+    var propertyType by remember { mutableStateOf(initialFilter.propertyType) }
+    var dealType by remember { mutableStateOf(initialFilter.dealType) }
+    var minPrice by remember { mutableStateOf(initialFilter.minPrice?.toString() ?: "") }
+    var maxPrice by remember { mutableStateOf(initialFilter.maxPrice?.toString() ?: "") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(shape = MaterialTheme.shapes.large) {
+            Column(
+                Modifier
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(stringResource(R.string.filter_dialog_title), style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(16.dp))
+
+                Text(stringResource(R.string.add_property_type_label), style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(8.dp))
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item {
+                        FilterChip(
+                            selected = propertyType == null,
+                            onClick = { propertyType = null },
+                            label = { Text(stringResource(R.string.filter_option_all)) }
+                        )
+                    }
+                    items(PropertyType.entries.toList()) { type ->
+                        FilterChip(
+                            selected = propertyType == type,
+                            onClick = { propertyType = type },
+                            label = { Text(type.toPersianLabel()) }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+                Text(stringResource(R.string.add_property_deal_type_label), style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(8.dp))
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item {
+                        FilterChip(
+                            selected = dealType == null,
+                            onClick = { dealType = null },
+                            label = { Text(stringResource(R.string.filter_option_all)) }
+                        )
+                    }
+                    items(DealType.entries.toList()) { type ->
+                        FilterChip(
+                            selected = dealType == type,
+                            onClick = { dealType = type },
+                            label = { Text(type.toPersianLabel()) }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+                Text(stringResource(R.string.filter_price_range_section), style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = minPrice,
+                        onValueChange = { minPrice = it },
+                        label = { Text(stringResource(R.string.filter_min_price)) },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                    OutlinedTextField(
+                        value = maxPrice,
+                        onValueChange = { maxPrice = it },
+                        label = { Text(stringResource(R.string.filter_max_price)) },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            propertyType = null
+                            dealType = null
+                            minPrice = ""
+                            maxPrice = ""
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) { Text(stringResource(R.string.filter_clear)) }
+                    Button(
+                        onClick = {
+                            onApply(
+                                PropertyFilter(
+                                    propertyType = propertyType,
+                                    dealType = dealType,
+                                    minPrice = minPrice.parseTomanInput(),
+                                    maxPrice = maxPrice.parseTomanInput()
+                                )
+                            )
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) { Text(stringResource(R.string.filter_apply)) }
+                }
             }
         }
     }

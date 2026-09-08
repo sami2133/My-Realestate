@@ -22,15 +22,20 @@ class PropertyViewModel @Inject constructor(
     private val _sortOption = MutableStateFlow(PropertySortOption.NEWEST)
     val sortOption: StateFlow<PropertySortOption> = _sortOption
 
+    private val _filter = MutableStateFlow(PropertyFilter())
+    val filter: StateFlow<PropertyFilter> = _filter
+
     /** رکورد در حال ویرایش (وقتی از صفحه ثبت ملک در حالت ویرایش استفاده می‌شود). */
     private val _editingProperty = MutableStateFlow<PropertyEntity?>(null)
     val editingProperty: StateFlow<PropertyEntity?> = _editingProperty
 
     val properties: StateFlow<List<PropertyEntity>> = combine(
         _searchQuery.flatMapLatest { query -> repository.search(query) },
-        _sortOption
-    ) { list, sort -> list.sortedWith(sort.comparator()) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        _sortOption,
+        _filter
+    ) { list, sort, filter ->
+        list.filter { it.matches(filter) }.sortedWith(sort.comparator())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun onSearchChanged(query: String) {
         _searchQuery.value = query
@@ -38,6 +43,10 @@ class PropertyViewModel @Inject constructor(
 
     fun onSortOptionChanged(option: PropertySortOption) {
         _sortOption.value = option
+    }
+
+    fun onFilterChanged(filter: PropertyFilter) {
+        _filter.value = filter
     }
 
     fun loadForEdit(id: Long) {
