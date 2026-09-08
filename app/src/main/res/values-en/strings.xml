@@ -207,4 +207,7 @@
     <string name="filter_clear">Clear filter</string>
     <string name="filter_apply">Apply filter</string>
     <string name="property_list_empty_filtered">No properties match this filter.\nChange or clear the filter.</string>
+
+    <!-- Image sync -->
+    <string name="image_not_downloaded_yet">This image hasn\'t been downloaded to this device yet</string>
 </resources>

@@ -17,11 +17,19 @@ interface ContactLogDao {
     @Delete
     suspend fun delete(log: ContactLogEntity)
 
-    @Query("SELECT * FROM contact_logs WHERE relatedId = :relatedId AND relatedType = :type ORDER BY contactDate DESC")
+    /** soft-delete: برای همگام‌سازی حذف بین دستگاه‌ها (فعلاً بدون UI مربوطه، فقط برای آینده). */
+    @Query("UPDATE contact_logs SET isDeleted = 1, updatedAt = :deletedAt, isSynced = 0 WHERE id = :id")
+    suspend fun softDelete(id: Long, deletedAt: Long = System.currentTimeMillis())
+
+    @Query("SELECT * FROM contact_logs WHERE relatedId = :relatedId AND relatedType = :type AND isDeleted = 0 ORDER BY contactDate DESC")
     fun getForEntity(relatedId: Long, type: RelatedType): Flow<List<ContactLogEntity>>
 
-    @Query("SELECT * FROM contact_logs WHERE followUpDate IS NOT NULL AND isFollowUpDone = 0 ORDER BY followUpDate ASC")
+    @Query("SELECT * FROM contact_logs WHERE followUpDate IS NOT NULL AND isFollowUpDone = 0 AND isDeleted = 0 ORDER BY followUpDate ASC")
     fun getPendingFollowUps(): Flow<List<ContactLogEntity>>
+
+    /** همه‌ی رکوردها شامل tombstone های حذف‌شده — فقط برای منطق sync، نه UI. */
+    @Query("SELECT * FROM contact_logs")
+    suspend fun getAllIncludingDeleted(): List<ContactLogEntity>
 }
 
 @Dao

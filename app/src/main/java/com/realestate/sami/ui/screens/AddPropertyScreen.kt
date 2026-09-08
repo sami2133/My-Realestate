@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import coil.compose.AsyncImage
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyImage
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
 import com.realestate.sami.util.parseIntInput
@@ -66,7 +68,7 @@ fun AddPropertyScreen(
     var hasParking by remember { mutableStateOf(false) }
     var hasStorage by remember { mutableStateOf(false) }
     var hasElevator by remember { mutableStateOf(false) }
-    var imageUris by remember { mutableStateOf(listOf<String>()) }
+    var images by remember { mutableStateOf(listOf<PropertyImage>()) }
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
@@ -86,7 +88,7 @@ fun AddPropertyScreen(
             hasParking = p.hasParking
             hasStorage = p.hasStorage
             hasElevator = p.hasElevator
-            imageUris = p.imageUris.split(",").filter { it.isNotBlank() }
+            images = p.images
             latitude = p.latitude
             longitude = p.longitude
         }
@@ -102,7 +104,7 @@ fun AddPropertyScreen(
 
     val imagePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia()
-    ) { uris -> imageUris = imageUris + uris.map { it.toString() } }
+    ) { uris -> images = images + uris.map { PropertyImage(localUri = it.toString()) } }
 
     Scaffold(
         topBar = {
@@ -130,9 +132,9 @@ fun AddPropertyScreen(
             Divider()
             Text(stringResource(R.string.add_property_photos_section), style = MaterialTheme.typography.titleMedium)
             PhotoPickerRow(
-                imageUris = imageUris,
+                images = images,
                 onAddClick = { imagePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-                onRemove = { uri -> imageUris = imageUris - uri }
+                onRemove = { image -> images = images - image }
             )
 
             Divider()
@@ -212,7 +214,7 @@ fun AddPropertyScreen(
                         totalPrice = totalPrice.parseTomanInput(),
                         depositPrice = depositPrice.parseTomanInput(),
                         rentPrice = rentPrice.parseTomanInput(),
-                        imageUris = imageUris.joinToString(",")
+                        images = images
                     )
                     viewModel.save(entity) { onSaved() }
                 },
@@ -234,9 +236,9 @@ private fun Double.toPlainInputString(): String =
 
 @Composable
 private fun PhotoPickerRow(
-    imageUris: List<String>,
+    images: List<PropertyImage>,
     onAddClick: () -> Unit,
-    onRemove: (String) -> Unit
+    onRemove: (PropertyImage) -> Unit
 ) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
@@ -250,22 +252,38 @@ private fun PhotoPickerRow(
                 Icon(Icons.Filled.AddAPhoto, contentDescription = stringResource(R.string.cd_add_photo), tint = MaterialTheme.colorScheme.primary)
             }
         }
-        items(imageUris) { uri ->
+        items(images) { image ->
             Box(Modifier.size(90.dp)) {
-                AsyncImage(
-                    model = uri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
-                )
+                if (image.localUri != null) {
+                    AsyncImage(
+                        model = image.localUri,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+                    )
+                } else {
+                    // این عکس روی یک دستگاه دیگه‌ی تیم اضافه شده و هنوز روی این دستگاه دانلود نشده
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.CloudDownload,
+                            contentDescription = stringResource(R.string.image_not_downloaded_yet),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
                 Box(
                     Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
                         .size(20.dp)
                         .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(50))
-                        .clickable { onRemove(uri) },
+                        .clickable { onRemove(image) },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_remove_photo), tint = Color.White, modifier = Modifier.size(16.dp))

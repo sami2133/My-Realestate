@@ -207,4 +207,7 @@
     <string name="filter_clear">پاک کردن فیلتر</string>
     <string name="filter_apply">اعمال فیلتر</string>
     <string name="property_list_empty_filtered">با این فیلتر ملکی پیدا نشد.\nفیلتر را تغییر بده یا پاک کن.</string>
+
+    <!-- همگام‌سازی عکس -->
+    <string name="image_not_downloaded_yet">این عکس هنوز روی این دستگاه دانلود نشده</string>
 </resources>

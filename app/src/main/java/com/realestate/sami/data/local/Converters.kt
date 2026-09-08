@@ -1,6 +1,8 @@
 package com.realestate.sami.data.local
 
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.realestate.sami.data.local.entity.*
 
 /**
@@ -8,6 +10,18 @@ import com.realestate.sami.data.local.entity.*
  * اما برای اطمینان از سازگاری در آینده (مثلاً migration) این‌ها رو صریح تعریف می‌کنیم.
  */
 class Converters {
+    private val gson = Gson()
+
+    /** لیست تصاویر ملک به‌صورت JSON در یک ستون متنی ذخیره می‌شود. */
+    @TypeConverter
+    fun fromPropertyImages(value: List<PropertyImage>): String = gson.toJson(value)
+
+    @TypeConverter
+    fun toPropertyImages(value: String): List<PropertyImage> {
+        if (value.isBlank()) return emptyList()
+        val type = TypeToken.getParameterized(List::class.java, PropertyImage::class.java).type
+        return gson.fromJson(value, type) ?: emptyList()
+    }
     @TypeConverter
     fun fromPropertyType(value: PropertyType): String = value.name
     @TypeConverter

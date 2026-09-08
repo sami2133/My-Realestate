@@ -12,9 +12,14 @@ object DriveConstants {
 
     const val PROPERTIES_FILE_NAME = "sami_properties.json"
     const val CLIENTS_FILE_NAME = "sami_clients.json"
+    const val CONTACT_LOGS_FILE_NAME = "sami_contact_logs.json"
+
+    /** زیرپوشه‌ی داخل پوشه‌ی تیمی که عکس‌های ملک (فایل‌های باینری) در آن آپلود می‌شوند. */
+    const val IMAGES_FOLDER_NAME = "images"
 
     const val FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
     const val JSON_MIME_TYPE = "application/json"
+    const val DEFAULT_IMAGE_MIME_TYPE = "image/jpeg"
 
     const val DRIVE_API_BASE = "https://www.googleapis.com/drive/v3"
     const val DRIVE_UPLOAD_BASE = "https://www.googleapis.com/upload/drive/v3"

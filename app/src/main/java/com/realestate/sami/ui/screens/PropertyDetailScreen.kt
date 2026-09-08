@@ -86,20 +86,37 @@ fun PropertyDetailScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             // گالری عکس
-            val images = current.imageUris.split(",").filter { it.isNotBlank() }
+            val images = current.images
             if (images.isNotEmpty()) {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(images) { uri ->
-                        AsyncImage(
-                            model = uri,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(220.dp, 150.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
-                        )
+                    items(images) { image ->
+                        if (image.localUri != null) {
+                            AsyncImage(
+                                model = image.localUri,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(220.dp, 150.dp)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
+                            )
+                        } else {
+                            // این عکس روی یک دستگاه دیگه‌ی تیم ثبت شده؛ با «همگام‌سازی الان» دانلود می‌شود
+                            Box(
+                                Modifier
+                                    .size(220.dp, 150.dp)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.CloudDownload,
+                                    contentDescription = stringResource(R.string.image_not_downloaded_yet),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        }
                     }
                 }
             } else {

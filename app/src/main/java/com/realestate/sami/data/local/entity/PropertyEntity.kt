@@ -41,7 +41,7 @@ data class PropertyEntity(
     val rentPrice: Long? = null,       // اجاره ماهانه
 
     val description: String? = null,
-    val imageUris: String = "",        // لیست مسیر عکس‌ها با کاما جدا شده
+    val images: List<PropertyImage> = emptyList(), // تصاویر ملک؛ هرکدام هم مسیر محلی (اگر روی این دستگاه موجود باشد) و هم شناسه‌ی فایل روی Drive (بعد از sync) را نگه می‌دارد
     val documentUris: String = "",     // اسکن سند/مدارک
 
     val status: PropertyStatus = PropertyStatus.AVAILABLE,

@@ -19,11 +19,14 @@ import com.realestate.sami.data.local.entity.VisitEntity
         ContactLogEntity::class,
         VisitEntity::class
     ],
-    // نسخه ۲: افزودن ستون isDeleted برای پشتیبانی از soft-delete در فاز ۴.۱ (sync حذف رکورد).
+    // نسخه ۲: افزودن ستون isDeleted برای پشتیبانی از soft-delete (sync حذف رکورد).
+    // نسخه ۳: افزودن remoteId/relatedRemoteId/updatedAt/isSynced/isDeleted به ContactLogEntity
+    // (برای sync تاریخچه‌ی تماس) و تبدیل PropertyEntity.imageUris (رشته‌ی ساده) به
+    // PropertyEntity.images (لیست PropertyImage با پشتیبانی از sync عکس روی Drive).
     // چون هنوز exportSchema=false و fallbackToDestructiveMigration فعال است (پروژه هنوز منتشر نشده)،
     // نیازی به Migration واقعی نیست؛ قبل از انتشار عمومی این باید با یک Migration واقعی جایگزین شود
     // تا داده‌ی کاربرهای واقعی موقع آپدیت پاک نشود.
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

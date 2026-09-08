@@ -65,6 +65,31 @@ class DriveApiClient @Inject constructor() {
         }
     }
 
+    /** یک زیرپوشه با نام مشخص را داخل پوشه‌ی والد پیدا می‌کند؛ اگر نبود می‌سازد (مثلاً پوشه‌ی «images»). */
+    suspend fun ensureSubfolder(token: String, parentFolderId: String, name: String): String =
+        withContext(Dispatchers.IO) {
+            val existing = findByName(token, name, DriveConstants.FOLDER_MIME_TYPE, parentId = parentFolderId)
+            existing?.id ?: createFolderIn(token, name, parentFolderId)
+        }
+
+    private fun createFolderIn(token: String, name: String, parentId: String): String {
+        val body = JsonObject().apply {
+            addProperty("name", name)
+            addProperty("mimeType", DriveConstants.FOLDER_MIME_TYPE)
+            add("parents", com.google.gson.JsonArray().apply { add(parentId) })
+        }
+        val request = Request.Builder()
+            .url("${DriveConstants.DRIVE_API_BASE}/files")
+            .header("Authorization", authHeader(token))
+            .post(body.toString().toRequestBody(json))
+            .build()
+        http.newCall(request).execute().use { resp ->
+            requireSuccess(resp, "ساخت زیرپوشه‌ی تصاویر")
+            val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
+            return result.get("id").asString
+        }
+    }
+
     /** فایل با نام مشخص را داخل یک پوشه (یا در ریشه اگر parentId=null) پیدا می‌کند. */
     suspend fun findFileInFolder(token: String, folderId: String, fileName: String): DriveFile? =
         withContext(Dispatchers.IO) { findByName(token, fileName, null, folderId) }
@@ -149,6 +174,53 @@ class DriveApiClient @Inject constructor() {
             requireSuccess(resp, "ساخت فایل روی Drive")
             val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
             return result.get("id").asString
+        }
+    }
+
+    /**
+     * یک فایل باینری (عکس) را به‌عنوان فایل جدید داخل پوشه آپلود می‌کند و شناسه‌ی فایل ساخته‌شده
+     * را برمی‌گرداند. برخلاف [uploadOrUpdateJson]، هربار یک فایل تازه می‌سازد چون هر عکس یک‌بار
+     * آپلود می‌شود و بعد از آن دیگر تغییر نمی‌کند (immutable).
+     */
+    suspend fun uploadBinaryFile(
+        token: String,
+        folderId: String,
+        fileName: String,
+        bytes: ByteArray,
+        mimeType: String
+    ): String = withContext(Dispatchers.IO) {
+        val metadata = JsonObject().apply {
+            addProperty("name", fileName)
+            add("parents", com.google.gson.JsonArray().apply { add(folderId) })
+        }
+        val multipart = MultipartBody.Builder()
+            .setType("multipart/related".toMediaType())
+            .addPart(MultipartBody.Part.create(metadata.toString().toRequestBody(json)))
+            .addPart(MultipartBody.Part.create(bytes.toRequestBody(mimeType.toMediaType())))
+            .build()
+        val request = Request.Builder()
+            .url("${DriveConstants.DRIVE_UPLOAD_BASE}/files?uploadType=multipart")
+            .header("Authorization", authHeader(token))
+            .post(multipart)
+            .build()
+        http.newCall(request).execute().use { resp ->
+            requireSuccess(resp, "آپلود عکس روی Drive")
+            val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
+            result.get("id").asString
+        }
+    }
+
+    /** محتوای باینری یک فایل (عکس) را دانلود می‌کند؛ اگر فایل دیگر روی Drive وجود نداشت null برمی‌گرداند. */
+    suspend fun downloadBinaryFile(token: String, fileId: String): ByteArray? = withContext(Dispatchers.IO) {
+        val request = Request.Builder()
+            .url("${DriveConstants.DRIVE_API_BASE}/files/$fileId?alt=media")
+            .header("Authorization", authHeader(token))
+            .get()
+            .build()
+        http.newCall(request).execute().use { resp ->
+            if (resp.code == 404) return@withContext null
+            requireSuccess(resp, "دانلود عکس از Drive")
+            resp.body?.bytes()
         }
     }
 
