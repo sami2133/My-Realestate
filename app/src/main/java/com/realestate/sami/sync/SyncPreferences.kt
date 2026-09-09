@@ -19,8 +19,14 @@ class SyncPreferences @Inject constructor(@ApplicationContext context: Context) 
         get() = prefs.getLong(KEY_LAST_SYNC, 0L).takeIf { it > 0 }
         set(value) = prefs.edit().putLong(KEY_LAST_SYNC, value ?: 0L).apply()
 
+    /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود (نه دیتای موبایل). پیش‌فرض خاموش. */
+    var autoSyncWifiOnly: Boolean
+        get() = prefs.getBoolean(KEY_WIFI_ONLY, false)
+        set(value) = prefs.edit().putBoolean(KEY_WIFI_ONLY, value).apply()
+
     companion object {
         private const val KEY_FOLDER_ID = "team_folder_id"
         private const val KEY_LAST_SYNC = "last_synced_at"
+        private const val KEY_WIFI_ONLY = "auto_sync_wifi_only"
     }
 }

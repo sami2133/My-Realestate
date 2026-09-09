@@ -38,15 +38,25 @@ class SyncWorker @AssistedInject constructor(
     companion object {
         private const val WORK_NAME = "team_sync_periodic"
 
-        fun schedulePeriodic(context: Context) {
+        /**
+         * [wifiOnly] از [com.realestate.sami.sync.SyncPreferences.autoSyncWifiOnly] می‌آید.
+         * [policy] پیش‌فرض KEEP است (برای زمان‌بندی اولیه‌ی onCreate)؛ وقتی کاربر خودش تنظیم
+         * Wi-Fi-only را از صفحه‌ی تیم عوض می‌کند، با REPLACE دوباره صدا زده می‌شود تا محدودیت
+         * شبکه‌ی کار دوره‌ای فوراً به‌روز شود.
+         */
+        fun schedulePeriodic(
+            context: Context,
+            wifiOnly: Boolean = false,
+            policy: ExistingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP
+        ) {
             val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiredNetworkType(if (wifiOnly) NetworkType.UNMETERED else NetworkType.CONNECTED)
                 .build()
             val request = PeriodicWorkRequestBuilder<SyncWorker>(30, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
             WorkManager.getInstance(context)
-                .enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+                .enqueueUniquePeriodicWork(WORK_NAME, policy, request)
         }
     }
 }

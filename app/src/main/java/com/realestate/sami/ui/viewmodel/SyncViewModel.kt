@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingPeriodicWorkPolicy
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -12,6 +13,7 @@ import com.realestate.sami.sync.JoinTeamResult
 import com.realestate.sami.sync.SyncManager
 import com.realestate.sami.sync.SyncPreferences
 import com.realestate.sami.sync.SyncResult
+import com.realestate.sami.sync.SyncWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,9 @@ data class SyncUiState(
     /** شناسه‌ی پوشه‌ی تیمی فعلی (بعد از اولین sync موفق یا join دستی) — برای نمایش/اشتراک‌گذاری با بقیه اعضا. */
     val teamFolderId: String? = null,
     val joinTeamMessage: String? = null,
-    val isJoiningTeam: Boolean = false
+    val isJoiningTeam: Boolean = false,
+    /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
+    val autoSyncWifiOnly: Boolean = false
 )
 
 @HiltViewModel
@@ -46,7 +50,8 @@ class SyncViewModel @Inject constructor(
         SyncUiState(
             account = authManager.getSignedInAccount(context),
             lastSyncedAt = syncPrefs.lastSyncedAt,
-            teamFolderId = syncPrefs.teamFolderId
+            teamFolderId = syncPrefs.teamFolderId,
+            autoSyncWifiOnly = syncPrefs.autoSyncWifiOnly
         )
     )
     val uiState: StateFlow<SyncUiState> = _uiState.asStateFlow()
@@ -72,7 +77,7 @@ class SyncViewModel @Inject constructor(
 
     fun signOut() {
         authManager.signOut(context) {
-            _uiState.value = SyncUiState(teamFolderId = syncPrefs.teamFolderId)
+            _uiState.value = SyncUiState(teamFolderId = syncPrefs.teamFolderId, autoSyncWifiOnly = syncPrefs.autoSyncWifiOnly)
         }
     }
 
@@ -132,5 +137,12 @@ class SyncViewModel @Inject constructor(
 
     fun clearJoinTeamMessage() {
         _uiState.value = _uiState.value.copy(joinTeamMessage = null)
+    }
+
+    /** تغییر تنظیم «sync خودکار فقط با Wi-Fi»؛ ذخیره می‌شود و کار دوره‌ای فوراً با محدودیت شبکه‌ی جدید دوباره زمان‌بندی می‌شود. */
+    fun setAutoSyncWifiOnly(enabled: Boolean) {
+        syncPrefs.autoSyncWifiOnly = enabled
+        _uiState.value = _uiState.value.copy(autoSyncWifiOnly = enabled)
+        SyncWorker.schedulePeriodic(context, wifiOnly = enabled, policy = ExistingPeriodicWorkPolicy.REPLACE)
     }
 }
