@@ -195,7 +195,7 @@ class SyncManager @Inject constructor(
         }
         val existingFile = driveApi.findFileInFolder(token, folderId, DriveConstants.PROPERTIES_FILE_NAME)
         val remoteJson = existingFile?.let { driveApi.downloadFileContent(token, it.id) }
-        val remote: List<PropertyEntity> = parseList(remoteJson)
+        val remote: List<PropertyEntity> = parsePropertyList(remoteJson)
 
         val localById = local.associateBy { it.remoteId }
         val remoteById = remote.associateBy { it.remoteId }
@@ -462,5 +462,34 @@ class SyncManager @Inject constructor(
         if (json.isNullOrBlank()) return emptyList()
         val type = TypeToken.getParameterized(List::class.java, T::class.java).type
         return gson.fromJson(json, type) ?: emptyList()
+    }
+
+    /**
+     * پارس کردن مخصوص ملک‌ها: فایل sami_properties.json روی Drive ممکن است رکوردهایی از یک
+     * نسخه‌ی قدیمی‌تر اپ داشته باشد که هنوز فیلد `images` (لیست تصاویر، اضافه‌شده در فاز ۲) را
+     * نداشتن. Gson برای فیلدهای Kotlin غیر-nullable که در JSON غایبند، به‌جای استفاده از مقدار
+     * پیش‌فرض کلاس (emptyList())، مقدار null واقعی می‌گذارد و null-safety کاتلین را دور می‌زند؛
+     * بعد هر `.copy()` روی همچین رکوردی بلافاصله با
+     * «Parameter specified as non-null is null: parameter images» کرش می‌کند.
+     * برای همین قبل از map شدن به PropertyEntity، فیلدهای غایب/null را در خودِ JSON پر می‌کنیم.
+     */
+    private fun parsePropertyList(json: String?): List<PropertyEntity> {
+        if (json.isNullOrBlank()) return emptyList()
+        return try {
+            val array = com.google.gson.JsonParser.parseString(json).asJsonArray
+            array.forEach { element ->
+                val obj = element.asJsonObject
+                if (!obj.has("images") || obj.get("images").isJsonNull) {
+                    obj.add("images", com.google.gson.JsonArray())
+                }
+                if (!obj.has("documentUris") || obj.get("documentUris").isJsonNull) {
+                    obj.addProperty("documentUris", "")
+                }
+            }
+            val type = TypeToken.getParameterized(List::class.java, PropertyEntity::class.java).type
+            gson.fromJson<List<PropertyEntity>>(array, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }
