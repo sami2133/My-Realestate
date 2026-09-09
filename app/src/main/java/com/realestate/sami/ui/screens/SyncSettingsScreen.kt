@@ -137,6 +137,34 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
 
             if (state.account != null) {
                 SectionCard {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.sync_auto_wifi_only_title),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                stringResource(R.string.sync_auto_wifi_only_description),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Switch(
+                            checked = state.autoSyncWifiOnly,
+                            onCheckedChange = { viewModel.setAutoSyncWifiOnly(it) }
+                        )
+                    }
+                }
+            }
+
+            if (state.account != null) {
+                SectionCard {
                     Text(
                         stringResource(R.string.sync_team_folder_title),
                         style = MaterialTheme.typography.titleSmall

@@ -168,6 +168,10 @@
     <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
 
+    <!-- تنظیم نوع اتصال برای sync خودکار پس‌زمینه -->
+    <string name="sync_auto_wifi_only_title">همگام‌سازی خودکار فقط با Wi-Fi</string>
+    <string name="sync_auto_wifi_only_description">وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شه و از دیتای موبایل استفاده نمی‌کنه. دکمه‌ی «همگام‌سازی الان» همیشه با هر اتصالی کار می‌کنه.</string>
+
     <!-- اکشن‌های عمومی: ویرایش، حذف، ترتیب -->
     <string name="action_edit">ویرایش</string>
     <string name="action_delete">حذف</string>
@@ -210,4 +214,57 @@
 
     <!-- همگام‌سازی عکس -->
     <string name="image_not_downloaded_yet">این عکس هنوز روی این دستگاه دانلود نشده</string>
+
+    <!-- فاز ۵: گزارش‌ها -->
+    <string name="nav_reports">گزارش‌ها</string>
+
+    <!-- فاز ۵: یادآوری پیگیری -->
+    <string name="follow_up_section_label">یادآوری پیگیری بعدی</string>
+    <string name="follow_up_option_none">بدون یادآوری</string>
+    <string name="follow_up_option_tomorrow">فردا</string>
+    <string name="follow_up_option_3_days">۳ روز دیگر</string>
+    <string name="follow_up_option_1_week">هفته دیگر</string>
+    <string name="follow_up_pending_badge">یادآوری: %1$s</string>
+    <string name="follow_up_done_badge">پیگیری شد (%1$s)</string>
+    <string name="notification_channel_followup_name">یادآوری پیگیری</string>
+    <string name="notification_channel_followup_desc">وقتی موعد پیگیری یک ملک یا متقاضی فرا برسد، یادآوری نشان داده می‌شود</string>
+    <string name="notification_followup_title">یادآوری پیگیری: %1$s</string>
+
+    <!-- فاز ۵: زمان‌بندی بازدید و تقویم -->
+    <string name="visit_section_title">بازدیدها</string>
+    <string name="visit_schedule_action">افزودن بازدید</string>
+    <string name="visit_no_candidates">برای زمان‌بندی بازدید، اول باید حداقل یک تطبیق سازگار وجود داشته باشد.</string>
+    <string name="visit_section_empty">هنوز بازدیدی ثبت نشده.</string>
+    <string name="visit_unknown_party">نامشخص</string>
+    <string name="visit_add_to_calendar">افزودن به تقویم</string>
+    <string name="visit_result_pending">در انتظار</string>
+    <string name="visit_result_interested">علاقه‌مند</string>
+    <string name="visit_result_not_interested">بی‌علاقه</string>
+    <string name="visit_result_deal_closed">معامله موفق</string>
+    <string name="visit_schedule_dialog_title">زمان‌بندی بازدید</string>
+    <string name="visit_pick_party_label">انتخاب طرف بازدید</string>
+    <string name="visit_pick_datetime_label">تاریخ و ساعت بازدید</string>
+    <string name="visit_pick_datetime_placeholder">انتخاب تاریخ و ساعت</string>
+    <string name="visit_schedule_confirm">ثبت بازدید</string>
+
+    <!-- فاز ۵: داشبورد آماری -->
+    <string name="reports_total_properties">کل ملک‌ها</string>
+    <string name="reports_available_properties">قابل معرفی</string>
+    <string name="reports_closed_deals">معاملات موفق</string>
+    <string name="reports_active_clients">متقاضیان فعال</string>
+    <string name="reports_commission_section">نرخ کمیسیون</string>
+    <string name="reports_commission_hint">این نرخ برای برآورد درآمد کمیسیون از معاملات موفق استفاده می‌شود؛ فقط روی همین گوشی ذخیره می‌شود.</string>
+    <string name="reports_commission_percent_label">درصد کمیسیون</string>
+    <string name="reports_estimated_commission">برآورد درآمد کمیسیون</string>
+    <string name="reports_upcoming_visits_section">بازدیدهای پیش‌رو (%1$d)</string>
+    <string name="reports_no_upcoming_visits">بازدید پیش‌رویی ثبت نشده.</string>
+    <string name="reports_visit_row">بازدید ملک #%1$d با متقاضی #%2$d</string>
+    <string name="reports_export_section">خروجی گرفتن</string>
+    <string name="reports_export_hint">خروجی PDF یا اکسل از لیست کامل ملک‌ها، برای ارسال یا چاپ.</string>
+    <string name="reports_export_pdf">خروجی PDF</string>
+    <string name="reports_export_excel">خروجی اکسل</string>
+
+    <!-- فاز ۵: عنوان رویداد تقویم هنگام «افزودن به تقویم» -->
+    <string name="visit_calendar_event_title_property">بازدید %1$s از ملک %2$s</string>
+    <string name="visit_calendar_event_title_client">بازدید %1$s با متقاضی %2$s</string>
 </resources>

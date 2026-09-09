@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- فاز ۵: برای نمایش نوتیفیکیشن یادآوری پیگیری (اجباری از اندروید ۱۳/API 33 به بعد) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".RealEstateApp"
@@ -36,6 +38,17 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+        </provider>
+
+        <!-- فاز ۵: برای اشتراک‌گذاری امن فایل‌های PDF/Excel خروجی‌گرفته‌شده، بدون مجوز حافظه -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
 
         <activity

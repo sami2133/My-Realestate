@@ -168,6 +168,10 @@
     <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
     <string name="sync_team_folder_join_button">Join existing team</string>
 
+    <!-- Network type setting for background auto-sync -->
+    <string name="sync_auto_wifi_only_title">Auto-sync on Wi-Fi only</string>
+    <string name="sync_auto_wifi_only_description">When on, periodic background sync only runs on Wi-Fi and won\'t use mobile data. The "Sync now" button always works on any connection.</string>
+
     <!-- Common actions: edit, delete, sort -->
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
@@ -210,4 +214,57 @@
 
     <!-- Image sync -->
     <string name="image_not_downloaded_yet">This image hasn\'t been downloaded to this device yet</string>
+
+    <!-- Phase 5: Reports -->
+    <string name="nav_reports">Reports</string>
+
+    <!-- Phase 5: Follow-up reminders -->
+    <string name="follow_up_section_label">Next follow-up reminder</string>
+    <string name="follow_up_option_none">No reminder</string>
+    <string name="follow_up_option_tomorrow">Tomorrow</string>
+    <string name="follow_up_option_3_days">In 3 days</string>
+    <string name="follow_up_option_1_week">In a week</string>
+    <string name="follow_up_pending_badge">Reminder: %1$s</string>
+    <string name="follow_up_done_badge">Followed up (%1$s)</string>
+    <string name="notification_channel_followup_name">Follow-up reminders</string>
+    <string name="notification_channel_followup_desc">Shows a reminder when a property or client follow-up is due</string>
+    <string name="notification_followup_title">Follow-up reminder: %1$s</string>
+
+    <!-- Phase 5: Visit scheduling and calendar -->
+    <string name="visit_section_title">Visits</string>
+    <string name="visit_schedule_action">Schedule visit</string>
+    <string name="visit_no_candidates">You need at least one matching client/property before scheduling a visit.</string>
+    <string name="visit_section_empty">No visits scheduled yet.</string>
+    <string name="visit_unknown_party">Unknown</string>
+    <string name="visit_add_to_calendar">Add to calendar</string>
+    <string name="visit_result_pending">Pending</string>
+    <string name="visit_result_interested">Interested</string>
+    <string name="visit_result_not_interested">Not interested</string>
+    <string name="visit_result_deal_closed">Deal closed</string>
+    <string name="visit_schedule_dialog_title">Schedule a visit</string>
+    <string name="visit_pick_party_label">Choose the other party</string>
+    <string name="visit_pick_datetime_label">Visit date and time</string>
+    <string name="visit_pick_datetime_placeholder">Pick date and time</string>
+    <string name="visit_schedule_confirm">Save visit</string>
+
+    <!-- Phase 5: Reports dashboard -->
+    <string name="reports_total_properties">Total properties</string>
+    <string name="reports_available_properties">Available</string>
+    <string name="reports_closed_deals">Closed deals</string>
+    <string name="reports_active_clients">Active clients</string>
+    <string name="reports_commission_section">Commission rate</string>
+    <string name="reports_commission_hint">Used to estimate commission income from closed deals; stored only on this device.</string>
+    <string name="reports_commission_percent_label">Commission percent</string>
+    <string name="reports_estimated_commission">Estimated commission income</string>
+    <string name="reports_upcoming_visits_section">Upcoming visits (%1$d)</string>
+    <string name="reports_no_upcoming_visits">No upcoming visits scheduled.</string>
+    <string name="reports_visit_row">Visit — property #%1$d with client #%2$d</string>
+    <string name="reports_export_section">Export</string>
+    <string name="reports_export_hint">Export the full property list as PDF or Excel, to send or print.</string>
+    <string name="reports_export_pdf">Export PDF</string>
+    <string name="reports_export_excel">Export Excel</string>
+
+    <!-- Phase 5: calendar event title used by "Add to calendar" -->
+    <string name="visit_calendar_event_title_property">Visit: %1$s viewing %2$s</string>
+    <string name="visit_calendar_event_title_client">Visit: %1$s with client %2$s</string>
 </resources>

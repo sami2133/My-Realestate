@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- فاز ۵: مسیرهای مجاز برای FileProvider — فقط پوشه‌ی cache/exports که فایل‌های PDF/Excel در آن ساخته می‌شوند. -->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="exports" path="exports/" />
+</paths>

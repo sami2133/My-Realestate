@@ -8,8 +8,11 @@ import com.realestate.sami.data.local.entity.ClientStatus
 import com.realestate.sami.data.local.entity.ContactLogEntity
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.local.entity.RelatedType
+import com.realestate.sami.data.local.entity.VisitEntity
+import com.realestate.sami.data.local.entity.VisitResult
 import com.realestate.sami.data.repository.ClientRepository
 import com.realestate.sami.data.repository.ContactLogRepository
+import com.realestate.sami.data.repository.VisitRepository
 import com.realestate.sami.domain.matching.MatchingEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -21,6 +24,7 @@ class ClientDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val clientRepository: ClientRepository,
     private val contactLogRepository: ContactLogRepository,
+    private val visitRepository: VisitRepository,
     private val matchingEngine: MatchingEngine
 ) : ViewModel() {
 
@@ -37,6 +41,10 @@ class ClientDetailViewModel @Inject constructor(
     val contactLogs: StateFlow<List<ContactLogEntity>> =
         contactLogRepository.getForEntity(clientId, RelatedType.CLIENT)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** فاز ۵: قرارهای بازدید ثبت‌شده برای این متقاضی (با ملک‌های مختلف). */
+    val visits: StateFlow<List<VisitEntity>> = visitRepository.getForClient(clientId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         viewModelScope.launch {
@@ -64,6 +72,25 @@ class ClientDetailViewModel @Inject constructor(
                     followUpDate = followUpDate
                 )
             )
+        }
+    }
+
+    /** فاز ۵: زمان‌بندی بازدید این متقاضی از یک ملک سازگار. */
+    fun scheduleVisit(propertyId: Long, visitDateMillis: Long) {
+        viewModelScope.launch {
+            visitRepository.add(
+                VisitEntity(
+                    propertyId = propertyId,
+                    clientId = clientId,
+                    visitDate = visitDateMillis
+                )
+            )
+        }
+    }
+
+    fun updateVisitResult(visit: VisitEntity, result: VisitResult) {
+        viewModelScope.launch {
+            visitRepository.update(visit.copy(result = result))
         }
     }
 

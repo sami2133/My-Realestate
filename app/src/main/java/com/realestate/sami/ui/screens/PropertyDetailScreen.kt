@@ -39,6 +39,8 @@ fun PropertyDetailScreen(
     val property by viewModel.property.collectAsState()
     val matchingClients by viewModel.matchingClients.collectAsState()
     val contactLogs by viewModel.contactLogs.collectAsState()
+    val visits by viewModel.visits.collectAsState()
+    val visitEventTitleTemplate = stringResource(R.string.visit_calendar_event_title_property)
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     if (showDeleteDialog) {
@@ -190,7 +192,22 @@ fun PropertyDetailScreen(
                 }
 
                 SectionCard {
-                    ContactLogSection(logs = contactLogs, onAddLog = { viewModel.addContactLog(it, null) })
+                    VisitScheduleSection(
+                        visits = visits,
+                        candidates = matchingClients.map {
+                            VisitCandidate(id = it.id, label = it.fullName, subLabel = it.phone)
+                        },
+                        otherPartyIdOf = { it.clientId },
+                        eventTitleFor = { candidate ->
+                            String.format(visitEventTitleTemplate, candidate.label, current.address)
+                        },
+                        onSchedule = viewModel::scheduleVisit,
+                        onResultChange = viewModel::updateVisitResult
+                    )
+                }
+
+                SectionCard {
+                    ContactLogSection(logs = contactLogs, onAddLog = { note, followUpDate -> viewModel.addContactLog(note, followUpDate) })
                 }
 
                 Spacer(Modifier.height(20.dp))

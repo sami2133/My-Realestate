@@ -27,6 +27,14 @@ interface ContactLogDao {
     @Query("SELECT * FROM contact_logs WHERE followUpDate IS NOT NULL AND isFollowUpDone = 0 AND isDeleted = 0 ORDER BY followUpDate ASC")
     fun getPendingFollowUps(): Flow<List<ContactLogEntity>>
 
+    /** یک‌بار (نه Flow) برای بررسی دوره‌ای در Worker یادآوری فاز ۵. */
+    @Query("SELECT * FROM contact_logs WHERE followUpDate IS NOT NULL AND isFollowUpDone = 0 AND isDeleted = 0 ORDER BY followUpDate ASC")
+    suspend fun getPendingFollowUpsOnce(): List<ContactLogEntity>
+
+    /** علامت‌گذاری یک پیگیری به‌عنوان انجام‌شده (فاز ۵: بعد از نمایش نوتیفیکیشن یا لمس دستی کاربر). */
+    @Query("UPDATE contact_logs SET isFollowUpDone = 1, updatedAt = :doneAt, isSynced = 0 WHERE id = :id")
+    suspend fun markFollowUpDone(id: Long, doneAt: Long = System.currentTimeMillis())
+
     /** همه‌ی رکوردها شامل tombstone های حذف‌شده — فقط برای منطق sync، نه UI. */
     @Query("SELECT * FROM contact_logs")
     suspend fun getAllIncludingDeleted(): List<ContactLogEntity>
@@ -51,4 +59,12 @@ interface VisitDao {
 
     @Query("SELECT * FROM visits WHERE visitDate BETWEEN :startOfDay AND :endOfDay ORDER BY visitDate ASC")
     fun getForDateRange(startOfDay: Long, endOfDay: Long): Flow<List<VisitEntity>>
+
+    /** همه‌ی بازدیدها — برای داشبورد آماری فاز ۵ (شمارش معاملات موفق و غیره). */
+    @Query("SELECT * FROM visits ORDER BY visitDate DESC")
+    fun getAll(): Flow<List<VisitEntity>>
+
+    /** بازدیدهای پیش‌رو از این لحظه به بعد — برای کارت «بازدیدهای این هفته» در داشبورد. */
+    @Query("SELECT * FROM visits WHERE visitDate >= :fromMillis ORDER BY visitDate ASC")
+    fun getUpcoming(fromMillis: Long): Flow<List<VisitEntity>>
 }
