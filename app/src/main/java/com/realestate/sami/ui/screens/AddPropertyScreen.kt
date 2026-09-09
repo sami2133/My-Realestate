@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,9 +31,13 @@ import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.local.entity.PropertyImage
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
+import com.realestate.sami.util.copyPickedImageToAppStorage
 import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * فرم ثبت/ویرایش ملک. وقتی [propertyId] مقدار داشته باشد، صفحه در حالت ویرایش باز می‌شود:
@@ -69,6 +74,8 @@ fun AddPropertyScreen(
     var hasStorage by remember { mutableStateOf(false) }
     var hasElevator by remember { mutableStateOf(false) }
     var images by remember { mutableStateOf(listOf<PropertyImage>()) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
@@ -104,7 +111,17 @@ fun AddPropertyScreen(
 
     val imagePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia()
-    ) { uris -> images = images + uris.map { PropertyImage(localUri = it.toString()) } }
+    ) { uris ->
+        // بایت‌های هر عکس بلافاصله به حافظه‌ی دائمی خودِ اپ کپی می‌شن، چون URIای که Photo Picker
+        // برمی‌گردونه فقط موقتیه و بعد از مدتی (وقتی اپ از حافظه پاک بشه) دیگه قابل خوندن نیست.
+        scope.launch(Dispatchers.IO) {
+            val copied = uris.mapNotNull { uri -> context.copyPickedImageToAppStorage(uri) }
+                .map { PropertyImage(localUri = it) }
+            withContext(Dispatchers.Main) {
+                images = images + copied
+            }
+        }
+    }
 
     Scaffold(
         topBar = {

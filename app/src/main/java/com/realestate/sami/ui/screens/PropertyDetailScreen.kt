@@ -15,6 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,6 +29,7 @@ import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.PropertyDetailViewModel
 import com.realestate.sami.util.toPersianDateString
 import com.realestate.sami.util.toTomanDisplay
+import com.realestate.sami.util.viewImageExternally
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +87,7 @@ fun PropertyDetailScreen(
         }
     ) { padding ->
         val current = property ?: return@Scaffold
+        val context = LocalContext.current
         Column(
             Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -96,13 +101,36 @@ fun PropertyDetailScreen(
                 ) {
                     items(images) { image ->
                         if (image.localUri != null) {
-                            AsyncImage(
-                                model = image.localUri,
-                                contentDescription = null,
+                            Box(
                                 modifier = Modifier
                                     .size(220.dp, 150.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
-                            )
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .clickable { viewImageOrNotify(context, image.localUri) }
+                            ) {
+                                AsyncImage(
+                                    model = image.localUri,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                                // فاز ۵.۱: «باز کردن با…» — نمایش تصویر با اپ گالری/نمایش‌گر پیش‌فرض گوشی،
+                                // یا در صورت چند اپ نصب‌شده، دیالوگ خودِ اندروید که گزینه‌ی «همیشه» هم دارد
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(6.dp)
+                                        .size(28.dp)
+                                        .background(Color.Black.copy(alpha = 0.45f), RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        Icons.Filled.OpenInNew,
+                                        contentDescription = stringResource(R.string.property_image_open_with),
+                                        tint = Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
                         } else {
                             // این عکس روی یک دستگاه دیگه‌ی تیم ثبت شده؛ با «همگام‌سازی الان» دانلود می‌شود
                             Box(
@@ -224,6 +252,18 @@ private fun InfoRow(label: String, value: String) {
     ) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         Text(value, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+/** باز کردن تصویر با اپ گالری/نمایش‌گر پیش‌فرض؛ اگر هیچ اپی برای نمایش عکس نصب نبود، یک Toast کوتاه نشان می‌دهد. */
+private fun viewImageOrNotify(context: android.content.Context, localUri: String) {
+    val opened = context.viewImageExternally(localUri)
+    if (!opened) {
+        android.widget.Toast.makeText(
+            context,
+            context.getString(R.string.property_image_open_failed),
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
     }
 }
 

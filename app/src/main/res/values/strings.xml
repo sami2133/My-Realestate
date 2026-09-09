@@ -267,4 +267,8 @@
     <!-- فاز ۵: عنوان رویداد تقویم هنگام «افزودن به تقویم» -->
     <string name="visit_calendar_event_title_property">بازدید %1$s از ملک %2$s</string>
     <string name="visit_calendar_event_title_client">بازدید %1$s با متقاضی %2$s</string>
+
+    <!-- فاز ۵.۱: باز کردن تصویر ملک با اپ گالری/نمایش‌گر دلخواه گوشی -->
+    <string name="property_image_open_with">باز کردن با…</string>
+    <string name="property_image_open_failed">هیچ اپی برای نمایش عکس روی این گوشی پیدا نشد</string>
 </resources>

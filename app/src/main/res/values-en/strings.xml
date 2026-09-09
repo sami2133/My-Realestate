@@ -267,4 +267,8 @@
     <!-- Phase 5: calendar event title used by "Add to calendar" -->
     <string name="visit_calendar_event_title_property">Visit: %1$s viewing %2$s</string>
     <string name="visit_calendar_event_title_client">Visit: %1$s with client %2$s</string>
+
+    <!-- Phase 5.1: open a property image with the device's preferred gallery/viewer app -->
+    <string name="property_image_open_with">Open with…</string>
+    <string name="property_image_open_failed">No app found on this device to view images</string>
 </resources>

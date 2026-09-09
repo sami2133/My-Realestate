@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- فاز ۵: مسیرهای مجاز برای FileProvider — فقط پوشه‌ی cache/exports که فایل‌های PDF/Excel در آن ساخته می‌شوند. -->
+<!-- فاز ۵: مسیرهای مجاز برای FileProvider -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- خروجی PDF/Excel لیست ملک‌ها -->
     <cache-path name="exports" path="exports/" />
+    <!-- عکس‌های ملک: هم آن‌ها که مستقیم روی همین گوشی ثبت شده‌اند، هم آن‌ها که از sync تیمی دانلود و کش شده‌اند -->
+    <files-path name="property_images" path="property_images/" />
+    <files-path name="synced_images" path="synced_images/" />
 </paths>
