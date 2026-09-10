@@ -41,7 +41,8 @@
 
     <!-- انواع معامله -->
     <string name="deal_type_sale">خرید و فروش</string>
-    <string name="deal_type_rent">اجاره</string>
+    <!-- فاز ۵.۲: رهن کامل و اجاره ادغام شدن؛ این یک نوع معامله با رهن+اجاره‌ی قابل‌تبدیله -->
+    <string name="deal_type_rent">رهن و اجاره</string>
     <string name="deal_type_mortgage">رهن کامل</string>
     <string name="deal_type_exchange">مبادله</string>
 
@@ -256,6 +257,12 @@
     <string name="reports_commission_section">نرخ کمیسیون</string>
     <string name="reports_commission_hint">این نرخ برای برآورد درآمد کمیسیون از معاملات موفق استفاده می‌شود؛ فقط روی همین گوشی ذخیره می‌شود.</string>
     <string name="reports_commission_percent_label">درصد کمیسیون</string>
+
+    <!-- فاز ۵.۲: نرخ تبدیل رهن↔اجاره -->
+    <string name="reports_rent_conversion_section">نرخ تبدیل رهن↔اجاره</string>
+    <string name="reports_rent_conversion_hint">نرخ رسمی/قانونی معمولاً ۲.۵٪ و نرخ متعارف بازار ۳٪ است؛ هر عددی که خودت می‌خواهی وارد کن. این نرخ برای محاسبه‌ی نوار لغزنده‌ی تعدیل رهن هنگام ثبت ملک استفاده می‌شود.</string>
+    <string name="reports_rent_conversion_percent_label">درصد تبدیل (ماهانه)</string>
+    <string name="reports_rent_conversion_saved">نرخ تبدیل ذخیره شد</string>
     <string name="reports_estimated_commission">برآورد درآمد کمیسیون</string>
     <string name="reports_upcoming_visits_section">بازدیدهای پیش‌رو (%1$d)</string>
     <string name="reports_no_upcoming_visits">بازدید پیش‌رویی ثبت نشده.</string>
@@ -272,4 +279,12 @@
     <!-- فاز ۵.۱: باز کردن تصویر ملک با اپ گالری/نمایش‌گر دلخواه گوشی -->
     <string name="property_image_open_with">باز کردن با…</string>
     <string name="property_image_open_failed">هیچ اپی برای نمایش عکس روی این گوشی پیدا نشد</string>
+
+    <!-- فاز ۵.۲: ادغام رهن کامل و اجاره + نوار لغزنده‌ی تبدیل -->
+    <string name="add_property_deposit_negotiable">رهن قابل تعدیل است (بازه‌ی مذاکره)</string>
+    <string name="add_property_min_deposit">حداقل رهن قابل تعدیل (تومان)</string>
+    <string name="rent_calc_title">پیش‌نمایش تبدیل رهن به اجاره</string>
+    <string name="rent_calc_deposit_label">رهن پیشنهادی</string>
+    <string name="rent_calc_rent_label">اجاره‌ی متناظر</string>
+    <string name="rent_calc_hint">بر اساس نرخ تبدیل %1$s٪ (قابل تغییر از تنظیمات)</string>
 </resources>

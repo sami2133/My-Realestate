@@ -31,6 +31,7 @@ import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.local.entity.PropertyImage
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
+import com.realestate.sami.ui.screens.common.RentDepositAdjustmentSlider
 import com.realestate.sami.util.copyPickedImageToAppStorage
 import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
@@ -76,6 +77,8 @@ fun AddPropertyScreen(
     var images by remember { mutableStateOf(listOf<PropertyImage>()) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var isDepositNegotiable by remember { mutableStateOf(false) }
+    var minAdjustableDeposit by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
@@ -91,13 +94,17 @@ fun AddPropertyScreen(
             depositPrice = p.depositPrice?.toString() ?: ""
             rentPrice = p.rentPrice?.toString() ?: ""
             propertyType = p.propertyType
-            dealType = p.dealType
+            // رکوردهای محلی قدیمی‌تر ممکنه هنوز dealType=MORTGAGE داشته باشن (قبل از migration)؛
+            // چون دیگه به‌صورت جدا قابل‌انتخاب نیست، همینجا معادل رهن‌واجاره‌اش نشون داده می‌شه.
+            dealType = if (p.dealType == DealType.MORTGAGE) DealType.RENT else p.dealType
             hasParking = p.hasParking
             hasStorage = p.hasStorage
             hasElevator = p.hasElevator
             images = p.images
             latitude = p.latitude
             longitude = p.longitude
+            isDepositNegotiable = p.minAdjustableDeposit != null
+            minAdjustableDeposit = p.minAdjustableDeposit?.toString() ?: ""
         }
     }
 
@@ -166,7 +173,7 @@ fun AddPropertyScreen(
             )
             DropdownSelector(
                 label = stringResource(R.string.add_property_deal_type_label),
-                options = DealType.entries.toList(),
+                options = DealType.entries.filterNot { it == DealType.MORTGAGE },
                 selected = dealType,
                 onSelect = { dealType = it },
                 display = { it.toPersianLabel() }
@@ -197,6 +204,32 @@ fun AddPropertyScreen(
                 DealType.RENT, DealType.MORTGAGE -> {
                     OutlinedTextField(depositPrice, { depositPrice = it }, label = { Text(stringResource(R.string.add_property_deposit_price)) }, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(rentPrice, { rentPrice = it }, label = { Text(stringResource(R.string.add_property_rent_price)) }, modifier = Modifier.fillMaxWidth())
+
+                    Spacer(Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = isDepositNegotiable, onCheckedChange = { isDepositNegotiable = it })
+                        Text(stringResource(R.string.add_property_deposit_negotiable), style = MaterialTheme.typography.bodyMedium)
+                    }
+                    if (isDepositNegotiable) {
+                        OutlinedTextField(
+                            minAdjustableDeposit,
+                            { minAdjustableDeposit = it },
+                            label = { Text(stringResource(R.string.add_property_min_deposit)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        val depositLong = depositPrice.parseTomanInput()
+                        val minLong = minAdjustableDeposit.parseTomanInput()
+                        if (depositLong != null && minLong != null && minLong < depositLong) {
+                            Spacer(Modifier.height(10.dp))
+                            val conversionPercent by viewModel.rentConversionPercent.collectAsState()
+                            RentDepositAdjustmentSlider(
+                                baseDeposit = depositLong,
+                                baseRent = rentPrice.parseTomanInput() ?: 0L,
+                                minDeposit = minLong,
+                                conversionPercent = conversionPercent
+                            )
+                        }
+                    }
                 }
                 DealType.EXCHANGE -> OutlinedTextField(totalPrice, { totalPrice = it }, label = { Text(stringResource(R.string.add_property_exchange_value)) }, modifier = Modifier.fillMaxWidth())
             }
@@ -231,6 +264,7 @@ fun AddPropertyScreen(
                         totalPrice = totalPrice.parseTomanInput(),
                         depositPrice = depositPrice.parseTomanInput(),
                         rentPrice = rentPrice.parseTomanInput(),
+                        minAdjustableDeposit = if (isDepositNegotiable) minAdjustableDeposit.parseTomanInput() else null,
                         images = images
                     )
                     viewModel.save(entity) { onSaved() }

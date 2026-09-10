@@ -232,7 +232,7 @@ private fun PropertyFilterDialog(
                             label = { Text(stringResource(R.string.filter_option_all)) }
                         )
                     }
-                    items(DealType.entries.toList()) { type ->
+                    items(DealType.entries.filterNot { it == DealType.MORTGAGE }) { type ->
                         FilterChip(
                             selected = dealType == type,
                             onClick = { dealType = type },

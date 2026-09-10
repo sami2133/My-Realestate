@@ -37,9 +37,14 @@ import com.realestate.sami.data.local.entity.PropertyImage
 import com.realestate.sami.data.local.entity.VisitEntity
 import com.realestate.sami.data.local.entity.VisitResult
 import com.realestate.sami.ui.theme.*
+import com.realestate.sami.util.calculateAdjustedRent
 import com.realestate.sami.util.openCalendarToAddVisit
+import com.realestate.sami.util.pickSliderStepToman
 import com.realestate.sami.util.toPersianDateString
+import com.realestate.sami.util.toPlainPercentString
+import com.realestate.sami.util.toTomanDisplay
 import com.realestate.sami.util.viewImageExternally
+import kotlin.math.roundToInt
 
 fun DealType.color(): Color = when (this) {
     DealType.SALE -> DealSaleColor
@@ -528,5 +533,55 @@ fun ImageGalleryDialog(
                 }
             }
         }
+    }
+}
+
+/**
+ * فاز ۵.۲ — نوار لغزنده‌ی تعدیل رهن↔اجاره: بین [minDeposit] (کف قابل‌مذاکره) و [baseDeposit]
+ * (رهن پایه‌ی ثبت‌شده، سقف بازه) حرکت می‌کنه و اجاره‌ی متناظر رو زنده محاسبه و نشون می‌ده.
+ * روی گام‌های رند (پیک‌شده با [pickSliderStepToman]) می‌ایسته تا رسیدن به یک عدد گرد راحت باشه.
+ * موقعیت به‌صورت شمارنده‌ی صحیح گام (نه مبلغ خام) نگه داشته می‌شه تا خطای گرد کردن اعداد
+ * اعشاری روی مبالغ چند صد میلیونی (که از محدوده‌ی دقیق Float می‌گذرن) پیش نیاد.
+ */
+@Composable
+fun RentDepositAdjustmentSlider(
+    baseDeposit: Long,
+    baseRent: Long,
+    minDeposit: Long,
+    conversionPercent: Float,
+    modifier: Modifier = Modifier
+) {
+    if (minDeposit >= baseDeposit) return
+
+    val span = baseDeposit - minDeposit
+    val step = remember(span) { pickSliderStepToman(span) }
+    val stepsCount = (span / step).toInt().coerceAtLeast(1)
+    var position by remember(baseDeposit, minDeposit) { mutableStateOf(stepsCount) } // شروع از رهن پایه (کامل)
+    val currentDeposit = minDeposit + position.toLong() * step
+    val adjustedRent = calculateAdjustedRent(baseDeposit, baseRent, currentDeposit, conversionPercent)
+
+    Column(modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.rent_calc_title), style = MaterialTheme.typography.titleSmall)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(stringResource(R.string.rent_calc_deposit_label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(currentDeposit.toTomanDisplay(), style = MaterialTheme.typography.titleMedium)
+        }
+        Slider(
+            value = position.toFloat(),
+            onValueChange = { position = it.roundToInt() },
+            valueRange = 0f..stepsCount.toFloat(),
+            steps = (stepsCount - 1).coerceAtLeast(0)
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(stringResource(R.string.rent_calc_rent_label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(adjustedRent.toTomanDisplay(), style = MaterialTheme.typography.titleMedium, color = GoldAccent)
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            stringResource(R.string.rent_calc_hint, conversionPercent.toPlainPercentString()),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

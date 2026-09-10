@@ -19,8 +19,9 @@ import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.ReportsViewModel
 import com.realestate.sami.util.PropertyExporter
 import com.realestate.sami.util.toEnglishDigits
-import com.realestate.sami.util.toTomanDisplay
 import com.realestate.sami.util.toPersianDateString
+import com.realestate.sami.util.toPlainPercentString
+import com.realestate.sami.util.toTomanDisplay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,9 +29,11 @@ fun ReportsScreen(viewModel: ReportsViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val stats by viewModel.stats.collectAsState()
     val commissionPercent by viewModel.commissionPercent.collectAsState()
+    val rentConversionPercent by viewModel.rentConversionPercent.collectAsState()
     val upcomingVisits by viewModel.upcomingVisits.collectAsState()
     val properties by viewModel.allProperties.collectAsState()
     var commissionInput by remember(commissionPercent) { mutableStateOf(commissionPercent.toString()) }
+    var rentConversionInput by remember(rentConversionPercent) { mutableStateOf(rentConversionPercent.toPlainPercentString()) }
 
     Scaffold(
         topBar = {
@@ -99,6 +102,35 @@ fun ReportsScreen(viewModel: ReportsViewModel = hiltViewModel()) {
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
+            }
+
+            SectionCard(title = stringResource(R.string.reports_rent_conversion_section)) {
+                Text(
+                    stringResource(R.string.reports_rent_conversion_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = rentConversionInput,
+                    onValueChange = { rentConversionInput = it },
+                    label = { Text(stringResource(R.string.reports_rent_conversion_percent_label)) },
+                    singleLine = true,
+                    trailingIcon = { Text("٪") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
+                    )
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        rentConversionInput.toEnglishDigits().toFloatOrNull()?.let {
+                            viewModel.setRentConversionPercent(it)
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.End)
+                ) { Text(stringResource(R.string.action_submit)) }
             }
 
             SectionCard(title = stringResource(R.string.reports_upcoming_visits_section, stats.upcomingVisits)) {

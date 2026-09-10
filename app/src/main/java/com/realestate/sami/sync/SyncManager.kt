@@ -299,7 +299,7 @@ class SyncManager @Inject constructor(
         }
         val existingFile = driveApi.findFileInFolder(token, folderId, DriveConstants.CLIENTS_FILE_NAME)
         val remoteJson = existingFile?.let { driveApi.downloadFileContent(token, it.id) }
-        val remote: List<ClientEntity> = parseList(remoteJson)
+        val remote: List<ClientEntity> = parseClientList(remoteJson)
 
         val localById = local.associateBy { it.remoteId }
         val remoteById = remote.associateBy { it.remoteId }
@@ -458,6 +458,28 @@ class SyncManager @Inject constructor(
         }
     }
 
+    /**
+     * پارس کردن مخصوص متقاضی‌ها: فایل sami_clients.json روی Drive ممکنه رکوردهایی از قبل از
+     * فاز ۵.۲ داشته باشه که desiredDealType="MORTGAGE" هستن؛ چون این مقدار دیگه به‌صورت جدا
+     * قابل‌انتخاب نیست (با RENT ادغام شده)، همینجا قبل از map شدن تبدیل می‌شه.
+     */
+    private fun parseClientList(json: String?): List<ClientEntity> {
+        if (json.isNullOrBlank()) return emptyList()
+        return try {
+            val array = com.google.gson.JsonParser.parseString(json).asJsonArray
+            array.forEach { element ->
+                val obj = element.asJsonObject
+                if (obj.get("desiredDealType")?.takeIf { !it.isJsonNull }?.asString == "MORTGAGE") {
+                    obj.addProperty("desiredDealType", "RENT")
+                }
+            }
+            val type = TypeToken.getParameterized(List::class.java, ClientEntity::class.java).type
+            gson.fromJson<List<ClientEntity>>(array, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     private inline fun <reified T> parseList(json: String?): List<T> {
         if (json.isNullOrBlank()) return emptyList()
         val type = TypeToken.getParameterized(List::class.java, T::class.java).type
@@ -484,6 +506,13 @@ class SyncManager @Inject constructor(
                 }
                 if (!obj.has("documentUris") || obj.get("documentUris").isJsonNull) {
                     obj.addProperty("documentUris", "")
+                }
+                // فاز ۵.۲: DealType.MORTGAGE با DealType.RENT ادغام شد (رهن کامل و اجاره در
+                // ایران یک فرآیندند)؛ رکوردهای قدیمی‌تر روی Drive که هنوز "MORTGAGE" دارند
+                // اینجا به "RENT" تبدیل می‌شن تا هم Gson.fromJson کرش نکنه (چون دیگه این مقدار
+                // به‌صورت عادی انتخاب نمی‌شه) و هم در فیلترها/گزارش‌ها به‌درستی با رهن‌واجاره یکی دیده بشه.
+                if (obj.get("dealType")?.takeIf { !it.isJsonNull }?.asString == "MORTGAGE") {
+                    obj.addProperty("dealType", "RENT")
                 }
             }
             val type = TypeToken.getParameterized(List::class.java, PropertyEntity::class.java).type

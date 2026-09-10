@@ -14,6 +14,7 @@ import com.realestate.sami.data.repository.ContactLogRepository
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.data.repository.VisitRepository
 import com.realestate.sami.domain.matching.MatchingEngine
+import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,10 +26,14 @@ class PropertyDetailViewModel @Inject constructor(
     private val propertyRepository: PropertyRepository,
     private val contactLogRepository: ContactLogRepository,
     private val visitRepository: VisitRepository,
-    private val matchingEngine: MatchingEngine
+    private val matchingEngine: MatchingEngine,
+    private val rentPreferences: RentPreferences
 ) : ViewModel() {
 
     private val propertyId: Long = checkNotNull(savedStateHandle["propertyId"])
+
+    /** فاز ۵.۲: نرخ تبدیل رهن↔اجاره، برای نوار لغزنده‌ی تعدیل رهن در همین صفحه. */
+    val rentConversionPercent: Float = rentPreferences.conversionPercent
 
     private val _property = MutableStateFlow<PropertyEntity?>(null)
     val property: StateFlow<PropertyEntity?> = _property

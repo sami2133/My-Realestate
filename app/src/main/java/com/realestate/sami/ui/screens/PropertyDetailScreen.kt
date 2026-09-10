@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ClientEntity
+import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyStatus
 import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.PropertyDetailViewModel
@@ -163,6 +164,21 @@ fun PropertyDetailScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
+
+                // فاز ۵.۲: اگه رهن این ملک قابل‌تعدیل ثبت شده، همینجا هم (نه فقط موقع ثبت) بشه
+                // زنده جلوی مشتری بازه رو تنظیم کرد و اجاره‌ی متناظرش رو دید.
+                val minDeposit = current.minAdjustableDeposit
+                val baseDeposit = current.depositPrice
+                if (current.dealType == DealType.RENT && minDeposit != null && baseDeposit != null && minDeposit < baseDeposit) {
+                    SectionCard {
+                        RentDepositAdjustmentSlider(
+                            baseDeposit = baseDeposit,
+                            baseRent = current.rentPrice ?: 0L,
+                            minDeposit = minDeposit,
+                            conversionPercent = viewModel.rentConversionPercent
+                        )
+                    }
+                }
 
                 SectionCard(title = stringResource(R.string.property_detail_specs_section)) {
                     InfoRow(stringResource(R.string.label_area), stringResource(R.string.property_detail_area_value, current.area.toInt()))

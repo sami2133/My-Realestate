@@ -41,7 +41,8 @@
 
     <!-- Deal types -->
     <string name="deal_type_sale">Sale</string>
-    <string name="deal_type_rent">Rent</string>
+    <!-- Phase 5.2: full mortgage and rent were merged; this is one deal type with convertible deposit+rent -->
+    <string name="deal_type_rent">Rent / Mortgage</string>
     <string name="deal_type_mortgage">Full Mortgage</string>
     <string name="deal_type_exchange">Exchange</string>
 
@@ -256,6 +257,12 @@
     <string name="reports_commission_section">Commission rate</string>
     <string name="reports_commission_hint">Used to estimate commission income from closed deals; stored only on this device.</string>
     <string name="reports_commission_percent_label">Commission percent</string>
+
+    <!-- Phase 5.2: rent-deposit conversion rate -->
+    <string name="reports_rent_conversion_section">Rent↔Deposit conversion rate</string>
+    <string name="reports_rent_conversion_hint">The official/legal rate is usually 2.5% and the common market rate is 3%; enter whatever rate you use. Used to calculate the deposit-adjustment slider when registering a property.</string>
+    <string name="reports_rent_conversion_percent_label">Conversion percent (monthly)</string>
+    <string name="reports_rent_conversion_saved">Conversion rate saved</string>
     <string name="reports_estimated_commission">Estimated commission income</string>
     <string name="reports_upcoming_visits_section">Upcoming visits (%1$d)</string>
     <string name="reports_no_upcoming_visits">No upcoming visits scheduled.</string>
@@ -272,4 +279,12 @@
     <!-- Phase 5.1: open a property image with the device's preferred gallery/viewer app -->
     <string name="property_image_open_with">Open with…</string>
     <string name="property_image_open_failed">No app found on this device to view images</string>
+
+    <!-- Phase 5.2: merged full-mortgage and rent + deposit/rent conversion slider -->
+    <string name="add_property_deposit_negotiable">Deposit is negotiable (adjustable range)</string>
+    <string name="add_property_min_deposit">Minimum adjustable deposit (Toman)</string>
+    <string name="rent_calc_title">Deposit-to-rent conversion preview</string>
+    <string name="rent_calc_deposit_label">Proposed deposit</string>
+    <string name="rent_calc_rent_label">Corresponding rent</string>
+    <string name="rent_calc_hint">Based on a %1$s%% conversion rate (editable in settings)</string>
 </resources>

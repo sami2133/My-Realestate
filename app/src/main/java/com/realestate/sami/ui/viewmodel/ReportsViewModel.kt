@@ -11,6 +11,7 @@ import com.realestate.sami.data.repository.ClientRepository
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.data.repository.VisitRepository
 import com.realestate.sami.util.ReportPreferences
+import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,11 +35,21 @@ class ReportsViewModel @Inject constructor(
     private val propertyRepository: PropertyRepository,
     private val clientRepository: ClientRepository,
     private val visitRepository: VisitRepository,
-    private val reportPreferences: ReportPreferences
+    private val reportPreferences: ReportPreferences,
+    private val rentPreferences: RentPreferences
 ) : ViewModel() {
 
     private val _commissionPercent = MutableStateFlow(reportPreferences.commissionPercent)
     val commissionPercent: StateFlow<Float> = _commissionPercent
+
+    /** فاز ۵.۲ — نرخ تبدیل رهن↔اجاره (درصد ماهانه)، قابل‌شخصی‌سازی از همین صفحه. */
+    private val _rentConversionPercent = MutableStateFlow(rentPreferences.conversionPercent)
+    val rentConversionPercent: StateFlow<Float> = _rentConversionPercent
+
+    fun setRentConversionPercent(percent: Float) {
+        rentPreferences.conversionPercent = percent
+        _rentConversionPercent.value = percent
+    }
 
     val stats: StateFlow<ReportStats> = combine(
         propertyRepository.getAll(),
@@ -71,9 +82,12 @@ class ReportsViewModel @Inject constructor(
     }
 }
 
-/** مبلغ مبنای محاسبه‌ی کمیسیون: قیمت فروش، ودیعه رهن کامل، یا اجاره ماهانه (بسته به نوع معامله). */
+/**
+ * مبلغ مبنای محاسبه‌ی کمیسیون. برای رهن‌واجاره (که حالا هم رهن‌های خیلی سنگین با اجاره‌ی نزدیک
+ * صفر، هم اجاره‌های سنگین با رهن کم رو شامل می‌شه) جمع رهن + اجاره در نظر گرفته می‌شه تا معامله‌های
+ * تماماً-رهنی (قبلاً MORTGAGE) دستِ‌کم‌گرفته نشن.
+ */
 private fun PropertyEntity.commissionableAmount(): Long = when (dealType) {
     DealType.SALE, DealType.EXCHANGE -> totalPrice ?: 0L
-    DealType.MORTGAGE -> depositPrice ?: 0L
-    DealType.RENT -> rentPrice ?: 0L
+    DealType.RENT, DealType.MORTGAGE -> (depositPrice ?: 0L) + (rentPrice ?: 0L)
 }

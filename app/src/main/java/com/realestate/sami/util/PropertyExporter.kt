@@ -17,7 +17,7 @@ import java.io.File
  */
 object PropertyExporter {
 
-    private val HEADERS = listOf("ردیف", "آدرس", "نوع ملک", "نوع معامله", "متراژ", "اتاق", "قیمت (تومان)", "وضعیت")
+    private val HEADERS = listOf("ردیف", "آدرس", "نوع ملک", "نوع معامله", "متراژ", "اتاق", "رهن/قیمت (تومان)", "اجاره (تومان)", "وضعیت")
 
     private fun rowsFor(properties: List<PropertyEntity>): List<List<Any?>> =
         properties.mapIndexed { index, p ->
@@ -28,7 +28,8 @@ object PropertyExporter {
                 p.dealType.toExportLabel(),
                 p.area,
                 p.rooms,
-                (p.totalPrice ?: p.rentPrice ?: 0L),
+                (p.totalPrice ?: p.depositPrice ?: 0L),
+                p.rentPrice,
                 p.status.toExportLabel()
             )
         }
@@ -83,7 +84,7 @@ object PropertyExporter {
         val cellPaint = Paint().apply { textSize = 11f; textAlign = Paint.Align.RIGHT }
         val titlePaint = Paint().apply { textSize = 16f; isFakeBoldText = true; textAlign = Paint.Align.RIGHT }
 
-        val colWidths = floatArrayOf(40f, 220f, 90f, 90f, 60f, 50f, 140f, 90f)
+        val colWidths = floatArrayOf(36f, 190f, 80f, 85f, 55f, 45f, 110f, 100f, 80f)
         // ستون‌ها راست‌به‌چپ چیده می‌شوند (اولین ستون سمت راست صفحه)
         val colRightEdges = FloatArray(colWidths.size)
         var runningRight = pageWidth - marginX
@@ -133,7 +134,7 @@ private fun com.realestate.sami.data.local.entity.PropertyType.toExportLabel(): 
 
 private fun com.realestate.sami.data.local.entity.DealType.toExportLabel(): String = when (this) {
     com.realestate.sami.data.local.entity.DealType.SALE -> "خرید و فروش"
-    com.realestate.sami.data.local.entity.DealType.RENT -> "اجاره"
+    com.realestate.sami.data.local.entity.DealType.RENT -> "رهن و اجاره"
     com.realestate.sami.data.local.entity.DealType.MORTGAGE -> "رهن کامل"
     com.realestate.sami.data.local.entity.DealType.EXCHANGE -> "مبادله"
 }

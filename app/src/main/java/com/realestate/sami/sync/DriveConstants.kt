@@ -1,0 +1,34 @@
+package com.realestate.sami.sync
+
+/** ثابت‌های مربوط به همگام‌سازی تیمی روی Google Drive (فاز ۴). */
+object DriveConstants {
+    /** Scope کامل Drive — چون تیم کوچک (۲ تا ۵ نفر) در حالت Testing در Google Cloud Console می‌ماند،
+     *  نیازی به تایید (verification) گوگل نیست؛ فقط باید ایمیل هر عضو تیم را به‌عنوان test user اضافه کنید. */
+    const val DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
+    const val DRIVE_SCOPE_OAUTH = "oauth2:$DRIVE_SCOPE"
+
+    /** نام پوشه‌ی مشترک تیمی که در Drive هر عضو ساخته/پیدا می‌شود. */
+    const val TEAM_FOLDER_NAME = "SamiRealEstate-TeamSync"
+
+    const val PROPERTIES_FILE_NAME = "sami_properties.json"
+    const val CLIENTS_FILE_NAME = "sami_clients.json"
+    const val CONTACT_LOGS_FILE_NAME = "sami_contact_logs.json"
+
+    /** زیرپوشه‌ی داخل پوشه‌ی تیمی که عکس‌های ملک (فایل‌های باینری) در آن آپلود می‌شوند. */
+    const val IMAGES_FOLDER_NAME = "images"
+
+    const val FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
+    const val JSON_MIME_TYPE = "application/json"
+    const val DEFAULT_IMAGE_MIME_TYPE = "image/jpeg"
+
+    const val DRIVE_API_BASE = "https://www.googleapis.com/drive/v3"
+    const val DRIVE_UPLOAD_BASE = "https://www.googleapis.com/upload/drive/v3"
+
+    /**
+     * رکوردهای soft-delete شده (tombstone) این تعداد روز در فایل JSON مشترک نگه داشته می‌شوند
+     * تا فرصت کافی برای رسیدن پیام حذف به همه‌ی دستگاه‌های تیم باشد، بعد از آن پاک‌سازی می‌شوند
+     * تا حجم فایل مشترک بی‌نهایت رشد نکند. دستگاهی که بیش از این مدت آفلاین بماند، ممکن است
+     * حذف رو نبینه (محدودیت شناخته‌شده).
+     */
+    const val TOMBSTONE_RETENTION_DAYS = 90L
+}
