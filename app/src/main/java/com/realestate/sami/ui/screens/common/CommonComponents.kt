@@ -466,6 +466,7 @@ private fun pickVisitDateTime(context: android.content.Context, onPicked: (Long)
  * بدون اینکه عکس‌ها به گالری سیستم گوشی اضافه بشن (حریم خصوصی عکس‌ها تغییری نمی‌کنه).
  * [startIndex] عکسی که کاربر رویش لمس کرده اول نمایش داده می‌شود.
  */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ImageGalleryDialog(
     images: List<PropertyImage>,
