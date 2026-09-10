@@ -14,6 +14,7 @@
     <string name="action_call">تماس</string>
     <string name="action_sms">پیامک</string>
     <string name="action_submit">ثبت</string>
+    <string name="action_close">بستن</string>
     <string name="action_back">بازگشت</string>
     <string name="label_name">نام</string>
     <string name="label_phone">شماره تماس</string>

@@ -5,13 +5,18 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,15 +26,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.google.maps.android.compose.MapType
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ContactLogEntity
 import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.data.local.entity.PropertyImage
 import com.realestate.sami.data.local.entity.VisitEntity
 import com.realestate.sami.data.local.entity.VisitResult
 import com.realestate.sami.ui.theme.*
 import com.realestate.sami.util.openCalendarToAddVisit
 import com.realestate.sami.util.toPersianDateString
+import com.realestate.sami.util.viewImageExternally
 
 fun DealType.color(): Color = when (this) {
     DealType.SALE -> DealSaleColor
@@ -444,4 +454,79 @@ private fun pickVisitDateTime(context: android.content.Context, onPicked: (Long)
     ).apply {
         datePicker.minDate = System.currentTimeMillis() - 1000
     }.show()
+}
+
+/**
+ * نمایش‌گر تمام‌صفحه‌ی مجموعه‌ی عکس‌های یک رکورد، با امکان swipe بین آن‌ها — داخل خودِ اپ،
+ * بدون اینکه عکس‌ها به گالری سیستم گوشی اضافه بشن (حریم خصوصی عکس‌ها تغییری نمی‌کنه).
+ * [startIndex] عکسی که کاربر رویش لمس کرده اول نمایش داده می‌شود.
+ */
+@Composable
+fun ImageGalleryDialog(
+    images: List<PropertyImage>,
+    startIndex: Int,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val pagerState = rememberPagerState(initialPage = startIndex.coerceIn(0, (images.size - 1).coerceAtLeast(0))) { images.size }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+                val image = images[page]
+                if (image.localUri != null) {
+                    AsyncImage(
+                        model = image.localUri,
+                        contentDescription = null,
+                        contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    // این عکس روی یک دستگاه دیگه‌ی تیم ثبت شده؛ با «همگام‌سازی الان» دانلود می‌شود
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Filled.CloudDownload,
+                            contentDescription = stringResource(R.string.image_not_downloaded_yet),
+                            tint = Color.White,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                }
+            }
+
+            // نوار بالا: شمارنده‌ی صفحه، «باز کردن با…» برای عکس جاری، و بستن
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.action_close), tint = Color.White)
+                }
+                Text(
+                    "${pagerState.currentPage + 1} / ${images.size}",
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                IconButton(onClick = {
+                    images.getOrNull(pagerState.currentPage)?.localUri?.let { uri ->
+                        context.viewImageExternally(uri)
+                    }
+                }) {
+                    Icon(Icons.Filled.OpenInNew, contentDescription = stringResource(R.string.property_image_open_with), tint = Color.White)
+                }
+            }
+        }
+    }
 }
