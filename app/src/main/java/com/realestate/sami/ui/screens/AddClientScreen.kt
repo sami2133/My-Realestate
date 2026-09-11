@@ -61,7 +61,11 @@ fun AddClientScreen(
             maxDepositPrice = c.maxDepositPrice?.toString() ?: ""
             maxRentPrice = c.maxRentPrice?.toString() ?: ""
             propertyType = c.desiredPropertyType
-            dealType = if (c.desiredDealType == DealType.MORTGAGE) DealType.RENT else c.desiredDealType
+            dealType = when (c.desiredDealType) {
+                DealType.MORTGAGE -> DealType.RENT
+                DealType.EXCHANGE -> DealType.SALE
+                else -> c.desiredDealType
+            }
             needsParking = c.needsParking
             needsElevator = c.needsElevator
         }
@@ -92,7 +96,7 @@ fun AddClientScreen(
             DropdownSelector(stringResource(R.string.add_property_type_label), PropertyType.entries.toList(), propertyType, { propertyType = it }) { it.toPersianLabel() }
             DropdownSelector(
                 stringResource(R.string.add_property_deal_type_label),
-                DealType.entries.filterNot { it == DealType.MORTGAGE },
+                DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
                 dealType,
                 { dealType = it }
             ) { it.toPersianLabel() }

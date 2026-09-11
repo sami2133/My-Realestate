@@ -25,7 +25,7 @@ object PropertyExporter {
                 index + 1,
                 p.address,
                 p.propertyType.toExportLabel(),
-                p.dealType.toExportLabel(),
+                p.dealType.toExportLabel() + if (p.isExchangeable) " +معاوضه" else "",
                 p.area,
                 p.rooms,
                 (p.totalPrice ?: p.depositPrice ?: 0L),

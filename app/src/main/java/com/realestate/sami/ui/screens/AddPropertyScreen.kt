@@ -79,6 +79,9 @@ fun AddPropertyScreen(
     val scope = rememberCoroutineScope()
     var isDepositNegotiable by remember { mutableStateOf(false) }
     var minAdjustableDeposit by remember { mutableStateOf("") }
+    var isExchangeable by remember { mutableStateOf(false) }
+    var exchangePreferredType by remember { mutableStateOf<PropertyType?>(null) }
+    var exchangeNote by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
@@ -94,9 +97,13 @@ fun AddPropertyScreen(
             depositPrice = p.depositPrice?.toString() ?: ""
             rentPrice = p.rentPrice?.toString() ?: ""
             propertyType = p.propertyType
-            // رکوردهای محلی قدیمی‌تر ممکنه هنوز dealType=MORTGAGE داشته باشن (قبل از migration)؛
-            // چون دیگه به‌صورت جدا قابل‌انتخاب نیست، همینجا معادل رهن‌واجاره‌اش نشون داده می‌شه.
-            dealType = if (p.dealType == DealType.MORTGAGE) DealType.RENT else p.dealType
+            // رکوردهای محلی قدیمی‌تر ممکنه هنوز dealType=MORTGAGE یا EXCHANGE داشته باشن (قبل از
+            // migration)؛ چون دیگه به‌صورت جدا قابل‌انتخاب نیستن، همینجا معادلشون نشون داده می‌شه.
+            dealType = when (p.dealType) {
+                DealType.MORTGAGE -> DealType.RENT
+                DealType.EXCHANGE -> DealType.SALE
+                else -> p.dealType
+            }
             hasParking = p.hasParking
             hasStorage = p.hasStorage
             hasElevator = p.hasElevator
@@ -105,6 +112,9 @@ fun AddPropertyScreen(
             longitude = p.longitude
             isDepositNegotiable = p.minAdjustableDeposit != null
             minAdjustableDeposit = p.minAdjustableDeposit?.toString() ?: ""
+            isExchangeable = p.isExchangeable || p.dealType == DealType.EXCHANGE
+            exchangePreferredType = p.exchangePreferredType
+            exchangeNote = p.exchangeNote ?: ""
         }
     }
 
@@ -173,7 +183,7 @@ fun AddPropertyScreen(
             )
             DropdownSelector(
                 label = stringResource(R.string.add_property_deal_type_label),
-                options = DealType.entries.filterNot { it == DealType.MORTGAGE },
+                options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
                 selected = dealType,
                 onSelect = { dealType = it },
                 display = { it.toPersianLabel() }
@@ -200,7 +210,30 @@ fun AddPropertyScreen(
             Divider()
             Text(stringResource(R.string.add_property_pricing_section), style = MaterialTheme.typography.titleMedium)
             when (dealType) {
-                DealType.SALE -> OutlinedTextField(totalPrice, { totalPrice = it }, label = { Text(stringResource(R.string.add_property_total_price)) }, modifier = Modifier.fillMaxWidth())
+                DealType.SALE, DealType.EXCHANGE -> {
+                    OutlinedTextField(totalPrice, { totalPrice = it }, label = { Text(stringResource(R.string.add_property_total_price)) }, modifier = Modifier.fillMaxWidth())
+
+                    Spacer(Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = isExchangeable, onCheckedChange = { isExchangeable = it })
+                        Text(stringResource(R.string.add_property_exchangeable), style = MaterialTheme.typography.bodyMedium)
+                    }
+                    if (isExchangeable) {
+                        DropdownSelector(
+                            label = stringResource(R.string.add_property_exchange_preferred_type),
+                            options = listOf<PropertyType?>(null) + PropertyType.entries.toList(),
+                            selected = exchangePreferredType,
+                            onSelect = { exchangePreferredType = it },
+                            display = { it?.toPersianLabel() ?: stringResource(R.string.add_property_exchange_any_type) }
+                        )
+                        OutlinedTextField(
+                            exchangeNote,
+                            { exchangeNote = it },
+                            label = { Text(stringResource(R.string.add_property_exchange_note)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
                 DealType.RENT, DealType.MORTGAGE -> {
                     OutlinedTextField(depositPrice, { depositPrice = it }, label = { Text(stringResource(R.string.add_property_deposit_price)) }, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(rentPrice, { rentPrice = it }, label = { Text(stringResource(R.string.add_property_rent_price)) }, modifier = Modifier.fillMaxWidth())
@@ -231,7 +264,6 @@ fun AddPropertyScreen(
                         }
                     }
                 }
-                DealType.EXCHANGE -> OutlinedTextField(totalPrice, { totalPrice = it }, label = { Text(stringResource(R.string.add_property_exchange_value)) }, modifier = Modifier.fillMaxWidth())
             }
 
             Spacer(Modifier.height(8.dp))
@@ -265,6 +297,9 @@ fun AddPropertyScreen(
                         depositPrice = depositPrice.parseTomanInput(),
                         rentPrice = rentPrice.parseTomanInput(),
                         minAdjustableDeposit = if (isDepositNegotiable) minAdjustableDeposit.parseTomanInput() else null,
+                        isExchangeable = dealType == DealType.SALE && isExchangeable,
+                        exchangePreferredType = if (dealType == DealType.SALE && isExchangeable) exchangePreferredType else null,
+                        exchangeNote = if (dealType == DealType.SALE && isExchangeable) exchangeNote.ifBlank { null } else null,
                         images = images
                     )
                     viewModel.save(entity) { onSaved() }

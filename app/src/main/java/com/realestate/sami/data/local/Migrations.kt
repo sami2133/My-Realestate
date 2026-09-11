@@ -21,3 +21,18 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
         db.execSQL("UPDATE clients SET desiredDealType = 'RENT' WHERE desiredDealType = 'MORTGAGE'")
     }
 }
+
+/**
+ * فاز ۵.۳ — نسخه ۴ به ۵: افزودن ستون‌های `isExchangeable`/`exchangePreferredType`/`exchangeNote`
+ * به جدول `properties`، و تبدیل مقدار قدیمی `dealType` = "EXCHANGE" به "SALE" + isExchangeable=1
+ * (چون معاوضه دیگه نوع معامله‌ی جدا نیست، یک پرچم روی فروشه). مشابه MIGRATION_3_4، این هم فقط
+ * ستون اضافه می‌کنه و مقدار آپدیت می‌کنه — بدون بازسازی جدول و بدون خطر برای داده‌ی موجود.
+ */
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE properties ADD COLUMN isExchangeable INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN exchangePreferredType TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN exchangeNote TEXT DEFAULT NULL")
+        db.execSQL("UPDATE properties SET dealType = 'SALE', isExchangeable = 1 WHERE dealType = 'EXCHANGE'")
+    }
+}

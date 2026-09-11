@@ -42,6 +42,7 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     }
     data object Sync : Screen("sync", R.string.nav_sync)
     data object Reports : Screen("reports", R.string.nav_reports)
+    data object Settings : Screen("settings", R.string.nav_settings)
 }
 
 @Composable
@@ -88,7 +89,8 @@ fun AppNavigation() {
             composable(Screen.PropertyList.route) {
                 PropertyListScreen(
                     onAddClick = { navController.navigate(Screen.AddProperty.route) },
-                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
+                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) },
+                    onOpenSettings = { navController.navigate(Screen.Settings.route) }
                 )
             }
             composable(Screen.AddProperty.route) { entry ->
@@ -183,7 +185,10 @@ fun AppNavigation() {
                 SyncSettingsScreen()
             }
             composable(Screen.Reports.route) {
-                ReportsScreen()
+                ReportsScreen(onOpenSettings = { navController.navigate(Screen.Settings.route) })
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(onBack = { navController.popBackStack() })
             }
         }
     }

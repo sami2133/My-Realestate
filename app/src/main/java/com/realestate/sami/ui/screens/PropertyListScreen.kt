@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.*
@@ -44,6 +45,7 @@ import com.realestate.sami.util.toTomanShort
 fun PropertyListScreen(
     onAddClick: () -> Unit,
     onPropertyClick: (PropertyEntity) -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: PropertyViewModel = hiltViewModel()
 ) {
     val properties by viewModel.properties.collectAsState()
@@ -59,6 +61,9 @@ fun PropertyListScreen(
                     PropertyExportButton(properties = properties)
                     PropertyFilterButton(filter = filter, onApply = viewModel::onFilterChanged)
                     PropertySortMenu(current = sortOption, onSelect = viewModel::onSortOptionChanged)
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings_title))
+                    }
                 }
             )
         },
@@ -232,7 +237,7 @@ private fun PropertyFilterDialog(
                             label = { Text(stringResource(R.string.filter_option_all)) }
                         )
                     }
-                    items(DealType.entries.filterNot { it == DealType.MORTGAGE }) { type ->
+                    items(DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE }) { type ->
                         FilterChip(
                             selected = dealType == type,
                             onClick = { dealType = type },

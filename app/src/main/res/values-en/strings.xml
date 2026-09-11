@@ -287,4 +287,21 @@
     <string name="rent_calc_deposit_label">Proposed deposit</string>
     <string name="rent_calc_rent_label">Corresponding rent</string>
     <string name="rent_calc_hint">Based on a %1$s%% conversion rate (editable in settings)</string>
+
+    <!-- Phase 5.3: exchange as a sub-option of sale -->
+    <string name="add_property_exchangeable">Open to exchange with another property</string>
+    <string name="add_property_exchange_preferred_type">Preferred property type for exchange</string>
+    <string name="add_property_exchange_any_type">Any property type</string>
+    <string name="add_property_exchange_note">Additional exchange notes (optional)</string>
+    <string name="property_detail_exchangeable_badge">Exchange OK</string>
+    <string name="property_detail_exchange_section">Exchange details</string>
+    <string name="property_detail_exchange_preferred_type_label">Preferred type</string>
+    <string name="property_detail_exchange_note_label">Notes</string>
+
+    <!-- Phase 5.3: settings menu -->
+    <string name="nav_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_more_soon_hint">More settings will be added here over time.</string>
+    <string name="settings_open_action">Settings</string>
+    <string name="settings_saved">Saved</string>
 </resources>

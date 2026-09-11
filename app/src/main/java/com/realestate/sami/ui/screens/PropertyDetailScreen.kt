@@ -149,6 +149,12 @@ fun PropertyDetailScreen(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     DealTypeChip(current.dealType, current.dealType.toPersianLabel())
                     Text(current.propertyType.toPersianLabel(), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (current.isExchangeable) {
+                        AssistChip(
+                            onClick = {},
+                            label = { Text(stringResource(R.string.property_detail_exchangeable_badge), style = MaterialTheme.typography.labelSmall) }
+                        )
+                    }
                 }
 
                 Text(
@@ -177,6 +183,21 @@ fun PropertyDetailScreen(
                             minDeposit = minDeposit,
                             conversionPercent = viewModel.rentConversionPercent
                         )
+                    }
+                }
+
+                // فاز ۵.۳: جزئیات معاوضه، وقتی مالک علاوه بر فروش نقدی به معاوضه هم راضیه.
+                if (current.isExchangeable) {
+                    SectionCard(title = stringResource(R.string.property_detail_exchange_section)) {
+                        InfoRow(
+                            stringResource(R.string.property_detail_exchange_preferred_type_label),
+                            current.exchangePreferredType?.toPersianLabel() ?: stringResource(R.string.add_property_exchange_any_type)
+                        )
+                        if (!current.exchangeNote.isNullOrBlank()) {
+                            Spacer(Modifier.height(6.dp))
+                            Text(stringResource(R.string.property_detail_exchange_note_label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(current.exchangeNote, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
 

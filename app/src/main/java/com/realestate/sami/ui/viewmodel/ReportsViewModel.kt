@@ -11,7 +11,6 @@ import com.realestate.sami.data.repository.ClientRepository
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.data.repository.VisitRepository
 import com.realestate.sami.util.ReportPreferences
-import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,21 +34,13 @@ class ReportsViewModel @Inject constructor(
     private val propertyRepository: PropertyRepository,
     private val clientRepository: ClientRepository,
     private val visitRepository: VisitRepository,
-    private val reportPreferences: ReportPreferences,
-    private val rentPreferences: RentPreferences
+    private val reportPreferences: ReportPreferences
 ) : ViewModel() {
 
+    // فاز ۵.۳: نرخ کمیسیون و نرخ تبدیل رهن↔اجاره از اینجا قابل‌ویرایش نیستن؛ فقط برای محاسبه‌ی
+    // زیر خونده می‌شن. ویرایش‌شون از صفحه‌ی «تنظیمات» انجام می‌شه (SettingsViewModel).
     private val _commissionPercent = MutableStateFlow(reportPreferences.commissionPercent)
     val commissionPercent: StateFlow<Float> = _commissionPercent
-
-    /** فاز ۵.۲ — نرخ تبدیل رهن↔اجاره (درصد ماهانه)، قابل‌شخصی‌سازی از همین صفحه. */
-    private val _rentConversionPercent = MutableStateFlow(rentPreferences.conversionPercent)
-    val rentConversionPercent: StateFlow<Float> = _rentConversionPercent
-
-    fun setRentConversionPercent(percent: Float) {
-        rentPreferences.conversionPercent = percent
-        _rentConversionPercent.value = percent
-    }
 
     val stats: StateFlow<ReportStats> = combine(
         propertyRepository.getAll(),
@@ -76,9 +67,14 @@ class ReportsViewModel @Inject constructor(
     val allProperties: StateFlow<List<PropertyEntity>> = propertyRepository.getAll()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun setCommissionPercent(percent: Float) {
-        reportPreferences.commissionPercent = percent
-        _commissionPercent.value = percent
+    /**
+     * چون نرخ کمیسیون الان فقط از صفحه‌ی «تنظیمات» (یک ViewModel جدا) ویرایش می‌شه، این ViewModel
+     * از تغییرش خبردار نمی‌شه مگر دوباره از SharedPreferences بخونیم. این تابع از یک
+     * LaunchedEffect(Unit) در ReportsScreen صدا زده می‌شه تا هر بار کاربر به تب گزارش‌ها برمی‌گرده،
+     * آخرین نرخ ذخیره‌شده لود بشه.
+     */
+    fun refreshCommissionPercent() {
+        _commissionPercent.value = reportPreferences.commissionPercent
     }
 }
 

@@ -28,7 +28,10 @@ import com.realestate.sami.data.local.entity.VisitEntity
     // انجام می‌شه (به data/local/Migrations.kt نگاه کن) نه destructive — چون اپ در حال استفاده‌ی
     // واقعیه و نباید داده‌ی sync‌نشده‌ی کسی پاک بشه. SyncManager هم هنگام دانلود از Drive مقدار
     // MORTGAGE قدیمی رو به RENT تبدیل می‌کنه، برای سازگاری با فایل‌های JSON قدیمی‌تر.
-    version = 4,
+    // نسخه ۵ (فاز ۵.۳): افزودن PropertyEntity.isExchangeable/exchangePreferredType/exchangeNote؛
+    // و ادغام DealType.EXCHANGE در DealType.SALE (معاوضه یک زیرحالت فروشه، نه نوع معامله‌ی جدا).
+    // با MIGRATION_4_5 (data/local/Migrations.kt) و بدون از دست رفتن داده انجام می‌شه.
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

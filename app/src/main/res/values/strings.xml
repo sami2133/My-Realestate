@@ -287,4 +287,21 @@
     <string name="rent_calc_deposit_label">رهن پیشنهادی</string>
     <string name="rent_calc_rent_label">اجاره‌ی متناظر</string>
     <string name="rent_calc_hint">بر اساس نرخ تبدیل %1$s٪ (قابل تغییر از تنظیمات)</string>
+
+    <!-- فاز ۵.۳: معاوضه به‌عنوان زیرمجموعه‌ی فروش -->
+    <string name="add_property_exchangeable">قابل معاوضه با ملک دیگر</string>
+    <string name="add_property_exchange_preferred_type">نوع ملک مدنظر برای معاوضه</string>
+    <string name="add_property_exchange_any_type">هر نوع ملکی</string>
+    <string name="add_property_exchange_note">توضیح تکمیلی معاوضه (اختیاری)</string>
+    <string name="property_detail_exchangeable_badge">قابل معاوضه</string>
+    <string name="property_detail_exchange_section">جزئیات معاوضه</string>
+    <string name="property_detail_exchange_preferred_type_label">نوع ملک مدنظر</string>
+    <string name="property_detail_exchange_note_label">توضیحات</string>
+
+    <!-- فاز ۵.۳: منوی تنظیمات -->
+    <string name="nav_settings">تنظیمات</string>
+    <string name="settings_title">تنظیمات</string>
+    <string name="settings_more_soon_hint">تنظیمات بیشتر به‌مرور به همین صفحه اضافه می‌شود.</string>
+    <string name="settings_open_action">تنظیمات</string>
+    <string name="settings_saved">ذخیره شد</string>
 </resources>

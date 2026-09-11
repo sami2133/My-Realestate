@@ -472,6 +472,11 @@ class SyncManager @Inject constructor(
                 if (obj.get("desiredDealType")?.takeIf { !it.isJsonNull }?.asString == "MORTGAGE") {
                     obj.addProperty("desiredDealType", "RENT")
                 }
+                // فاز ۵.۳: همینطور EXCHANGE قدیمی رو به SALE تبدیل می‌کنیم (متقاضی‌ها نیازی به
+                // isExchangeable ندارن، چون این پرچم فقط برای ملک معنا داره نه جستجوی متقاضی).
+                if (obj.get("desiredDealType")?.takeIf { !it.isJsonNull }?.asString == "EXCHANGE") {
+                    obj.addProperty("desiredDealType", "SALE")
+                }
             }
             val type = TypeToken.getParameterized(List::class.java, ClientEntity::class.java).type
             gson.fromJson<List<ClientEntity>>(array, type) ?: emptyList()
@@ -513,6 +518,13 @@ class SyncManager @Inject constructor(
                 // به‌صورت عادی انتخاب نمی‌شه) و هم در فیلترها/گزارش‌ها به‌درستی با رهن‌واجاره یکی دیده بشه.
                 if (obj.get("dealType")?.takeIf { !it.isJsonNull }?.asString == "MORTGAGE") {
                     obj.addProperty("dealType", "RENT")
+                }
+                // فاز ۵.۳: DealType.EXCHANGE با DealType.SALE + isExchangeable=true ادغام شد
+                // (معاوضه یک زیرحالت فروشه، نه نوع معامله‌ی جدا)؛ رکوردهای قدیمی‌تر روی Drive که
+                // هنوز "EXCHANGE" دارند اینجا تبدیل می‌شن.
+                if (obj.get("dealType")?.takeIf { !it.isJsonNull }?.asString == "EXCHANGE") {
+                    obj.addProperty("dealType", "SALE")
+                    obj.addProperty("isExchangeable", true)
                 }
             }
             val type = TypeToken.getParameterized(List::class.java, PropertyEntity::class.java).type
