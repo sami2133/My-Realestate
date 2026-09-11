@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     data object PropertyDetail : Screen("property_detail/{propertyId}", R.string.nav_property_detail) {
         fun buildRoute(id: Long) = "property_detail/$id"
     }
-    data object PropertiesMap : Screen("properties_map", R.string.nav_map)
     data object LocationPicker : Screen("location_picker", R.string.map_picker_title)
     data object ClientList : Screen("client_list", R.string.nav_clients)
     data object AddClient : Screen("add_client", R.string.nav_add_client)
@@ -48,7 +46,7 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val bottomItems = listOf(Screen.PropertyList, Screen.PropertiesMap, Screen.ClientList, Screen.Reports, Screen.Sync)
+    val bottomItems = listOf(Screen.PropertyList, Screen.ClientList, Screen.Reports, Screen.Sync)
 
     Scaffold(
         bottomBar = {
@@ -59,7 +57,6 @@ fun AppNavigation() {
                 bottomItems.forEach { screen ->
                     val icon = when (screen) {
                         Screen.PropertyList -> Icons.Filled.Home
-                        Screen.PropertiesMap -> Icons.Filled.Map
                         Screen.Sync -> Icons.Filled.Groups
                         Screen.Reports -> Icons.Filled.Assessment
                         else -> Icons.Filled.People
@@ -135,11 +132,6 @@ fun AppNavigation() {
                     onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) },
                     onEdit = { id -> navController.navigate(Screen.EditProperty.buildRoute(id)) },
                     onDeleted = { navController.popBackStack() }
-                )
-            }
-            composable(Screen.PropertiesMap.route) {
-                PropertiesMapScreen(
-                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) }
                 )
             }
             composable(Screen.LocationPicker.route) {

@@ -2,6 +2,7 @@ package com.realestate.sami.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.domain.matching.MatchingEngine
@@ -10,6 +11,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+/** فاز ۵.۴: نمای فعلی صفحه‌ی ملک‌ها — لیست یا نقشه (به‌جای یک صفحه‌ی جدا). */
+enum class PropertyViewMode { LIST, MAP }
 
 @HiltViewModel
 class PropertyViewModel @Inject constructor(
@@ -28,8 +32,24 @@ class PropertyViewModel @Inject constructor(
     private val _sortOption = MutableStateFlow(PropertySortOption.NEWEST)
     val sortOption: StateFlow<PropertySortOption> = _sortOption
 
-    private val _filter = MutableStateFlow(PropertyFilter())
+    // فاز ۵.۴: چون کل عملکرد اپ به دو نوع معامله محدوده، صفحه‌ی ملک‌ها همیشه رو یکی از این دو تبه؛
+    // پیش‌فرض «خرید و فروش» است.
+    private val _filter = MutableStateFlow(PropertyFilter(dealType = DealType.SALE))
     val filter: StateFlow<PropertyFilter> = _filter
+
+    /** فاز ۵.۴: نمای لیست یا نقشه؛ پیش‌فرض لیست. تا وقتی این ViewModel زنده‌ست (یعنی کاربر بین
+     * تب‌های پایین برنامه سوییچ می‌کنه، نه خارج از اپ) انتخاب کاربر حفظ می‌شود. */
+    private val _viewMode = MutableStateFlow(PropertyViewMode.LIST)
+    val viewMode: StateFlow<PropertyViewMode> = _viewMode
+
+    fun setViewMode(mode: PropertyViewMode) {
+        _viewMode.value = mode
+    }
+
+    /** تعویض تب خرید-و-فروش/اجاره؛ بقیه‌ی فیلترها (نوع ملک، بازه قیمت) دست‌نخورده می‌مونن. */
+    fun setDealTypeTab(dealType: DealType) {
+        _filter.value = _filter.value.copy(dealType = dealType)
+    }
 
     /** رکورد در حال ویرایش (وقتی از صفحه ثبت ملک در حالت ویرایش استفاده می‌شود). */
     private val _editingProperty = MutableStateFlow<PropertyEntity?>(null)

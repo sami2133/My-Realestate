@@ -16,8 +16,14 @@ data class PropertyFilter(
     val minPrice: Long? = null,
     val maxPrice: Long? = null
 ) {
+    /**
+     * فاز ۵.۴: dealType دیگه یه «فیلتر اختیاری» نیست — چون صفحه‌ی ملک‌ها الان همیشه رو یکی از دو
+     * تب خرید-و-فروش/اجاره است، این مقدار همیشه ست شده. برای همین در تشخیص «آیا واقعاً فیلتری
+     * روی نتایج اعمال شده» (برای پیام حالت خالی) دخالت داده نمی‌شه؛ فقط propertyType و بازه‌ی
+     * قیمت به‌عنوان فیلتر «اختیاری» در نظر گرفته می‌شن.
+     */
     val isActive: Boolean
-        get() = propertyType != null || dealType != null || minPrice != null || maxPrice != null
+        get() = propertyType != null || minPrice != null || maxPrice != null
 }
 
 /** قیمتی که برای مقایسه با بازه‌ی فیلتر استفاده می‌شود. */
