@@ -31,7 +31,12 @@ import com.realestate.sami.data.local.entity.VisitEntity
     // نسخه ۵ (فاز ۵.۳): افزودن PropertyEntity.isExchangeable/exchangePreferredType/exchangeNote؛
     // و ادغام DealType.EXCHANGE در DealType.SALE (معاوضه یک زیرحالت فروشه، نه نوع معامله‌ی جدا).
     // با MIGRATION_4_5 (data/local/Migrations.kt) و بدون از دست رفتن داده انجام می‌شه.
-    version = 5,
+    // نسخه ۶ (فاز ۵.۵): افزودن ~۳۷ ستون nullable/پیش‌فرض-false برای مشخصات تکمیلی بسته به نوع
+    // ملک (نوع سند، جهت/وضعیت واحد، کلاس ساختمان، امتیازات آب/برق/گاز، مشخصات زمین/تجاری/اداری).
+    // با MIGRATION_5_6 و بدون از دست رفتن داده انجام می‌شه.
+    // نسخه ۷ (فاز ۵.۶): افزودن PropertyEntity.additionalNotes (یادداشت آزاد شخصی/داخلی، جدا از
+    // توضیحات نمایش‌داده‌شده به مشتری). با MIGRATION_6_7 و بدون از دست رفتن داده.
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

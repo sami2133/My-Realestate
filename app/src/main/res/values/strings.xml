@@ -304,4 +304,148 @@
     <string name="settings_more_soon_hint">تنظیمات بیشتر به‌مرور به همین صفحه اضافه می‌شود.</string>
     <string name="settings_open_action">تنظیمات</string>
     <string name="settings_saved">ذخیره شد</string>
+
+    <!-- فاز ۵.۵ — مشخصات تکمیلی بسته به نوع ملک -->
+    <string name="value_unspecified">نامشخص</string>
+    <string name="add_property_description">توضیحات تکمیلی</string>
+
+    <!-- مقادیر enum: DeedType -->
+    <string name="deed_type_single_page">تک‌برگ</string>
+    <string name="deed_type_mangoleh">منگوله‌دار</string>
+    <string name="deed_type_agreement">قولنامه‌ای</string>
+    <string name="deed_type_under_construction">در حال ساخت</string>
+    <string name="deed_type_six_dang">شش‌دانگ</string>
+    <string name="deed_type_endowment">وقفی</string>
+    <string name="deed_type_other">سایر</string>
+
+    <!-- مقادیر enum: UtilityStatus -->
+    <string name="utility_status_available">دارد</string>
+    <string name="utility_status_not_available">ندارد</string>
+    <string name="utility_status_obtainable">قابل‌اخذ</string>
+
+    <!-- مقادیر enum: HeatingCoolingSystem -->
+    <string name="heating_cooling_package">پکیج</string>
+    <string name="heating_cooling_radiator">شوفاژ</string>
+    <string name="heating_cooling_split">اسپلیت</string>
+    <string name="heating_cooling_fan_coil">فن‌کوئل</string>
+    <string name="heating_cooling_central">مرکزی</string>
+    <string name="heating_cooling_other">سایر</string>
+
+    <!-- مقادیر enum: UnitDirection -->
+    <string name="unit_direction_north">شمالی</string>
+    <string name="unit_direction_south">جنوبی</string>
+    <string name="unit_direction_east">شرقی</string>
+    <string name="unit_direction_west">غربی</string>
+    <string name="unit_direction_two_sided">دوکله</string>
+
+    <!-- مقادیر enum: UnitCondition -->
+    <string name="unit_condition_new">نوساز</string>
+    <string name="unit_condition_renovated">بازسازی‌شده</string>
+    <string name="unit_condition_lived_in">سکونتی</string>
+    <string name="unit_condition_unoccupied">کلیدنخورده</string>
+
+    <!-- مقادیر enum: FlooringType -->
+    <string name="flooring_ceramic">سرامیک</string>
+    <string name="flooring_parquet">پارکت</string>
+    <string name="flooring_mosaic">موزاییک</string>
+    <string name="flooring_stone">سنگ</string>
+    <string name="flooring_other">سایر</string>
+
+    <!-- مقادیر enum: FacadeType -->
+    <string name="facade_stone">سنگ</string>
+    <string name="facade_brick">آجر</string>
+    <string name="facade_composite">کامپوزیت</string>
+    <string name="facade_other">سایر</string>
+
+    <!-- مقادیر enum: LandUse -->
+    <string name="land_use_residential">مسکونی</string>
+    <string name="land_use_commercial">تجاری</string>
+    <string name="land_use_office">اداری</string>
+    <string name="land_use_agricultural">کشاورزی</string>
+    <string name="land_use_industrial">صنعتی</string>
+    <string name="land_use_garden">باغی</string>
+
+    <!-- مقادیر enum: LandPosition -->
+    <string name="land_position_north">شمالی</string>
+    <string name="land_position_south">جنوبی</string>
+    <string name="land_position_two_sided">دوکله</string>
+    <string name="land_position_corner_three">سه‌نبش</string>
+    <string name="land_position_corner_four">چهارنبش</string>
+
+    <!-- مقادیر enum: LandSlope -->
+    <string name="land_slope_flat">مسطح</string>
+    <string name="land_slope_sloped">شیب‌دار</string>
+
+    <!-- مقادیر enum: CommercialPosition -->
+    <string name="commercial_position_basement">زیرزمین</string>
+    <string name="commercial_position_ground">همکف</string>
+    <string name="commercial_position_upper_floor">طبقه بالا</string>
+
+    <!-- مقادیر enum: StreetPosition -->
+    <string name="street_position_main">گذر اصلی</string>
+    <string name="street_position_side">گذر فرعی</string>
+
+    <!-- مقادیر enum: BuildingClass -->
+    <string name="building_class_a">کلاس A</string>
+    <string name="building_class_b">کلاس B</string>
+    <string name="building_class_c">کلاس C</string>
+
+    <!-- فاز ۵.۵/۵.۶: عنوان بخش‌ها و برچسب فیلدهای مشخصات تکمیلی فرم ثبت ملک -->
+    <string name="spec_section_common">مشخصات تکمیلی</string>
+    <string name="spec_section_apartment">مشخصات آپارتمان</string>
+    <string name="spec_section_land">مشخصات زمین</string>
+    <string name="spec_section_commercial">مشخصات تجاری</string>
+    <string name="spec_section_office">مشخصات اداری</string>
+    <string name="spec_section_amenities">امکانات</string>
+
+    <string name="label_building_age">سن بنا (سال)</string>
+    <string name="label_floor">طبقه</string>
+    <string name="label_total_floors">تعداد کل طبقات</string>
+    <string name="label_deed_type">نوع سند</string>
+    <string name="label_water_status">امتیاز آب</string>
+    <string name="label_electricity_status">امتیاز برق</string>
+    <string name="label_gas_status">امتیاز گاز</string>
+    <string name="label_building_class">کلاس ساختمان</string>
+    <string name="label_heating_cooling">سیستم سرمایش/گرمایش</string>
+    <string name="label_street_position">موقعیت نسبت به گذر</string>
+    <string name="label_frontage_width_land">طول بر (متر)</string>
+    <string name="label_frontage_width_commercial">عرض ویترین (متر)</string>
+
+    <string name="label_unit_direction">جهت واحد</string>
+    <string name="label_unit_condition">وضعیت واحد</string>
+    <string name="label_flooring">کفپوش</string>
+    <string name="label_facade">نمای ساختمان</string>
+    <string name="label_bathroom_count">تعداد سرویس/حمام</string>
+    <string name="amenity_balcony">بالکن/تراس</string>
+    <string name="amenity_pool">استخر</string>
+    <string name="amenity_sauna">سونا/جکوزی</string>
+    <string name="amenity_gym">سالن ورزشی</string>
+    <string name="amenity_lobby">لابی</string>
+    <string name="amenity_security_guard">نگهبانی</string>
+    <string name="amenity_video_intercom">آیفون تصویری</string>
+
+    <string name="label_land_use">کاربری</string>
+    <string name="label_street_width">عرض گذر (متر)</string>
+    <string name="label_allowed_density">تراکم مجاز (٪)</string>
+    <string name="label_allowed_floors">تعداد طبقات مجاز ساخت</string>
+    <string name="label_land_position">موقعیت زمین نسبت به گذر</string>
+    <string name="amenity_wall">دیوارکشی شده</string>
+    <string name="amenity_building_permit">پروانه/نقشه ساخت دارد</string>
+    <string name="label_land_slope">شیب زمین</string>
+
+    <string name="label_key_money">مبلغ سرقفلی (تومان)</string>
+    <string name="label_commercial_floor_position">موقعیت طبقه</string>
+    <string name="label_ceiling_height">ارتفاع سقف (متر)</string>
+    <string name="label_business_license_type">صنف/کاربری مجاز پروانه کسب</string>
+    <string name="amenity_three_phase_electricity">کنتور برق سه‌فاز</string>
+    <string name="amenity_restroom">سرویس بهداشتی</string>
+
+    <string name="label_partition_count">تعداد اتاق‌بندی/پارتیشن</string>
+    <string name="amenity_false_floor">کف کاذب</string>
+    <string name="amenity_false_ceiling">سقف کاذب</string>
+    <string name="amenity_conference_room">سالن کنفرانس</string>
+
+    <!-- فاز ۵.۶: یادداشت آزاد شخصی/داخلی، جدا از توضیحات نمایش‌داده‌شده به مشتری -->
+    <string name="label_additional_notes">توضیحات اضافی (یادداشت داخلی)</string>
+    <string name="add_property_additional_notes_hint">هر نکته‌ی شخصی که فقط برای خودتان یا همکارانتان لازم است؛ به مشتری نشان داده نمی‌شود</string>
 </resources>

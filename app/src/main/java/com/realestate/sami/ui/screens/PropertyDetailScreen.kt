@@ -24,7 +24,9 @@ import coil.compose.AsyncImage
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.local.entity.PropertyStatus
+import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.PropertyDetailViewModel
 import com.realestate.sami.util.toPersianDateString
@@ -211,6 +213,20 @@ fun PropertyDetailScreen(
                     InfoRow(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
                 }
 
+                // فاز ۵.۵/۵.۶ — مشخصات تکمیلیِ بسته به نوع ملک، فقط اگر چیزی برای نشان دادن باشد.
+                PropertyDetailedSpecsSection(current)
+
+                if (!current.description.isNullOrBlank()) {
+                    SectionCard(title = stringResource(R.string.add_property_description)) {
+                        Text(current.description, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                if (!current.additionalNotes.isNullOrBlank()) {
+                    SectionCard(title = stringResource(R.string.label_additional_notes)) {
+                        Text(current.additionalNotes, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+
                 SectionCard(title = stringResource(R.string.property_detail_owner_section)) {
                     InfoRow(stringResource(R.string.label_name), current.ownerName)
                     Spacer(Modifier.height(8.dp))
@@ -264,6 +280,102 @@ fun PropertyDetailScreen(
         }
     }
 }
+
+/**
+ * فاز ۵.۵/۵.۶ — نمایش مشخصات تکمیلیِ بسته به نوع ملک که در فرم ثبت وارد شده (نوع سند، جهت واحد،
+ * کلاس ساختمان، امتیازات آب/برق/گاز، مشخصات زمین/تجاری/اداری و…). اگر برای این رکورد هیچ‌کدام
+ * پر نشده باشد (مثلاً رکوردهای قدیمی‌تر از قبل از این فاز)، اصلاً کارتی نشان داده نمی‌شود.
+ */
+@Composable
+private fun PropertyDetailedSpecsSection(property: PropertyEntity) {
+    val type = property.propertyType
+    val rows = mutableListOf<Pair<String, String>>()
+
+    property.deedType?.let { rows += stringResource(R.string.label_deed_type) to it.toPersianLabel() }
+    if (type != PropertyType.LAND) {
+        property.buildingAge?.let { rows += stringResource(R.string.label_building_age) to it.toString() }
+        property.floor?.let { rows += stringResource(R.string.label_floor) to it.toString() }
+        property.totalFloors?.let { rows += stringResource(R.string.label_total_floors) to it.toString() }
+    }
+    if (type == PropertyType.APARTMENT || type == PropertyType.VILLA || type == PropertyType.LAND) {
+        property.waterStatus?.let { rows += stringResource(R.string.label_water_status) to it.toPersianLabel() }
+        property.electricityStatus?.let { rows += stringResource(R.string.label_electricity_status) to it.toPersianLabel() }
+        property.gasStatus?.let { rows += stringResource(R.string.label_gas_status) to it.toPersianLabel() }
+    }
+    if (type == PropertyType.APARTMENT || type == PropertyType.OFFICE) {
+        property.buildingClass?.let { rows += stringResource(R.string.label_building_class) to it.toPersianLabel() }
+        property.heatingCoolingSystem?.let { rows += stringResource(R.string.label_heating_cooling) to it.toPersianLabel() }
+    }
+    if (type == PropertyType.COMMERCIAL || type == PropertyType.OFFICE) {
+        property.streetPosition?.let { rows += stringResource(R.string.label_street_position) to it.toPersianLabel() }
+    }
+    if (type == PropertyType.LAND || type == PropertyType.COMMERCIAL) {
+        val frontageLabel = if (type == PropertyType.LAND) stringResource(R.string.label_frontage_width_land)
+        else stringResource(R.string.label_frontage_width_commercial)
+        property.frontageWidth?.let { rows += frontageLabel to it.toPlainSpecString() }
+    }
+
+    when (type) {
+        PropertyType.APARTMENT -> {
+            property.unitDirection?.let { rows += stringResource(R.string.label_unit_direction) to it.toPersianLabel() }
+            property.unitCondition?.let { rows += stringResource(R.string.label_unit_condition) to it.toPersianLabel() }
+            property.flooring?.let { rows += stringResource(R.string.label_flooring) to it.toPersianLabel() }
+            property.facade?.let { rows += stringResource(R.string.label_facade) to it.toPersianLabel() }
+            property.bathroomCount?.let { rows += stringResource(R.string.label_bathroom_count) to it.toString() }
+        }
+        PropertyType.LAND -> {
+            property.landUse?.let { rows += stringResource(R.string.label_land_use) to it.toPersianLabel() }
+            property.streetWidth?.let { rows += stringResource(R.string.label_street_width) to it.toPlainSpecString() }
+            property.allowedDensity?.let { rows += stringResource(R.string.label_allowed_density) to "$it٪" }
+            property.allowedFloors?.let { rows += stringResource(R.string.label_allowed_floors) to it.toString() }
+            property.landPosition?.let { rows += stringResource(R.string.label_land_position) to it.toPersianLabel() }
+            property.landSlope?.let { rows += stringResource(R.string.label_land_slope) to it.toPersianLabel() }
+        }
+        PropertyType.COMMERCIAL -> {
+            property.keyMoney?.let { rows += stringResource(R.string.label_key_money) to it.toTomanDisplay() }
+            property.commercialFloorPosition?.let { rows += stringResource(R.string.label_commercial_floor_position) to it.toPersianLabel() }
+            property.ceilingHeight?.let { rows += stringResource(R.string.label_ceiling_height) to it.toPlainSpecString() }
+            if (!property.businessLicenseType.isNullOrBlank()) rows += stringResource(R.string.label_business_license_type) to property.businessLicenseType
+        }
+        PropertyType.OFFICE -> {
+            property.partitionCount?.let { rows += stringResource(R.string.label_partition_count) to it.toString() }
+        }
+        PropertyType.VILLA -> Unit
+    }
+
+    // امکانات بولی — فقط مواردی که واقعاً موجودن نشون داده می‌شن (نه یک لیست بلند از «ندارد»)
+    val amenities = buildList {
+        if (property.hasBalcony) add(stringResource(R.string.amenity_balcony))
+        if (property.hasPool) add(stringResource(R.string.amenity_pool))
+        if (property.hasSauna) add(stringResource(R.string.amenity_sauna))
+        if (property.hasGym) add(stringResource(R.string.amenity_gym))
+        if (property.hasVideoIntercom) add(stringResource(R.string.amenity_video_intercom))
+        if (property.hasLobby) add(stringResource(R.string.amenity_lobby))
+        if (property.hasSecurityGuard) add(stringResource(R.string.amenity_security_guard))
+        if (property.hasWall) add(stringResource(R.string.amenity_wall))
+        if (property.hasBuildingPermit) add(stringResource(R.string.amenity_building_permit))
+        if (property.hasThreePhaseElectricity) add(stringResource(R.string.amenity_three_phase_electricity))
+        if (property.hasRestroom) add(stringResource(R.string.amenity_restroom))
+        if (property.hasFalseFloor) add(stringResource(R.string.amenity_false_floor))
+        if (property.hasFalseCeiling) add(stringResource(R.string.amenity_false_ceiling))
+        if (property.hasConferenceRoom) add(stringResource(R.string.amenity_conference_room))
+    }
+
+    if (rows.isEmpty() && amenities.isEmpty()) return
+
+    SectionCard(title = stringResource(R.string.spec_section_common)) {
+        rows.forEach { (label, value) -> InfoRow(label, value) }
+        if (amenities.isNotEmpty()) {
+            if (rows.isNotEmpty()) Spacer(Modifier.height(6.dp))
+            Text(stringResource(R.string.spec_section_amenities), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(amenities.joinToString("، "), style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+/** فرمت متراژ/طول/ارتفاع بدون ".0" اضافه برای اعداد صحیح (مثلاً «۱۲» به‌جای «۱۲.۰»). */
+private fun Double.toPlainSpecString(): String =
+    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 @Composable
 private fun InfoRow(label: String, value: String) {

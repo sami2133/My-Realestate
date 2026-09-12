@@ -304,4 +304,148 @@
     <string name="settings_more_soon_hint">More settings will be added here over time.</string>
     <string name="settings_open_action">Settings</string>
     <string name="settings_saved">Saved</string>
+
+    <!-- Phase 5.5 — additional specs depending on property type -->
+    <string name="value_unspecified">Unspecified</string>
+    <string name="add_property_description">Additional notes</string>
+
+    <!-- Enum values: DeedType -->
+    <string name="deed_type_single_page">Single-page title</string>
+    <string name="deed_type_mangoleh">Mangoleh-dar title</string>
+    <string name="deed_type_agreement">Agreement (قولنامه)</string>
+    <string name="deed_type_under_construction">Under construction</string>
+    <string name="deed_type_six_dang">Six-dang</string>
+    <string name="deed_type_endowment">Endowment (وقف)</string>
+    <string name="deed_type_other">Other</string>
+
+    <!-- Enum values: UtilityStatus -->
+    <string name="utility_status_available">Available</string>
+    <string name="utility_status_not_available">Not available</string>
+    <string name="utility_status_obtainable">Obtainable</string>
+
+    <!-- Enum values: HeatingCoolingSystem -->
+    <string name="heating_cooling_package">Package unit</string>
+    <string name="heating_cooling_radiator">Radiator</string>
+    <string name="heating_cooling_split">Split AC</string>
+    <string name="heating_cooling_fan_coil">Fan coil</string>
+    <string name="heating_cooling_central">Central</string>
+    <string name="heating_cooling_other">Other</string>
+
+    <!-- Enum values: UnitDirection -->
+    <string name="unit_direction_north">North</string>
+    <string name="unit_direction_south">South</string>
+    <string name="unit_direction_east">East</string>
+    <string name="unit_direction_west">West</string>
+    <string name="unit_direction_two_sided">Two-sided</string>
+
+    <!-- Enum values: UnitCondition -->
+    <string name="unit_condition_new">New</string>
+    <string name="unit_condition_renovated">Renovated</string>
+    <string name="unit_condition_lived_in">Lived-in</string>
+    <string name="unit_condition_unoccupied">Unoccupied</string>
+
+    <!-- Enum values: FlooringType -->
+    <string name="flooring_ceramic">Ceramic</string>
+    <string name="flooring_parquet">Parquet</string>
+    <string name="flooring_mosaic">Mosaic</string>
+    <string name="flooring_stone">Stone</string>
+    <string name="flooring_other">Other</string>
+
+    <!-- Enum values: FacadeType -->
+    <string name="facade_stone">Stone</string>
+    <string name="facade_brick">Brick</string>
+    <string name="facade_composite">Composite</string>
+    <string name="facade_other">Other</string>
+
+    <!-- Enum values: LandUse -->
+    <string name="land_use_residential">Residential</string>
+    <string name="land_use_commercial">Commercial</string>
+    <string name="land_use_office">Office</string>
+    <string name="land_use_agricultural">Agricultural</string>
+    <string name="land_use_industrial">Industrial</string>
+    <string name="land_use_garden">Garden</string>
+
+    <!-- Enum values: LandPosition -->
+    <string name="land_position_north">North</string>
+    <string name="land_position_south">South</string>
+    <string name="land_position_two_sided">Two-sided</string>
+    <string name="land_position_corner_three">Three-way corner</string>
+    <string name="land_position_corner_four">Four-way corner</string>
+
+    <!-- Enum values: LandSlope -->
+    <string name="land_slope_flat">Flat</string>
+    <string name="land_slope_sloped">Sloped</string>
+
+    <!-- Enum values: CommercialPosition -->
+    <string name="commercial_position_basement">Basement</string>
+    <string name="commercial_position_ground">Ground floor</string>
+    <string name="commercial_position_upper_floor">Upper floor</string>
+
+    <!-- Enum values: StreetPosition -->
+    <string name="street_position_main">Main street</string>
+    <string name="street_position_side">Side street</string>
+
+    <!-- Enum values: BuildingClass -->
+    <string name="building_class_a">Class A</string>
+    <string name="building_class_b">Class B</string>
+    <string name="building_class_c">Class C</string>
+
+    <!-- Phase 5.5/5.6: section titles and field labels for the extended property specs form -->
+    <string name="spec_section_common">Additional specs</string>
+    <string name="spec_section_apartment">Apartment specs</string>
+    <string name="spec_section_land">Land specs</string>
+    <string name="spec_section_commercial">Commercial specs</string>
+    <string name="spec_section_office">Office specs</string>
+    <string name="spec_section_amenities">Amenities</string>
+
+    <string name="label_building_age">Building age (years)</string>
+    <string name="label_floor">Floor</string>
+    <string name="label_total_floors">Total floors</string>
+    <string name="label_deed_type">Deed type</string>
+    <string name="label_water_status">Water connection</string>
+    <string name="label_electricity_status">Electricity connection</string>
+    <string name="label_gas_status">Gas connection</string>
+    <string name="label_building_class">Building class</string>
+    <string name="label_heating_cooling">Heating/cooling system</string>
+    <string name="label_street_position">Street position</string>
+    <string name="label_frontage_width_land">Street frontage (m)</string>
+    <string name="label_frontage_width_commercial">Storefront width (m)</string>
+
+    <string name="label_unit_direction">Unit direction</string>
+    <string name="label_unit_condition">Unit condition</string>
+    <string name="label_flooring">Flooring</string>
+    <string name="label_facade">Facade</string>
+    <string name="label_bathroom_count">Bathroom count</string>
+    <string name="amenity_balcony">Balcony/terrace</string>
+    <string name="amenity_pool">Pool</string>
+    <string name="amenity_sauna">Sauna/jacuzzi</string>
+    <string name="amenity_gym">Gym</string>
+    <string name="amenity_lobby">Lobby</string>
+    <string name="amenity_security_guard">Security guard</string>
+    <string name="amenity_video_intercom">Video intercom</string>
+
+    <string name="label_land_use">Land use</string>
+    <string name="label_street_width">Street width (m)</string>
+    <string name="label_allowed_density">Allowed density (%)</string>
+    <string name="label_allowed_floors">Allowed floors to build</string>
+    <string name="label_land_position">Position relative to street</string>
+    <string name="amenity_wall">Walled/fenced</string>
+    <string name="amenity_building_permit">Has construction permit</string>
+    <string name="label_land_slope">Land slope</string>
+
+    <string name="label_key_money">Key money / سرقفلی (Toman)</string>
+    <string name="label_commercial_floor_position">Floor position</string>
+    <string name="label_ceiling_height">Ceiling height (m)</string>
+    <string name="label_business_license_type">Permitted business type</string>
+    <string name="amenity_three_phase_electricity">Three-phase electricity</string>
+    <string name="amenity_restroom">Restroom</string>
+
+    <string name="label_partition_count">Partitions/rooms</string>
+    <string name="amenity_false_floor">Raised floor</string>
+    <string name="amenity_false_ceiling">Suspended ceiling</string>
+    <string name="amenity_conference_room">Conference room</string>
+
+    <!-- Phase 5.6: free-form personal/internal note, separate from the customer-facing description -->
+    <string name="label_additional_notes">Additional notes (internal)</string>
+    <string name="add_property_additional_notes_hint">Any personal note for you or your colleagues; not shown to the customer</string>
 </resources>

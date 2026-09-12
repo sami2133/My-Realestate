@@ -19,6 +19,36 @@ enum class PropertyType { APARTMENT, VILLA, LAND, COMMERCIAL, OFFICE }
 enum class DealType { SALE, RENT, MORTGAGE, EXCHANGE }
 enum class PropertyStatus { AVAILABLE, RESERVED, SOLD_OR_RENTED, ARCHIVED }
 
+// ===== فاز ۵.۵ — ویژگی‌های تکمیلی مشخصات ملک (بر اساس نوع ملک) =====
+
+/** نوع سند مالکیت — برای همه‌ی انواع ملک کاربرد دارد. */
+enum class DeedType { SINGLE_PAGE, MANGOLEH, AGREEMENT, UNDER_CONSTRUCTION, SIX_DANG, ENDOWMENT, OTHER }
+
+/** وضعیت اشتراک آب/برق/گاز — برای آپارتمان، ویلایی و زمین. */
+enum class UtilityStatus { AVAILABLE, NOT_AVAILABLE, OBTAINABLE }
+
+/** کلاس ساختمان (استاندارد رایج در آگهی‌های اداری) — برای آپارتمان و اداری. */
+enum class BuildingClass { A, B, C }
+
+/** سیستم سرمایش/گرمایش — برای آپارتمان و اداری. */
+enum class HeatingCoolingSystem { PACKAGE, RADIATOR, SPLIT, FAN_COIL, CENTRAL, OTHER }
+
+// --- مخصوص آپارتمان ---
+enum class UnitDirection { NORTH, SOUTH, EAST, WEST, TWO_SIDED }
+enum class UnitCondition { NEW, RENOVATED, LIVED_IN, UNOCCUPIED }
+enum class FlooringType { CERAMIC, PARQUET, MOSAIC, STONE, OTHER }
+enum class FacadeType { STONE, BRICK, COMPOSITE, OTHER }
+
+// --- مخصوص زمین ---
+enum class LandUse { RESIDENTIAL, COMMERCIAL, OFFICE, AGRICULTURAL, INDUSTRIAL, GARDEN }
+enum class LandPosition { NORTH, SOUTH, TWO_SIDED, CORNER_THREE, CORNER_FOUR }
+enum class LandSlope { FLAT, SLOPED }
+
+// --- مخصوص تجاری ---
+enum class CommercialPosition { BASEMENT, GROUND, UPPER_FLOOR }
+/** موقعیت نسبت به گذر — برای تجاری و اداری. */
+enum class StreetPosition { MAIN_STREET, SIDE_STREET }
+
 /**
  * ملکی که یک "معرف" (مالک یا واسطه) به دفتر معرفی کرده است.
  */
@@ -72,8 +102,61 @@ data class PropertyEntity(
     val minAdjustableDeposit: Long? = null,
 
     val description: String? = null,
+    /** فاز ۵.۶ — یادداشت آزاد برای درج موارد شخصی/داخلی هر رکورد؛ جدا از [description] که برای نمایش به مشتری است. */
+    val additionalNotes: String? = null,
     val images: List<PropertyImage> = emptyList(), // تصاویر ملک؛ هرکدام هم مسیر محلی (اگر روی این دستگاه موجود باشد) و هم شناسه‌ی فایل روی Drive (بعد از sync) را نگه می‌دارد
     val documentUris: String = "",     // اسکن سند/مدارک
+
+    // ===== فاز ۵.۵ — مشخصات تکمیلی، بسته به نوع ملک (همه nullable و اختیاری) =====
+
+    /** نوع سند — برای همه‌ی انواع ملک. */
+    val deedType: DeedType? = null,
+
+    // --- آپارتمان (و برخی مشترک با ویلایی/اداری) ---
+    val unitDirection: UnitDirection? = null,
+    val unitCondition: UnitCondition? = null,
+    val heatingCoolingSystem: HeatingCoolingSystem? = null,
+    val flooring: FlooringType? = null,
+    val facade: FacadeType? = null,
+    val bathroomCount: Int? = null,
+    val buildingClass: BuildingClass? = null, // آپارتمان و اداری
+    val hasPool: Boolean = false,
+    val hasSauna: Boolean = false,
+    val hasGym: Boolean = false,
+    val hasLobby: Boolean = false,          // آپارتمان و اداری
+    val hasSecurityGuard: Boolean = false,  // آپارتمان و اداری
+    val hasVideoIntercom: Boolean = false,
+
+    // --- آپارتمان، ویلایی و زمین: اشتراک آب/برق/گاز ---
+    val waterStatus: UtilityStatus? = null,
+    val electricityStatus: UtilityStatus? = null,
+    val gasStatus: UtilityStatus? = null,
+
+    // --- زمین ---
+    val landUse: LandUse? = null,
+    val frontageWidth: Double? = null, // طول بر (زمین) / عرض ویترین (تجاری) — یک مفهوم مشترک
+    val streetWidth: Double? = null,
+    val allowedDensity: Int? = null,   // تراکم مجاز (درصد)
+    val allowedFloors: Int? = null,    // تعداد طبقات مجاز ساخت
+    val landPosition: LandPosition? = null,
+    val hasWall: Boolean = false,
+    val hasBuildingPermit: Boolean = false,
+    val landSlope: LandSlope? = null,
+
+    // --- تجاری ---
+    val keyMoney: Long? = null, // مبلغ سرقفلی — جدا از رهن/اجاره
+    val commercialFloorPosition: CommercialPosition? = null,
+    val ceilingHeight: Double? = null,
+    val businessLicenseType: String? = null,
+    val hasThreePhaseElectricity: Boolean = false,
+    val hasRestroom: Boolean = false,
+    val streetPosition: StreetPosition? = null, // تجاری و اداری
+
+    // --- اداری ---
+    val partitionCount: Int? = null,
+    val hasFalseFloor: Boolean = false,
+    val hasFalseCeiling: Boolean = false,
+    val hasConferenceRoom: Boolean = false,
 
     val status: PropertyStatus = PropertyStatus.AVAILABLE,
     val createdAt: Long = System.currentTimeMillis(),

@@ -36,3 +36,72 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("UPDATE properties SET dealType = 'SALE', isExchangeable = 1 WHERE dealType = 'EXCHANGE'")
     }
 }
+
+/**
+ * فاز ۵.۵ — نسخه ۵ به ۶: افزودن مشخصات تکمیلیِ بسته به نوع ملک (نوع سند، جهت/وضعیت واحد،
+ * کلاس ساختمان، امتیازات آب/برق/گاز، مشخصات زمین، سرقفلی و مشخصات تجاری/اداری و…). همه‌ی
+ * ستون‌های جدید nullable یا با مقدار پیش‌فرض false/0 هستن، پس هیچ رکورد موجودی خراب نمی‌شه —
+ * فقط ستون‌های جدید خالی اضافه می‌شن، بدون بازسازی جدول.
+ */
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // مشترک بین چند نوع ملک
+        db.execSQL("ALTER TABLE properties ADD COLUMN deedType TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN waterStatus TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN electricityStatus TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN gasStatus TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN buildingClass TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN heatingCoolingSystem TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasLobby INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasSecurityGuard INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN streetPosition TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN frontageWidth REAL DEFAULT NULL")
+
+        // آپارتمان
+        db.execSQL("ALTER TABLE properties ADD COLUMN unitDirection TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN unitCondition TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN flooring TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN facade TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN bathroomCount INTEGER DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasPool INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasSauna INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasGym INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasVideoIntercom INTEGER NOT NULL DEFAULT 0")
+
+        // زمین
+        db.execSQL("ALTER TABLE properties ADD COLUMN landUse TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN streetWidth REAL DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN allowedDensity INTEGER DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN allowedFloors INTEGER DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN landPosition TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasWall INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasBuildingPermit INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN landSlope TEXT DEFAULT NULL")
+
+        // تجاری
+        db.execSQL("ALTER TABLE properties ADD COLUMN keyMoney INTEGER DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN commercialFloorPosition TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN ceilingHeight REAL DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN businessLicenseType TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasThreePhaseElectricity INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasRestroom INTEGER NOT NULL DEFAULT 0")
+
+        // اداری
+        db.execSQL("ALTER TABLE properties ADD COLUMN partitionCount INTEGER DEFAULT NULL")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasFalseFloor INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasFalseCeiling INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE properties ADD COLUMN hasConferenceRoom INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+/**
+ * فاز ۵.۶ — نسخه ۶ به ۷: افزودن ستون `additionalNotes` (یادداشت آزاد برای موارد شخصی هر رکورد،
+ * جدا از توضیحات نمایش‌داده‌شده به مشتری). یک migration جداگانه (نه ویرایش MIGRATION_5_6) چون
+ * اون migration ممکنه قبلاً روی گوشی‌هایی اجرا شده باشه؛ migration‌های قبلی نباید بعد از انتشار
+ * تغییر کنن.
+ */
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE properties ADD COLUMN additionalNotes TEXT DEFAULT NULL")
+    }
+}
