@@ -24,15 +24,30 @@ private val LightColors = lightColorScheme(
     onSurface = InkText
 )
 
+// نکته‌ی مهم: قبلاً این پالت فقط primary/secondary/tertiary رو ست می‌کرد و نقش‌های
+// «Container» (primaryContainer/secondaryContainer/tertiaryContainer) رو خالی می‌ذاشت.
+// وقتی این نقش‌ها ست نشن، Compose به‌جای رنگ‌های تعریف‌شده‌ی این پروژه، از پالت پیش‌فرض
+// Material Baseline (که بنفشه) استفاده می‌کنه — دقیقاً همون جعبه‌ی بنفشِ دکمه‌ی
+// «افزودن عکس» در حالت تاریک. همه‌ی نقش‌ها رو صریح ست می‌کنیم تا این نشتی رنگی از بین بره.
 private val DarkColors = darkColorScheme(
     primary = EmeraldPrimaryDark,
-    onPrimary = InkText,
+    onPrimary = InkTextDark,
+    primaryContainer = EmeraldPrimary,
+    onPrimaryContainer = EmeraldPrimaryDark,
     secondary = SlateBlue,
+    onSecondary = InkTextDark,
+    secondaryContainer = SlateBlueContainer.copy(alpha = 0.24f),
+    onSecondaryContainer = InkTextDark,
     tertiary = GoldAccentDark,
+    onTertiary = InkText,
+    tertiaryContainer = GoldAccent,
+    onTertiaryContainer = GoldAccentDark,
     background = WarmBackgroundDark,
     surface = SurfaceDark,
     onBackground = InkTextDark,
-    onSurface = InkTextDark
+    onSurface = InkTextDark,
+    surfaceVariant = SurfaceDark,
+    onSurfaceVariant = InkTextDark
 )
 
 // شکل‌های اختصاصی: گوشه‌های نرم اما نه یکسان روی همه چیز — سلسله‌مراتب بصری دارد

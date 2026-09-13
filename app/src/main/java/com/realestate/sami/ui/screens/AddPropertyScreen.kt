@@ -13,15 +13,50 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Apartment
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Balcony
+import androidx.compose.material.icons.filled.Bathtub
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Elevator
+import androidx.compose.material.icons.filled.Fence
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Height
+import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.LocalParking
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MeetingRoom
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Pool
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.Stairs
+import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.ViewColumn
+import androidx.compose.material.icons.filled.Wc
+import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -44,7 +79,13 @@ import com.realestate.sami.data.local.entity.UnitCondition
 import com.realestate.sami.data.local.entity.UnitDirection
 import com.realestate.sami.data.local.entity.UtilityStatus
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
+import com.realestate.sami.ui.screens.common.AmenityChip
+import com.realestate.sami.ui.screens.common.SectionCard
+import com.realestate.sami.ui.screens.common.FormSubsectionLabel
+import com.realestate.sami.ui.screens.common.LabeledField
 import com.realestate.sami.ui.screens.common.RentDepositAdjustmentSlider
+import com.realestate.sami.ui.screens.common.SwitchRow
+import com.realestate.sami.ui.screens.common.icon
 import com.realestate.sami.util.copyPickedImageToAppStorage
 import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
@@ -56,8 +97,12 @@ import kotlinx.coroutines.withContext
 /**
  * فرم ثبت/ویرایش ملک. وقتی [propertyId] مقدار داشته باشد، صفحه در حالت ویرایش باز می‌شود:
  * رکورد موجود از دیتابیس خوانده و فرم با مقادیرش پر می‌شود؛ در غیر این صورت فرم برای ثبت ملک جدید خالی است.
+ *
+ * ساختار بصری بازطراحی شده: هر بخش فرم داخل یک [SectionCard] مستقل با آیکون هدر قرار
+ * می‌گیرد (به‌جای Divider+Text خام قبلی) و امکانات به‌جای ستون چک‌باکس، چیپ‌های
+ * [AmenityChip] در یک FlowRow هستند. منطق state/ذخیره‌سازی نسبت به نسخه‌ی قبلی تغییری نکرده.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddPropertyScreen(
     propertyId: Long? = null,
@@ -273,179 +318,171 @@ fun AddPropertyScreen(
                 .padding(padding)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Text(stringResource(R.string.add_property_owner_section), style = MaterialTheme.typography.titleMedium)
-            OutlinedTextField(ownerName, { ownerName = it }, label = { Text(stringResource(R.string.add_property_owner_name)) }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(ownerPhone, { ownerPhone = it }, label = { Text(stringResource(R.string.label_phone)) }, modifier = Modifier.fillMaxWidth())
+            // ===== اطلاعات معرف/مالک =====
+            SectionCard(title = stringResource(R.string.add_property_owner_section), icon = Icons.Filled.Person) {
+                LabeledField(ownerName, { ownerName = it }, stringResource(R.string.add_property_owner_name), icon = Icons.Filled.Person)
+                LabeledField(ownerPhone, { ownerPhone = it }, stringResource(R.string.label_phone), icon = Icons.Filled.Call, keyboardType = KeyboardType.Phone)
+            }
 
-            Divider()
-            Text(stringResource(R.string.add_property_photos_section), style = MaterialTheme.typography.titleMedium)
-            PhotoPickerRow(
-                images = images,
-                onAddClick = { imagePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-                onRemove = { image -> images = images - image }
-            )
-
-            Divider()
-            Text(stringResource(R.string.add_property_specs_section), style = MaterialTheme.typography.titleMedium)
-
-            DropdownSelector(
-                label = stringResource(R.string.add_property_type_label),
-                options = PropertyType.entries.toList(),
-                selected = propertyType,
-                onSelect = { propertyType = it },
-                display = { it.toPersianLabel() }
-            )
-            DropdownSelector(
-                label = stringResource(R.string.add_property_deal_type_label),
-                options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
-                selected = dealType,
-                onSelect = { dealType = it },
-                display = { it.toPersianLabel() }
-            )
-
-            OutlinedTextField(address, { address = it }, label = { Text(stringResource(R.string.label_address)) }, modifier = Modifier.fillMaxWidth())
-            OutlinedButton(onClick = onPickLocationOnMap, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    if (latitude != null) stringResource(R.string.add_property_location_selected)
-                    else stringResource(R.string.add_property_pick_location)
+            // ===== عکس‌های ملک =====
+            SectionCard(title = stringResource(R.string.add_property_photos_section), icon = Icons.Filled.PhotoLibrary) {
+                PhotoPickerRow(
+                    images = images,
+                    onAddClick = { imagePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                    onRemove = { image -> images = images - image }
                 )
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(area, { area = it }, label = { Text(stringResource(R.string.add_property_area_hint)) }, modifier = Modifier.weight(1f))
-                OutlinedTextField(rooms, { rooms = it }, label = { Text(stringResource(R.string.label_rooms)) }, modifier = Modifier.weight(1f))
+            // ===== مشخصات پایه‌ی ملک =====
+            SectionCard(title = stringResource(R.string.add_property_specs_section), icon = propertyType.icon()) {
+                DropdownSelector(
+                    label = stringResource(R.string.add_property_type_label),
+                    options = PropertyType.entries.toList(),
+                    selected = propertyType,
+                    onSelect = { propertyType = it },
+                    icon = propertyType.icon(),
+                    display = { it.toPersianLabel() }
+                )
+                DropdownSelector(
+                    label = stringResource(R.string.add_property_deal_type_label),
+                    options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
+                    selected = dealType,
+                    onSelect = { dealType = it },
+                    icon = dealType.icon(),
+                    display = { it.toPersianLabel() }
+                )
+
+                LabeledField(address, { address = it }, stringResource(R.string.label_address), icon = Icons.Filled.LocationOn)
+                OutlinedButton(onClick = onPickLocationOnMap, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        if (latitude != null) stringResource(R.string.add_property_location_selected)
+                        else stringResource(R.string.add_property_pick_location)
+                    )
+                }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    LabeledField(area, { area = it }, stringResource(R.string.add_property_area_hint), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                    LabeledField(rooms, { rooms = it }, stringResource(R.string.label_rooms), icon = Icons.Filled.MeetingRoom, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                }
+
+                FormSubsectionLabel(stringResource(R.string.add_property_amenities_section))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AmenityChip(stringResource(R.string.amenity_parking), Icons.Filled.LocalParking, hasParking) { hasParking = it }
+                    AmenityChip(stringResource(R.string.amenity_storage), Icons.Filled.Inventory2, hasStorage) { hasStorage = it }
+                    AmenityChip(stringResource(R.string.amenity_elevator), Icons.Filled.Elevator, hasElevator) { hasElevator = it }
+                }
             }
 
-            Text(stringResource(R.string.add_property_amenities_section), style = MaterialTheme.typography.titleSmall)
-            CheckboxRow(stringResource(R.string.amenity_parking), hasParking) { hasParking = it }
-            CheckboxRow(stringResource(R.string.amenity_storage), hasStorage) { hasStorage = it }
-            CheckboxRow(stringResource(R.string.amenity_elevator), hasElevator) { hasElevator = it }
+            // ===== مشخصات تکمیلی (بسته به نوع ملک) =====
+            SectionCard(title = stringResource(R.string.spec_section_common), icon = Icons.Filled.Tune) {
+                PropertySpecsSection(
+                    propertyType = propertyType,
+                    deedType = deedType, onDeedTypeChange = { deedType = it },
+                    buildingAge = buildingAge, onBuildingAgeChange = { buildingAge = it },
+                    floor = floor, onFloorChange = { floor = it },
+                    totalFloors = totalFloors, onTotalFloorsChange = { totalFloors = it },
+                    waterStatus = waterStatus, onWaterStatusChange = { waterStatus = it },
+                    electricityStatus = electricityStatus, onElectricityStatusChange = { electricityStatus = it },
+                    gasStatus = gasStatus, onGasStatusChange = { gasStatus = it },
+                    buildingClass = buildingClass, onBuildingClassChange = { buildingClass = it },
+                    heatingCoolingSystem = heatingCoolingSystem, onHeatingCoolingSystemChange = { heatingCoolingSystem = it },
+                    hasLobby = hasLobby, onHasLobbyChange = { hasLobby = it },
+                    hasSecurityGuard = hasSecurityGuard, onHasSecurityGuardChange = { hasSecurityGuard = it },
+                    streetPosition = streetPosition, onStreetPositionChange = { streetPosition = it },
+                    frontageWidth = frontageWidth, onFrontageWidthChange = { frontageWidth = it },
+                    unitDirection = unitDirection, onUnitDirectionChange = { unitDirection = it },
+                    unitCondition = unitCondition, onUnitConditionChange = { unitCondition = it },
+                    flooring = flooring, onFlooringChange = { flooring = it },
+                    facade = facade, onFacadeChange = { facade = it },
+                    bathroomCount = bathroomCount, onBathroomCountChange = { bathroomCount = it },
+                    hasBalcony = hasBalcony, onHasBalconyChange = { hasBalcony = it },
+                    hasPool = hasPool, onHasPoolChange = { hasPool = it },
+                    hasSauna = hasSauna, onHasSaunaChange = { hasSauna = it },
+                    hasGym = hasGym, onHasGymChange = { hasGym = it },
+                    hasVideoIntercom = hasVideoIntercom, onHasVideoIntercomChange = { hasVideoIntercom = it },
+                    landUse = landUse, onLandUseChange = { landUse = it },
+                    streetWidth = streetWidth, onStreetWidthChange = { streetWidth = it },
+                    allowedDensity = allowedDensity, onAllowedDensityChange = { allowedDensity = it },
+                    allowedFloors = allowedFloors, onAllowedFloorsChange = { allowedFloors = it },
+                    landPosition = landPosition, onLandPositionChange = { landPosition = it },
+                    hasWall = hasWall, onHasWallChange = { hasWall = it },
+                    hasBuildingPermit = hasBuildingPermit, onHasBuildingPermitChange = { hasBuildingPermit = it },
+                    landSlope = landSlope, onLandSlopeChange = { landSlope = it },
+                    keyMoney = keyMoney, onKeyMoneyChange = { keyMoney = it },
+                    commercialFloorPosition = commercialFloorPosition, onCommercialFloorPositionChange = { commercialFloorPosition = it },
+                    ceilingHeight = ceilingHeight, onCeilingHeightChange = { ceilingHeight = it },
+                    businessLicenseType = businessLicenseType, onBusinessLicenseTypeChange = { businessLicenseType = it },
+                    hasThreePhaseElectricity = hasThreePhaseElectricity, onHasThreePhaseElectricityChange = { hasThreePhaseElectricity = it },
+                    hasRestroom = hasRestroom, onHasRestroomChange = { hasRestroom = it },
+                    partitionCount = partitionCount, onPartitionCountChange = { partitionCount = it },
+                    hasFalseFloor = hasFalseFloor, onHasFalseFloorChange = { hasFalseFloor = it },
+                    hasFalseCeiling = hasFalseCeiling, onHasFalseCeilingChange = { hasFalseCeiling = it },
+                    hasConferenceRoom = hasConferenceRoom, onHasConferenceRoomChange = { hasConferenceRoom = it }
+                )
+            }
 
-            Divider()
-            PropertySpecsSection(
-                propertyType = propertyType,
-                deedType = deedType, onDeedTypeChange = { deedType = it },
-                buildingAge = buildingAge, onBuildingAgeChange = { buildingAge = it },
-                floor = floor, onFloorChange = { floor = it },
-                totalFloors = totalFloors, onTotalFloorsChange = { totalFloors = it },
-                waterStatus = waterStatus, onWaterStatusChange = { waterStatus = it },
-                electricityStatus = electricityStatus, onElectricityStatusChange = { electricityStatus = it },
-                gasStatus = gasStatus, onGasStatusChange = { gasStatus = it },
-                buildingClass = buildingClass, onBuildingClassChange = { buildingClass = it },
-                heatingCoolingSystem = heatingCoolingSystem, onHeatingCoolingSystemChange = { heatingCoolingSystem = it },
-                hasLobby = hasLobby, onHasLobbyChange = { hasLobby = it },
-                hasSecurityGuard = hasSecurityGuard, onHasSecurityGuardChange = { hasSecurityGuard = it },
-                streetPosition = streetPosition, onStreetPositionChange = { streetPosition = it },
-                frontageWidth = frontageWidth, onFrontageWidthChange = { frontageWidth = it },
-                unitDirection = unitDirection, onUnitDirectionChange = { unitDirection = it },
-                unitCondition = unitCondition, onUnitConditionChange = { unitCondition = it },
-                flooring = flooring, onFlooringChange = { flooring = it },
-                facade = facade, onFacadeChange = { facade = it },
-                bathroomCount = bathroomCount, onBathroomCountChange = { bathroomCount = it },
-                hasBalcony = hasBalcony, onHasBalconyChange = { hasBalcony = it },
-                hasPool = hasPool, onHasPoolChange = { hasPool = it },
-                hasSauna = hasSauna, onHasSaunaChange = { hasSauna = it },
-                hasGym = hasGym, onHasGymChange = { hasGym = it },
-                hasVideoIntercom = hasVideoIntercom, onHasVideoIntercomChange = { hasVideoIntercom = it },
-                landUse = landUse, onLandUseChange = { landUse = it },
-                streetWidth = streetWidth, onStreetWidthChange = { streetWidth = it },
-                allowedDensity = allowedDensity, onAllowedDensityChange = { allowedDensity = it },
-                allowedFloors = allowedFloors, onAllowedFloorsChange = { allowedFloors = it },
-                landPosition = landPosition, onLandPositionChange = { landPosition = it },
-                hasWall = hasWall, onHasWallChange = { hasWall = it },
-                hasBuildingPermit = hasBuildingPermit, onHasBuildingPermitChange = { hasBuildingPermit = it },
-                landSlope = landSlope, onLandSlopeChange = { landSlope = it },
-                keyMoney = keyMoney, onKeyMoneyChange = { keyMoney = it },
-                commercialFloorPosition = commercialFloorPosition, onCommercialFloorPositionChange = { commercialFloorPosition = it },
-                ceilingHeight = ceilingHeight, onCeilingHeightChange = { ceilingHeight = it },
-                businessLicenseType = businessLicenseType, onBusinessLicenseTypeChange = { businessLicenseType = it },
-                hasThreePhaseElectricity = hasThreePhaseElectricity, onHasThreePhaseElectricityChange = { hasThreePhaseElectricity = it },
-                hasRestroom = hasRestroom, onHasRestroomChange = { hasRestroom = it },
-                partitionCount = partitionCount, onPartitionCountChange = { partitionCount = it },
-                hasFalseFloor = hasFalseFloor, onHasFalseFloorChange = { hasFalseFloor = it },
-                hasFalseCeiling = hasFalseCeiling, onHasFalseCeilingChange = { hasFalseCeiling = it },
-                hasConferenceRoom = hasConferenceRoom, onHasConferenceRoomChange = { hasConferenceRoom = it }
-            )
+            // ===== توضیحات =====
+            SectionCard(title = stringResource(R.string.add_property_description), icon = Icons.Filled.Description) {
+                LabeledField(
+                    description, { description = it },
+                    stringResource(R.string.add_property_description),
+                    icon = Icons.Filled.Description,
+                    minLines = 2
+                )
+                LabeledField(
+                    additionalNotes, { additionalNotes = it },
+                    stringResource(R.string.label_additional_notes),
+                    icon = Icons.Filled.EditNote,
+                    placeholder = stringResource(R.string.add_property_additional_notes_hint),
+                    minLines = 2
+                )
+            }
 
-            Divider()
-            OutlinedTextField(
-                description,
-                { description = it },
-                label = { Text(stringResource(R.string.add_property_description)) },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 2
-            )
-            OutlinedTextField(
-                additionalNotes,
-                { additionalNotes = it },
-                label = { Text(stringResource(R.string.label_additional_notes)) },
-                placeholder = { Text(stringResource(R.string.add_property_additional_notes_hint), style = MaterialTheme.typography.bodySmall) },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 2
-            )
+            // ===== قیمت‌گذاری =====
+            SectionCard(title = stringResource(R.string.add_property_pricing_section), icon = Icons.Filled.Payments) {
+                when (dealType) {
+                    DealType.SALE, DealType.EXCHANGE -> {
+                        LabeledField(totalPrice, { totalPrice = it }, stringResource(R.string.add_property_total_price), icon = Icons.Filled.Payments, keyboardType = KeyboardType.Number)
 
-            Divider()
-            Text(stringResource(R.string.add_property_pricing_section), style = MaterialTheme.typography.titleMedium)
-            when (dealType) {
-                DealType.SALE, DealType.EXCHANGE -> {
-                    OutlinedTextField(totalPrice, { totalPrice = it }, label = { Text(stringResource(R.string.add_property_total_price)) }, modifier = Modifier.fillMaxWidth())
-
-                    Spacer(Modifier.height(4.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = isExchangeable, onCheckedChange = { isExchangeable = it })
-                        Text(stringResource(R.string.add_property_exchangeable), style = MaterialTheme.typography.bodyMedium)
-                    }
-                    if (isExchangeable) {
-                        DropdownSelector(
-                            label = stringResource(R.string.add_property_exchange_preferred_type),
-                            options = listOf<PropertyType?>(null) + PropertyType.entries.toList(),
-                            selected = exchangePreferredType,
-                            onSelect = { exchangePreferredType = it },
-                            display = { it?.toPersianLabel() ?: stringResource(R.string.add_property_exchange_any_type) }
-                        )
-                        OutlinedTextField(
-                            exchangeNote,
-                            { exchangeNote = it },
-                            label = { Text(stringResource(R.string.add_property_exchange_note)) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-                DealType.RENT, DealType.MORTGAGE -> {
-                    OutlinedTextField(depositPrice, { depositPrice = it }, label = { Text(stringResource(R.string.add_property_deposit_price)) }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(rentPrice, { rentPrice = it }, label = { Text(stringResource(R.string.add_property_rent_price)) }, modifier = Modifier.fillMaxWidth())
-
-                    Spacer(Modifier.height(4.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = isDepositNegotiable, onCheckedChange = { isDepositNegotiable = it })
-                        Text(stringResource(R.string.add_property_deposit_negotiable), style = MaterialTheme.typography.bodyMedium)
-                    }
-                    if (isDepositNegotiable) {
-                        OutlinedTextField(
-                            minAdjustableDeposit,
-                            { minAdjustableDeposit = it },
-                            label = { Text(stringResource(R.string.add_property_min_deposit)) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        val depositLong = depositPrice.parseTomanInput()
-                        val minLong = minAdjustableDeposit.parseTomanInput()
-                        if (depositLong != null && minLong != null && minLong < depositLong) {
-                            Spacer(Modifier.height(10.dp))
-                            val conversionPercent by viewModel.rentConversionPercent.collectAsState()
-                            RentDepositAdjustmentSlider(
-                                baseDeposit = depositLong,
-                                baseRent = rentPrice.parseTomanInput() ?: 0L,
-                                minDeposit = minLong,
-                                conversionPercent = conversionPercent
+                        SwitchRow(stringResource(R.string.add_property_exchangeable), isExchangeable) { isExchangeable = it }
+                        if (isExchangeable) {
+                            DropdownSelector(
+                                label = stringResource(R.string.add_property_exchange_preferred_type),
+                                options = listOf<PropertyType?>(null) + PropertyType.entries.toList(),
+                                selected = exchangePreferredType,
+                                onSelect = { exchangePreferredType = it },
+                                display = { it?.toPersianLabel() ?: stringResource(R.string.add_property_exchange_any_type) }
                             )
+                            LabeledField(exchangeNote, { exchangeNote = it }, stringResource(R.string.add_property_exchange_note), icon = Icons.Filled.EditNote)
+                        }
+                    }
+                    DealType.RENT, DealType.MORTGAGE -> {
+                        LabeledField(depositPrice, { depositPrice = it }, stringResource(R.string.add_property_deposit_price), icon = Icons.Filled.Payments, keyboardType = KeyboardType.Number)
+                        LabeledField(rentPrice, { rentPrice = it }, stringResource(R.string.add_property_rent_price), icon = Icons.Filled.Payments, keyboardType = KeyboardType.Number)
+
+                        SwitchRow(stringResource(R.string.add_property_deposit_negotiable), isDepositNegotiable) { isDepositNegotiable = it }
+                        if (isDepositNegotiable) {
+                            LabeledField(minAdjustableDeposit, { minAdjustableDeposit = it }, stringResource(R.string.add_property_min_deposit), icon = Icons.Filled.Payments, keyboardType = KeyboardType.Number)
+                            val depositLong = depositPrice.parseTomanInput()
+                            val minLong = minAdjustableDeposit.parseTomanInput()
+                            if (depositLong != null && minLong != null && minLong < depositLong) {
+                                val conversionPercent by viewModel.rentConversionPercent.collectAsState()
+                                RentDepositAdjustmentSlider(
+                                    baseDeposit = depositLong,
+                                    baseRent = rentPrice.parseTomanInput() ?: 0L,
+                                    minDeposit = minLong,
+                                    conversionPercent = conversionPercent
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
             Button(
                 onClick = {
                     // در حالت ویرایش، رکورد موجود را با مقادیر جدید copy می‌کنیم تا id و فیلدهای
@@ -536,9 +573,14 @@ fun AddPropertyScreen(
                     )
                     viewModel.save(entity) { onSaved() }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = ownerName.isNotBlank() && ownerPhone.isNotBlank() && address.isNotBlank()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                enabled = ownerName.isNotBlank() && ownerPhone.isNotBlank() && address.isNotBlank(),
+                shape = MaterialTheme.shapes.medium
             ) {
+                Icon(Icons.Filled.Save, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
                 Text(
                     if (isEditMode) stringResource(R.string.edit_property_save)
                     else stringResource(R.string.add_property_save)
@@ -548,14 +590,16 @@ fun AddPropertyScreen(
     }
 }
 
-/** تبدیل متراژ به رشته‌ی قابل‌ویرایش در فیلد فرم، بدون ".0" اضافه برای اعداد صحیح. */
+/** تبدیل متراژ به رشته‌ی قابل‌ویرایش در فرم، بدون ".0" اضافه برای اعداد صحیح. */
 private fun Double.toPlainInputString(): String =
     if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 /**
  * فاز ۵.۵/۵.۶ — مشخصات تکمیلی ملک، بسته به نوع ملک. بخش «مشترک» همیشه نمایش داده می‌شود (با
  * فیلدهایی که فقط برای بعضی انواع معنا دارند، مشروط)، و بعدش یک بخش مخصوص همان نوع ملک.
+ * (این کامپوننت داخل [SectionCard] در AddPropertyScreen صدا زده می‌شود، پس خودش کارت جدا نمی‌سازد.)
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun PropertySpecsSection(
     propertyType: PropertyType,
@@ -606,18 +650,16 @@ private fun PropertySpecsSection(
     val showStreetPosition = propertyType == PropertyType.COMMERCIAL || propertyType == PropertyType.OFFICE
     val showFrontageWidth = propertyType == PropertyType.LAND || propertyType == PropertyType.COMMERCIAL
 
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(stringResource(R.string.spec_section_common), style = MaterialTheme.typography.titleMedium)
-
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (propertyType != PropertyType.LAND) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(buildingAge, onBuildingAgeChange, label = { Text(stringResource(R.string.label_building_age)) }, modifier = Modifier.weight(1f))
-                OutlinedTextField(floor, onFloorChange, label = { Text(stringResource(R.string.label_floor)) }, modifier = Modifier.weight(1f))
-                OutlinedTextField(totalFloors, onTotalFloorsChange, label = { Text(stringResource(R.string.label_total_floors)) }, modifier = Modifier.weight(1f))
+                LabeledField(buildingAge, onBuildingAgeChange, stringResource(R.string.label_building_age), icon = Icons.Filled.Apartment, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                LabeledField(floor, onFloorChange, stringResource(R.string.label_floor), icon = Icons.Filled.Stairs, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                LabeledField(totalFloors, onTotalFloorsChange, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
             }
         }
 
-        NullableEnumDropdown(stringResource(R.string.label_deed_type), DeedType.entries.toList(), deedType, onDeedTypeChange) { it.toPersianLabel() }
+        NullableEnumDropdown(stringResource(R.string.label_deed_type), DeedType.entries.toList(), deedType, onDeedTypeChange, icon = Icons.Filled.Verified) { it.toPersianLabel() }
 
         if (showUtilities) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -636,8 +678,10 @@ private fun PropertySpecsSection(
         if (showBuildingClassAndHvac) {
             NullableEnumDropdown(stringResource(R.string.label_building_class), BuildingClass.entries.toList(), buildingClass, onBuildingClassChange) { it.toPersianLabel() }
             NullableEnumDropdown(stringResource(R.string.label_heating_cooling), HeatingCoolingSystem.entries.toList(), heatingCoolingSystem, onHeatingCoolingSystemChange) { it.toPersianLabel() }
-            CheckboxRow(stringResource(R.string.amenity_lobby), hasLobby, onHasLobbyChange)
-            CheckboxRow(stringResource(R.string.amenity_security_guard), hasSecurityGuard, onHasSecurityGuardChange)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AmenityChip(stringResource(R.string.amenity_lobby), Icons.Filled.Weekend, hasLobby, onHasLobbyChange)
+                AmenityChip(stringResource(R.string.amenity_security_guard), Icons.Filled.Security, hasSecurityGuard, onHasSecurityGuardChange)
+            }
         }
 
         if (showStreetPosition) {
@@ -645,71 +689,76 @@ private fun PropertySpecsSection(
         }
 
         if (showFrontageWidth) {
-            OutlinedTextField(
+            LabeledField(
                 frontageWidth,
                 onFrontageWidthChange,
-                label = {
-                    Text(
-                        stringResource(
-                            if (propertyType == PropertyType.LAND) R.string.label_frontage_width_land
-                            else R.string.label_frontage_width_commercial
-                        )
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
+                stringResource(
+                    if (propertyType == PropertyType.LAND) R.string.label_frontage_width_land
+                    else R.string.label_frontage_width_commercial
+                ),
+                icon = Icons.Filled.Straighten,
+                keyboardType = KeyboardType.Number
             )
         }
 
         when (propertyType) {
             PropertyType.APARTMENT -> {
                 Divider()
-                Text(stringResource(R.string.spec_section_apartment), style = MaterialTheme.typography.titleMedium)
+                FormSubsectionLabel(stringResource(R.string.spec_section_apartment))
                 NullableEnumDropdown(stringResource(R.string.label_unit_direction), UnitDirection.entries.toList(), unitDirection, onUnitDirectionChange) { it.toPersianLabel() }
                 NullableEnumDropdown(stringResource(R.string.label_unit_condition), UnitCondition.entries.toList(), unitCondition, onUnitConditionChange) { it.toPersianLabel() }
                 NullableEnumDropdown(stringResource(R.string.label_flooring), FlooringType.entries.toList(), flooring, onFlooringChange) { it.toPersianLabel() }
                 NullableEnumDropdown(stringResource(R.string.label_facade), FacadeType.entries.toList(), facade, onFacadeChange) { it.toPersianLabel() }
-                OutlinedTextField(bathroomCount, onBathroomCountChange, label = { Text(stringResource(R.string.label_bathroom_count)) }, modifier = Modifier.fillMaxWidth())
-                Text(stringResource(R.string.spec_section_amenities), style = MaterialTheme.typography.titleSmall)
-                CheckboxRow(stringResource(R.string.amenity_balcony), hasBalcony, onHasBalconyChange)
-                CheckboxRow(stringResource(R.string.amenity_pool), hasPool, onHasPoolChange)
-                CheckboxRow(stringResource(R.string.amenity_sauna), hasSauna, onHasSaunaChange)
-                CheckboxRow(stringResource(R.string.amenity_gym), hasGym, onHasGymChange)
-                CheckboxRow(stringResource(R.string.amenity_video_intercom), hasVideoIntercom, onHasVideoIntercomChange)
+                LabeledField(bathroomCount, onBathroomCountChange, stringResource(R.string.label_bathroom_count), icon = Icons.Filled.Bathtub, keyboardType = KeyboardType.Number)
+                FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AmenityChip(stringResource(R.string.amenity_balcony), Icons.Filled.Balcony, hasBalcony, onHasBalconyChange)
+                    AmenityChip(stringResource(R.string.amenity_pool), Icons.Filled.Pool, hasPool, onHasPoolChange)
+                    AmenityChip(stringResource(R.string.amenity_sauna), Icons.Filled.Spa, hasSauna, onHasSaunaChange)
+                    AmenityChip(stringResource(R.string.amenity_gym), Icons.Filled.FitnessCenter, hasGym, onHasGymChange)
+                    AmenityChip(stringResource(R.string.amenity_video_intercom), Icons.Filled.Videocam, hasVideoIntercom, onHasVideoIntercomChange)
+                }
             }
             PropertyType.LAND -> {
                 Divider()
-                Text(stringResource(R.string.spec_section_land), style = MaterialTheme.typography.titleMedium)
+                FormSubsectionLabel(stringResource(R.string.spec_section_land))
                 NullableEnumDropdown(stringResource(R.string.label_land_use), LandUse.entries.toList(), landUse, onLandUseChange) { it.toPersianLabel() }
-                OutlinedTextField(streetWidth, onStreetWidthChange, label = { Text(stringResource(R.string.label_street_width)) }, modifier = Modifier.fillMaxWidth())
+                LabeledField(streetWidth, onStreetWidthChange, stringResource(R.string.label_street_width), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(allowedDensity, onAllowedDensityChange, label = { Text(stringResource(R.string.label_allowed_density)) }, modifier = Modifier.weight(1f))
-                    OutlinedTextField(allowedFloors, onAllowedFloorsChange, label = { Text(stringResource(R.string.label_allowed_floors)) }, modifier = Modifier.weight(1f))
+                    LabeledField(allowedDensity, onAllowedDensityChange, stringResource(R.string.label_allowed_density), icon = Icons.Filled.Apartment, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                    LabeledField(allowedFloors, onAllowedFloorsChange, stringResource(R.string.label_allowed_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
                 }
                 NullableEnumDropdown(stringResource(R.string.label_land_position), LandPosition.entries.toList(), landPosition, onLandPositionChange) { it.toPersianLabel() }
                 NullableEnumDropdown(stringResource(R.string.label_land_slope), LandSlope.entries.toList(), landSlope, onLandSlopeChange) { it.toPersianLabel() }
-                Text(stringResource(R.string.spec_section_amenities), style = MaterialTheme.typography.titleSmall)
-                CheckboxRow(stringResource(R.string.amenity_wall), hasWall, onHasWallChange)
-                CheckboxRow(stringResource(R.string.amenity_building_permit), hasBuildingPermit, onHasBuildingPermitChange)
+                FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AmenityChip(stringResource(R.string.amenity_wall), Icons.Filled.Fence, hasWall, onHasWallChange)
+                    AmenityChip(stringResource(R.string.amenity_building_permit), Icons.Filled.Verified, hasBuildingPermit, onHasBuildingPermitChange)
+                }
             }
             PropertyType.COMMERCIAL -> {
                 Divider()
-                Text(stringResource(R.string.spec_section_commercial), style = MaterialTheme.typography.titleMedium)
-                OutlinedTextField(keyMoney, onKeyMoneyChange, label = { Text(stringResource(R.string.label_key_money)) }, modifier = Modifier.fillMaxWidth())
+                FormSubsectionLabel(stringResource(R.string.spec_section_commercial))
+                LabeledField(keyMoney, onKeyMoneyChange, stringResource(R.string.label_key_money), icon = Icons.Filled.Payments, keyboardType = KeyboardType.Number)
                 NullableEnumDropdown(stringResource(R.string.label_commercial_floor_position), CommercialPosition.entries.toList(), commercialFloorPosition, onCommercialFloorPositionChange) { it.toPersianLabel() }
-                OutlinedTextField(ceilingHeight, onCeilingHeightChange, label = { Text(stringResource(R.string.label_ceiling_height)) }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(businessLicenseType, onBusinessLicenseTypeChange, label = { Text(stringResource(R.string.label_business_license_type)) }, modifier = Modifier.fillMaxWidth())
-                Text(stringResource(R.string.spec_section_amenities), style = MaterialTheme.typography.titleSmall)
-                CheckboxRow(stringResource(R.string.amenity_three_phase_electricity), hasThreePhaseElectricity, onHasThreePhaseElectricityChange)
-                CheckboxRow(stringResource(R.string.amenity_restroom), hasRestroom, onHasRestroomChange)
+                LabeledField(ceilingHeight, onCeilingHeightChange, stringResource(R.string.label_ceiling_height), icon = Icons.Filled.Height, keyboardType = KeyboardType.Number)
+                LabeledField(businessLicenseType, onBusinessLicenseTypeChange, stringResource(R.string.label_business_license_type), icon = Icons.Filled.Badge)
+                FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AmenityChip(stringResource(R.string.amenity_three_phase_electricity), Icons.Filled.Bolt, hasThreePhaseElectricity, onHasThreePhaseElectricityChange)
+                    AmenityChip(stringResource(R.string.amenity_restroom), Icons.Filled.Wc, hasRestroom, onHasRestroomChange)
+                }
             }
             PropertyType.OFFICE -> {
                 Divider()
-                Text(stringResource(R.string.spec_section_office), style = MaterialTheme.typography.titleMedium)
-                OutlinedTextField(partitionCount, onPartitionCountChange, label = { Text(stringResource(R.string.label_partition_count)) }, modifier = Modifier.fillMaxWidth())
-                Text(stringResource(R.string.spec_section_amenities), style = MaterialTheme.typography.titleSmall)
-                CheckboxRow(stringResource(R.string.amenity_false_floor), hasFalseFloor, onHasFalseFloorChange)
-                CheckboxRow(stringResource(R.string.amenity_false_ceiling), hasFalseCeiling, onHasFalseCeilingChange)
-                CheckboxRow(stringResource(R.string.amenity_conference_room), hasConferenceRoom, onHasConferenceRoomChange)
+                FormSubsectionLabel(stringResource(R.string.spec_section_office))
+                LabeledField(partitionCount, onPartitionCountChange, stringResource(R.string.label_partition_count), icon = Icons.Filled.ViewColumn, keyboardType = KeyboardType.Number)
+                FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AmenityChip(stringResource(R.string.amenity_false_floor), Icons.Filled.Layers, hasFalseFloor, onHasFalseFloorChange)
+                    AmenityChip(stringResource(R.string.amenity_false_ceiling), Icons.Filled.Height, hasFalseCeiling, onHasFalseCeilingChange)
+                    AmenityChip(stringResource(R.string.amenity_conference_room), Icons.Filled.MeetingRoom, hasConferenceRoom, onHasConferenceRoomChange)
+                }
             }
             PropertyType.VILLA -> Unit // فقط بخش مشترک بالا (سن بنا، طبقات، سند، آب/برق/گاز)؛ فیلد اختصاصی ندارد
         }
@@ -723,6 +772,7 @@ private fun <T : Enum<T>> NullableEnumDropdown(
     options: List<T>,
     selected: T?,
     onSelect: (T?) -> Unit,
+    icon: ImageVector? = null,
     display: @Composable (T) -> String
 ) {
     DropdownSelector(
@@ -730,6 +780,7 @@ private fun <T : Enum<T>> NullableEnumDropdown(
         options = listOf<T?>(null) + options,
         selected = selected,
         onSelect = onSelect,
+        icon = icon,
         display = { it?.let { value -> display(value) } ?: stringResource(R.string.value_unspecified) }
     )
 }
@@ -749,7 +800,7 @@ private fun PhotoPickerRow(
                     .clickable(onClick = onAddClick),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.AddAPhoto, contentDescription = stringResource(R.string.cd_add_photo), tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.Filled.AddAPhoto, contentDescription = stringResource(R.string.cd_add_photo), tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
         items(images) { image ->
@@ -795,6 +846,9 @@ private fun PhotoPickerRow(
 
 /**
  * منوی کشویی عمومی برای انتخاب یک مقدار از بین چند گزینه (مثل نوع ملک/نوع معامله).
+ * پارامتر [icon] اختیاریه (پیش‌فرض null) و بعد از onSelect و قبل از display اومده؛ چون
+ * default value داره، فراخوانی‌های قدیمی با trailing-lambda برای display (مثل داخل
+ * AddClientScreen) بدون تغییر کامپایل می‌شن.
  *
  * نکته‌ی مهم پیاده‌سازی: بدون Modifier.menuAnchor() روی TextField داخلِ
  * ExposedDropdownMenuBox، منو به فیلد "لنگر" نمی‌شود و در برخی دستگاه‌ها/نسخه‌ها
@@ -807,6 +861,7 @@ fun <T> DropdownSelector(
     options: List<T>,
     selected: T,
     onSelect: (T) -> Unit,
+    icon: ImageVector? = null,
     display: @Composable (T) -> String
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -816,6 +871,7 @@ fun <T> DropdownSelector(
             value = display(selected),
             onValueChange = {},
             label = { Text(label) },
+            leadingIcon = icon?.let { i -> { Icon(i, contentDescription = null) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()

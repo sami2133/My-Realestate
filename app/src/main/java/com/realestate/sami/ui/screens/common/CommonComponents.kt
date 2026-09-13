@@ -23,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -234,22 +235,47 @@ fun MapTypeSwitcher(
     }
 }
 
+/**
+ * پارامتر [icon] اختیاریه (پیش‌فرض null) — وقتی ست بشه، یک آیکون کنار عنوان نمایش داده
+ * می‌شه تا هر بخش از فرم/صفحه یک نشانه‌ی بصری معنادار داشته باشه، نه فقط متن ساده.
+ * چون پیش‌فرض داره و قبل از content (که همیشه trailing lambda صدا زده می‌شه) اومده،
+ * همه‌ی فراخوانی‌های قبلیِ SectionCard(title = ...) { ... } بدون تغییر کار می‌کنن.
+ */
 @Composable
-fun SectionCard(title: String? = null, content: @Composable ColumnScope.() -> Unit) {
+fun SectionCard(
+    title: String? = null,
+    icon: ImageVector? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Card(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(16.dp)) {
             if (title != null) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (icon != null) {
+                        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    }
+                    Text(title, style = MaterialTheme.typography.titleMedium)
+                }
                 Spacer(Modifier.height(10.dp))
             }
             content()
         }
     }
+}
+
+/** برچسب کوچک برای زیربخش‌های داخل یک [SectionCard] (مثلاً «امکانات» داخل کارت مشخصات). */
+@Composable
+fun FormSubsectionLabel(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** یک گزینه‌ی قابل انتخاب برای طرف مقابل بازدید (متقاضی هنگام ثبت از صفحه ملک، یا ملک هنگام ثبت از صفحه متقاضی). */
