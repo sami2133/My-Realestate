@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.Villa
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -148,6 +149,26 @@ fun PriceField(
         shape = MaterialTheme.shapes.small,
         modifier = modifier.fillMaxWidth()
     )
+}
+
+/**
+ * ردیف چک‌باکس ساده با برچسب — برای فرم‌های ساده‌تر مثل ثبت مشتری (نیازمندی‌های بولی مثل پارکینگ/آسانسور).
+ * برخلاف [AmenityChip] که یک چیپ بزرگ‌تره، این یک چک‌باکس معمولی کنار متنه؛ برای لیست کوتاه از
+ * نیازمندی‌ها (نه امکانات ملک) مناسب‌تره.
+ */
+@Composable
+fun CheckboxRow(
+    label: String,
+    checked: Boolean,
+    onChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(checked = checked, onCheckedChange = onChange)
+        Text(label)
+    }
 }
 
 /** ردیف سوییچ برای گزینه‌های «روشن/خاموش» که فیلدهای اضافی رو نمایان می‌کنن (مثل «قابل معاوضه»). */

@@ -14,6 +14,7 @@ import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.ClientViewModel
+import com.realestate.sami.ui.screens.common.CheckboxRow
 import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
