@@ -2,12 +2,12 @@ package com.realestate.sami.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,9 +24,15 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.realestate.sami.R
 import com.realestate.sami.ui.screens.common.MapTypeSwitcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 /** مرکز پیش‌فرض نقشه: تهران — وقتی هنوز موقعیتی انتخاب نشده. */
 private val DEFAULT_LOCATION = LatLng(35.6892, 51.3890)
@@ -37,7 +43,7 @@ fun LocationPickerScreen(
     initialLatitude: Double?,
     initialLongitude: Double?,
     onBack: () -> Unit,
-    onConfirm: (lat: Double, lng: Double) -> Unit
+    onConfirm: (lat: Double, lng: Double, address: String?) -> Unit
 ) {
     val context = LocalContext.current
     val startPoint = if (initialLatitude != null && initialLongitude != null) {
@@ -47,6 +53,10 @@ fun LocationPickerScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(startPoint, 15f)
     }
+
+    var selectedPosition by remember { mutableStateOf(startPoint) }
+    var isResolvingAddress by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     var mapType by remember { mutableStateOf(MapType.NORMAL) }
 
@@ -81,9 +91,23 @@ fun LocationPickerScreen(
                     Spacer(Modifier.height(10.dp))
                     Button(
                         onClick = {
-                            val target = cameraPositionState.position.target
-                            onConfirm(target.latitude, target.longitude)
+                            isResolvingAddress = true
+                            scope.launch {
+                                val address = withContext(Dispatchers.IO) {
+                                    try {
+                                        @Suppress("DEPRECATION")
+                                        Geocoder(context, Locale("fa"))
+                                            .getFromLocation(selectedPosition.latitude, selectedPosition.longitude, 1)
+                                            ?.firstOrNull()?.getAddressLine(0)
+                                    } catch (_: Exception) {
+                                        null
+                                    }
+                                }
+                                isResolvingAddress = false
+                                onConfirm(selectedPosition.latitude, selectedPosition.longitude, address)
+                            }
                         },
+                        enabled = !isResolvingAddress,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(stringResource(R.string.map_picker_confirm))
@@ -97,21 +121,16 @@ fun LocationPickerScreen(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(isMyLocationEnabled = hasLocationPermission, mapType = mapType),
-                uiSettings = MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = true)
-            )
+                uiSettings = MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = true),
+                onMapClick = { latLng -> selectedPosition = latLng }
+            ) {
+                Marker(state = MarkerState(position = selectedPosition))
+            }
 
             MapTypeSwitcher(
                 currentType = mapType,
                 onTypeSelected = { mapType = it },
                 modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
-            )
-
-            // پین ثابت وسط صفحه — نقشه زیرش حرکت می‌کند، خود پین ثابت می‌ماند
-            Icon(
-                imageVector = Icons.Filled.LocationOn,
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.Center).size(48.dp).padding(bottom = 48.dp),
-                tint = MaterialTheme.colorScheme.primary
             )
 
             FloatingActionButton(
@@ -123,9 +142,9 @@ fun LocationPickerScreen(
                         try {
                             fusedClient.lastLocation.addOnSuccessListener { location ->
                                 if (location != null) {
-                                    cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                                        LatLng(location.latitude, location.longitude), 16f
-                                    )
+                                    val target = LatLng(location.latitude, location.longitude)
+                                    selectedPosition = target
+                                    cameraPositionState.position = CameraPosition.fromLatLngZoom(target, 16f)
                                 }
                             }
                         } catch (_: SecurityException) {

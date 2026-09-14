@@ -65,6 +65,7 @@ fun AddPropertyScreen(
     onPickLocationOnMap: () -> Unit,
     pickedLatitude: Double? = null,
     pickedLongitude: Double? = null,
+    pickedAddress: String? = null,
     viewModel: PropertyViewModel = hiltViewModel()
 ) {
     val isEditMode = propertyId != null
@@ -291,6 +292,9 @@ fun AddPropertyScreen(
         if (pickedLatitude != null && pickedLongitude != null) {
             latitude = pickedLatitude
             longitude = pickedLongitude
+            if (!pickedAddress.isNullOrBlank()) {
+                address = pickedAddress
+            }
         }
     }
 

@@ -97,11 +97,15 @@ fun AppNavigation() {
                 val pickedLng by entry.savedStateHandle
                     .getStateFlow<Double?>("picked_lng", null)
                     .collectAsState()
+                val pickedAddress by entry.savedStateHandle
+                    .getStateFlow<String?>("picked_address", null)
+                    .collectAsState()
                 AddPropertyScreen(
                     onSaved = { navController.popBackStack() },
                     onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
                     pickedLatitude = pickedLat,
-                    pickedLongitude = pickedLng
+                    pickedLongitude = pickedLng,
+                    pickedAddress = pickedAddress
                 )
             }
             composable(
@@ -115,12 +119,16 @@ fun AppNavigation() {
                 val pickedLng by entry.savedStateHandle
                     .getStateFlow<Double?>("picked_lng", null)
                     .collectAsState()
+                val pickedAddress by entry.savedStateHandle
+                    .getStateFlow<String?>("picked_address", null)
+                    .collectAsState()
                 AddPropertyScreen(
                     propertyId = propertyId,
                     onSaved = { navController.popBackStack() },
                     onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
                     pickedLatitude = pickedLat,
-                    pickedLongitude = pickedLng
+                    pickedLongitude = pickedLng,
+                    pickedAddress = pickedAddress
                 )
             }
             composable(
@@ -139,9 +147,10 @@ fun AppNavigation() {
                     initialLatitude = null,
                     initialLongitude = null,
                     onBack = { navController.popBackStack() },
-                    onConfirm = { lat, lng ->
+                    onConfirm = { lat, lng, address ->
                         navController.previousBackStackEntry?.savedStateHandle?.set("picked_lat", lat)
                         navController.previousBackStackEntry?.savedStateHandle?.set("picked_lng", lng)
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_address", address)
                         navController.popBackStack()
                     }
                 )
