@@ -143,10 +143,11 @@ fun AddPropertyScreen(
     var hasGym by remember { mutableStateOf(false) }
     var hasCourtyard by remember { mutableStateOf(false) }
 
-    // ویلایی
+    // آپارتمان — حیاط اختصاصی و تعداد مستر
     var yardArea by remember { mutableStateOf("") }
-    var terraceArea by remember { mutableStateOf("") }
     var masterBedroomCount by remember { mutableStateOf("") }
+
+    // ویلایی
     var hasCaretaker by remember { mutableStateOf(false) }
 
     // زمین
@@ -154,8 +155,6 @@ fun AddPropertyScreen(
     var frontageWidth by remember { mutableStateOf("") }
     var streetWidth by remember { mutableStateOf("") }
     var buildingPermitArea by remember { mutableStateOf("") }
-    var landPosition by remember { mutableStateOf<LandPosition?>(null) }
-    var landSlope by remember { mutableStateOf<LandSlope?>(null) }
     var hasWall by remember { mutableStateOf(false) }
     var waterRightOwned by remember { mutableStateOf(false) }
     var waterRightObtainable by remember { mutableStateOf(false) }
@@ -166,11 +165,8 @@ fun AddPropertyScreen(
 
     // تجاری (شامل اداری سابق)
     var commercialUsage by remember { mutableStateOf<CommercialUsage?>(null) }
-    var commercialFloorPosition by remember { mutableStateOf<CommercialPosition?>(null) }
-    var streetPosition by remember { mutableStateOf<StreetPosition?>(null) }
     var ceilingHeight by remember { mutableStateOf("") }
     var hasThreePhaseElectricity by remember { mutableStateOf(false) }
-    var hasKitchen by remember { mutableStateOf(false) }
     var hasRestroom by remember { mutableStateOf(false) }
 
     // ===== ۵) توضیحات =====
@@ -256,7 +252,6 @@ fun AddPropertyScreen(
             hasCourtyard = p.hasCourtyard
 
             yardArea = p.yardArea?.toPlainInputString() ?: ""
-            terraceArea = p.terraceArea?.toPlainInputString() ?: ""
             masterBedroomCount = p.masterBedroomCount?.toString() ?: ""
             hasCaretaker = p.hasCaretaker
 
@@ -264,8 +259,6 @@ fun AddPropertyScreen(
             frontageWidth = p.frontageWidth?.toPlainInputString() ?: ""
             streetWidth = p.streetWidth?.toPlainInputString() ?: ""
             buildingPermitArea = p.buildingPermitArea?.toPlainInputString() ?: ""
-            landPosition = p.landPosition
-            landSlope = p.landSlope
             hasWall = p.hasWall
             waterRightOwned = p.waterRightOwned
             waterRightObtainable = p.waterRightObtainable
@@ -275,11 +268,8 @@ fun AddPropertyScreen(
             gasRightObtainable = p.gasRightObtainable
 
             commercialUsage = p.commercialUsage
-            commercialFloorPosition = p.commercialFloorPosition
-            streetPosition = p.streetPosition
             ceilingHeight = p.ceilingHeight?.toPlainInputString() ?: ""
             hasThreePhaseElectricity = p.hasThreePhaseElectricity
-            hasKitchen = p.hasKitchen
             hasRestroom = p.hasRestroom
 
             description = p.description ?: ""
@@ -350,83 +340,87 @@ fun AddPropertyScreen(
                 )
             }
 
-            // ===== ۳) مشخصات پایه =====
-            SectionCard(title = stringResource(R.string.add_property_specs_section), icon = propertyType.icon()) {
-                DropdownSelector(
-                    label = stringResource(R.string.add_property_type_label),
-                    options = PropertyType.entries.toList(),
-                    selected = propertyType,
-                    onSelect = { propertyType = it },
-                    icon = propertyType.icon(),
-                    display = { it.toPersianLabel() }
-                )
-                DropdownSelector(
-                    label = stringResource(R.string.add_property_deal_type_label),
-                    options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
-                    selected = dealType,
-                    onSelect = { dealType = it },
-                    icon = dealType.icon(),
-                    display = { it.toPersianLabel() }
-                )
-
-                LabeledField(address, { address = it }, stringResource(R.string.label_address), icon = Icons.Filled.LocationOn)
-                OutlinedButton(onClick = onPickLocationOnMap, modifier = Modifier.fillMaxWidth()) {
-                    Icon(Icons.Filled.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        if (latitude != null) stringResource(R.string.add_property_location_selected)
-                        else stringResource(R.string.add_property_pick_location)
-                    )
+            // ===== ۳-الف) کاربری/کاربرد — فقط زمین و تجاری، پیش از «مشخصات ملک» =====
+            if (propertyType == PropertyType.LAND) {
+                SectionCard(title = stringResource(R.string.label_land_use), icon = Icons.Filled.Category) {
+                    NullableEnumDropdown(stringResource(R.string.label_land_use), LandUse.entries.toList(), landUse, { landUse = it }, icon = Icons.Filled.Category) { it.toPersianLabel() }
                 }
-
-                // مساحت — برچسب و تعداد فیلد بسته به نوع ملک فرق می‌کند
-                when (propertyType) {
-                    PropertyType.VILLA -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        LabeledField(totalArea, { totalArea = it }, stringResource(R.string.label_area_total), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                        LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                    }
-                    PropertyType.COMMERCIAL -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                        LabeledField(balconyArea, { balconyArea = it }, stringResource(R.string.label_area_balcony), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                    }
-                    PropertyType.LAND -> LabeledField(area, { area = it }, stringResource(R.string.label_area_total), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number)
-                    PropertyType.APARTMENT -> LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number)
-                }
-
-                if (propertyType != PropertyType.LAND) {
-                    LabeledField(rooms, { rooms = it }, stringResource(R.string.label_rooms), icon = Icons.Filled.MeetingRoom, keyboardType = KeyboardType.Number)
-                }
-
-                // طبقات — فقط آپارتمان/ویلایی/تجاری، با فیلدهای متفاوت
-                when (propertyType) {
-                    PropertyType.APARTMENT -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        LabeledField(floor, { floor = it }, stringResource(R.string.label_floor), icon = Icons.Filled.Stairs, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                        LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                        LabeledField(unitsPerFloor, { unitsPerFloor = it }, stringResource(R.string.label_units_per_floor), icon = Icons.Filled.ViewColumn, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                    }
-                    PropertyType.COMMERCIAL -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        LabeledField(floor, { floor = it }, stringResource(R.string.label_floor), icon = Icons.Filled.Stairs, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                        LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                    }
-                    PropertyType.VILLA -> LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number)
-                    PropertyType.LAND -> Unit
-                }
-
-                if (propertyType == PropertyType.APARTMENT || propertyType == PropertyType.VILLA) {
-                    LabeledField(buildingAge, { buildingAge = it }, stringResource(R.string.label_building_age), icon = Icons.Filled.Apartment, keyboardType = KeyboardType.Number)
+            } else if (propertyType == PropertyType.COMMERCIAL) {
+                SectionCard(title = stringResource(R.string.label_commercial_usage), icon = Icons.Filled.Business) {
+                    NullableEnumDropdown(stringResource(R.string.label_commercial_usage), CommercialUsage.entries.toList(), commercialUsage, { commercialUsage = it }, icon = Icons.Filled.Business) { it.toPersianLabel() }
                 }
             }
 
-            // ===== ۴) مشخصات تکمیلی بسته به نوع ملک =====
-            SectionCard(title = stringResource(R.string.spec_section_common), icon = Icons.Filled.Tune) {
+            // ===== ۳) مشخصات ملک =====
+            SectionCard(title = stringResource(R.string.add_property_specs_section), icon = propertyType.icon()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    val deedOptions = if (propertyType == PropertyType.LAND) {
-                        DeedType.entries.filterNot { it == DeedType.UNDER_CONSTRUCTION }
-                    } else DeedType.entries.toList()
-                    NullableEnumDropdown(stringResource(R.string.label_deed_type), deedOptions, deedType, { deedType = it }, icon = Icons.Filled.Verified) { it.toPersianLabel() }
+                    DropdownSelector(
+                        label = stringResource(R.string.add_property_type_label),
+                        options = PropertyType.entries.toList(),
+                        selected = propertyType,
+                        onSelect = { propertyType = it },
+                        icon = propertyType.icon(),
+                        display = { it.toPersianLabel() }
+                    )
+                    DropdownSelector(
+                        label = stringResource(R.string.add_property_deal_type_label),
+                        options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },
+                        selected = dealType,
+                        onSelect = { dealType = it },
+                        icon = dealType.icon(),
+                        display = { it.toPersianLabel() }
+                    )
 
-                    if (propertyType == PropertyType.APARTMENT || propertyType == PropertyType.VILLA || propertyType == PropertyType.COMMERCIAL) {
-                        NullableEnumDropdown(stringResource(R.string.label_building_class), BuildingClass.entries.toList(), buildingClass, { buildingClass = it }) { it.toPersianLabel() }
+                    // مساحت/اطاق/طبقات — بسته به نوع ملک، دقیقاً مطابق ترتیب فرم جدید
+                    when (propertyType) {
+                        PropertyType.APARTMENT -> {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(yardArea, { yardArea = it }, stringResource(R.string.label_yard_area), icon = Icons.Filled.Yard, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(rooms, { rooms = it }, stringResource(R.string.label_rooms), icon = Icons.Filled.MeetingRoom, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(masterBedroomCount, { masterBedroomCount = it }, stringResource(R.string.label_master_bedroom_count), icon = Icons.Filled.Bed, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            LabeledField(floor, { floor = it }, stringResource(R.string.label_floor), icon = Icons.Filled.Stairs, keyboardType = KeyboardType.Number)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(unitsPerFloor, { unitsPerFloor = it }, stringResource(R.string.label_units_per_floor), icon = Icons.Filled.ViewColumn, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                        }
+                        PropertyType.VILLA -> {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(totalArea, { totalArea = it }, stringResource(R.string.label_area_total), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(rooms, { rooms = it }, stringResource(R.string.label_rooms), icon = Icons.Filled.MeetingRoom, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                        }
+                        PropertyType.COMMERCIAL -> {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(area, { area = it }, stringResource(R.string.label_area_built), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(balconyArea, { balconyArea = it }, stringResource(R.string.label_area_balcony), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            LabeledField(rooms, { rooms = it }, stringResource(R.string.label_rooms), icon = Icons.Filled.MeetingRoom, keyboardType = KeyboardType.Number)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(floor, { floor = it }, stringResource(R.string.label_floor), icon = Icons.Filled.Stairs, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(totalFloors, { totalFloors = it }, stringResource(R.string.label_total_floors), icon = Icons.Filled.Layers, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(frontageWidth, { frontageWidth = it }, stringResource(R.string.label_frontage_width_commercial), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(ceilingHeight, { ceilingHeight = it }, stringResource(R.string.label_ceiling_height), icon = Icons.Filled.Height, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                        }
+                        PropertyType.LAND -> {
+                            LabeledField(area, { area = it }, stringResource(R.string.label_area_total), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                LabeledField(frontageWidth, { frontageWidth = it }, stringResource(R.string.label_frontage_width_land), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                                LabeledField(streetWidth, { streetWidth = it }, stringResource(R.string.label_street_width), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                            }
+                            LabeledField(buildingPermitArea, { buildingPermitArea = it }, stringResource(R.string.label_building_permit_area), icon = Icons.Filled.Verified, keyboardType = KeyboardType.Number)
+                        }
                     }
 
                     when (propertyType) {
@@ -460,23 +454,15 @@ fun AddPropertyScreen(
                             val heatingOptions = if (propertyType == PropertyType.VILLA) HeatingSystem.entries.filterNot { it == HeatingSystem.CENTRAL } else HeatingSystem.entries.toList()
                             NullableEnumDropdown(stringResource(R.string.label_heating_system), heatingOptions, heatingSystem, { heatingSystem = it }, icon = Icons.Filled.LocalFireDepartment) { it.toPersianLabel() }
 
-                            if (propertyType == PropertyType.VILLA) {
-                                FormSubsectionLabel(stringResource(R.string.spec_section_villa))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    LabeledField(yardArea, { yardArea = it }, stringResource(R.string.label_yard_area), icon = Icons.Filled.Yard, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                                    LabeledField(terraceArea, { terraceArea = it }, stringResource(R.string.label_terrace_area), icon = Icons.Filled.Balcony, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                                }
-                                LabeledField(masterBedroomCount, { masterBedroomCount = it }, stringResource(R.string.label_master_bedroom_count), icon = Icons.Filled.Bed, keyboardType = KeyboardType.Number)
-                            } else {
-                                LabeledField(terraceArea, { terraceArea = it }, stringResource(R.string.label_terrace_area), icon = Icons.Filled.Balcony, keyboardType = KeyboardType.Number)
-                            }
-
-                            // امکانات
-                            FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                            // امکانات آپارتمان/ویلایی
+                            FormSubsectionLabel(
+                                if (propertyType == PropertyType.APARTMENT) stringResource(R.string.spec_section_amenities_apartment)
+                                else stringResource(R.string.spec_section_amenities_villa)
+                            )
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                AmenityChip(stringResource(R.string.amenity_parking), Icons.Filled.LocalParking, hasParking) { hasParking = it }
                                 AmenityChip(stringResource(R.string.amenity_storage), Icons.Filled.Inventory2, hasStorage) { hasStorage = it }
                                 AmenityChip(stringResource(R.string.amenity_elevator), Icons.Filled.Elevator, hasElevator) { hasElevator = it }
-                                AmenityChip(stringResource(R.string.amenity_parking), Icons.Filled.LocalParking, hasParking) { hasParking = it }
                                 if (propertyType == PropertyType.APARTMENT) {
                                     AmenityChip(stringResource(R.string.amenity_private_parking_path), Icons.Filled.LocalParking, hasPrivateParkingPath) { hasPrivateParkingPath = it }
                                     AmenityChip(stringResource(R.string.amenity_shared_parking_path), Icons.Filled.LocalParking, hasSharedParkingPath) { hasSharedParkingPath = it }
@@ -492,36 +478,27 @@ fun AddPropertyScreen(
                                 AmenityChip(stringResource(R.string.amenity_video_intercom), Icons.Filled.Videocam, hasVideoIntercom) { hasVideoIntercom = it }
                                 if (propertyType == PropertyType.VILLA) {
                                     AmenityChip(stringResource(R.string.amenity_caretaker), Icons.Filled.Security, hasCaretaker) { hasCaretaker = it }
+                                    AmenityChip(stringResource(R.string.amenity_pool), Icons.Filled.Pool, hasPool) { hasPool = it }
+                                    AmenityChip(stringResource(R.string.amenity_gym), Icons.Filled.FitnessCenter, hasGym) { hasGym = it }
                                 }
                             }
 
-                            // امکانات ساختمان
-                            FormSubsectionLabel(stringResource(R.string.spec_section_building_amenities))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                if (propertyType == PropertyType.APARTMENT) {
+                            // امکانات ساختمان — فقط آپارتمان
+                            if (propertyType == PropertyType.APARTMENT) {
+                                FormSubsectionLabel(stringResource(R.string.spec_section_building_amenities))
+                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     AmenityChip(stringResource(R.string.amenity_lobby), Icons.Filled.Weekend, hasLobby) { hasLobby = it }
                                     AmenityChip(stringResource(R.string.amenity_security_guard), Icons.Filled.Security, hasSecurityGuard) { hasSecurityGuard = it }
-                                }
-                                AmenityChip(stringResource(R.string.amenity_pool), Icons.Filled.Pool, hasPool) { hasPool = it }
-                                AmenityChip(stringResource(R.string.amenity_gym), Icons.Filled.FitnessCenter, hasGym) { hasGym = it }
-                                if (propertyType == PropertyType.APARTMENT) {
+                                    AmenityChip(stringResource(R.string.amenity_pool), Icons.Filled.Pool, hasPool) { hasPool = it }
+                                    AmenityChip(stringResource(R.string.amenity_gym), Icons.Filled.FitnessCenter, hasGym) { hasGym = it }
                                     AmenityChip(stringResource(R.string.amenity_courtyard), Icons.Filled.Yard, hasCourtyard) { hasCourtyard = it }
                                 }
                             }
                         }
 
                         PropertyType.LAND -> {
-                            FormSubsectionLabel(stringResource(R.string.spec_section_land))
-                            NullableEnumDropdown(stringResource(R.string.label_land_use), LandUse.entries.toList(), landUse, { landUse = it }) { it.toPersianLabel() }
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                LabeledField(frontageWidth, { frontageWidth = it }, stringResource(R.string.label_frontage_width_land), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                                LabeledField(streetWidth, { streetWidth = it }, stringResource(R.string.label_street_width), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                            }
-                            LabeledField(buildingPermitArea, { buildingPermitArea = it }, stringResource(R.string.label_building_permit_area), icon = Icons.Filled.Verified, keyboardType = KeyboardType.Number)
-                            NullableEnumDropdown(stringResource(R.string.label_land_position), LandPosition.entries.toList(), landPosition, { landPosition = it }) { it.toPersianLabel() }
-                            NullableEnumDropdown(stringResource(R.string.label_land_slope), LandSlope.entries.toList(), landSlope, { landSlope = it }) { it.toPersianLabel() }
-
-                            FormSubsectionLabel(stringResource(R.string.spec_section_land_rights))
+                            // امکانات زمین
+                            FormSubsectionLabel(stringResource(R.string.spec_section_land_amenities))
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 AmenityChip(stringResource(R.string.amenity_water_right_owned), Icons.Filled.WaterDrop, waterRightOwned) { waterRightOwned = it }
                                 AmenityChip(stringResource(R.string.amenity_water_right_obtainable), Icons.Filled.WaterDrop, waterRightObtainable) { waterRightObtainable = it }
@@ -534,15 +511,6 @@ fun AddPropertyScreen(
                         }
 
                         PropertyType.COMMERCIAL -> {
-                            FormSubsectionLabel(stringResource(R.string.spec_section_commercial))
-                            NullableEnumDropdown(stringResource(R.string.label_commercial_usage), CommercialUsage.entries.toList(), commercialUsage, { commercialUsage = it }, icon = Icons.Filled.Business) { it.toPersianLabel() }
-                            NullableEnumDropdown(stringResource(R.string.label_commercial_floor_position), CommercialPosition.entries.toList(), commercialFloorPosition, { commercialFloorPosition = it }) { it.toPersianLabel() }
-                            NullableEnumDropdown(stringResource(R.string.label_street_position), StreetPosition.entries.toList(), streetPosition, { streetPosition = it }) { it.toPersianLabel() }
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                LabeledField(frontageWidth, { frontageWidth = it }, stringResource(R.string.label_frontage_width_commercial), icon = Icons.Filled.Straighten, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                                LabeledField(ceilingHeight, { ceilingHeight = it }, stringResource(R.string.label_ceiling_height), icon = Icons.Filled.Height, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
-                            }
-
                             FormSubsectionLabel(stringResource(R.string.spec_section_finishes))
                             NullableEnumDropdown(stringResource(R.string.label_flooring), FlooringType.entries.toList(), flooring, { flooring = it }) { it.toPersianLabel() }
                             NullableEnumDropdown(stringResource(R.string.label_wall_covering), WallCovering.entries.filterNot { it == WallCovering.PAINT }, wallCovering, { wallCovering = it }) { it.toPersianLabel() }
@@ -552,11 +520,12 @@ fun AddPropertyScreen(
                             NullableEnumDropdown(stringResource(R.string.label_cooling_system), CoolingSystem.entries.toList(), coolingSystem, { coolingSystem = it }, icon = Icons.Filled.AcUnit) { it.toPersianLabel() }
                             NullableEnumDropdown(stringResource(R.string.label_heating_system), HeatingSystem.entries.toList(), heatingSystem, { heatingSystem = it }, icon = Icons.Filled.LocalFireDepartment) { it.toPersianLabel() }
 
-                            FormSubsectionLabel(stringResource(R.string.spec_section_amenities))
+                            FormSubsectionLabel(stringResource(R.string.spec_section_amenities_commercial))
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 AmenityChip(stringResource(R.string.amenity_parking), Icons.Filled.LocalParking, hasParking) { hasParking = it }
                                 AmenityChip(stringResource(R.string.amenity_storage), Icons.Filled.Inventory2, hasStorage) { hasStorage = it }
                                 AmenityChip(stringResource(R.string.amenity_elevator), Icons.Filled.Elevator, hasElevator) { hasElevator = it }
+                                AmenityChip(stringResource(R.string.amenity_restroom), Icons.Filled.Wc, hasRestroom) { hasRestroom = it }
                                 AmenityChip(stringResource(R.string.amenity_three_phase_electricity), Icons.Filled.Bolt, hasThreePhaseElectricity) { hasThreePhaseElectricity = it }
                                 AmenityChip(stringResource(R.string.amenity_private_water), Icons.Filled.WaterDrop, hasPrivateWater) { hasPrivateWater = it }
                                 AmenityChip(stringResource(R.string.amenity_shared_water), Icons.Filled.WaterDrop, hasSharedWater) { hasSharedWater = it }
@@ -564,12 +533,38 @@ fun AddPropertyScreen(
                                 AmenityChip(stringResource(R.string.amenity_shared_electricity), Icons.Filled.Bolt, hasSharedElectricity) { hasSharedElectricity = it }
                                 AmenityChip(stringResource(R.string.amenity_private_gas), Icons.Filled.LocalFireDepartment, hasPrivateGas) { hasPrivateGas = it }
                                 AmenityChip(stringResource(R.string.amenity_shared_gas), Icons.Filled.LocalFireDepartment, hasSharedGas) { hasSharedGas = it }
-                                AmenityChip(stringResource(R.string.amenity_kitchen), Icons.Filled.Kitchen, hasKitchen) { hasKitchen = it }
-                                AmenityChip(stringResource(R.string.amenity_restroom), Icons.Filled.Wc, hasRestroom) { hasRestroom = it }
                             }
                         }
                     }
+
+                    // نوع سند — همیشه
+                    val deedOptions = if (propertyType == PropertyType.LAND) {
+                        DeedType.entries.filterNot { it == DeedType.UNDER_CONSTRUCTION }
+                    } else DeedType.entries.toList()
+                    NullableEnumDropdown(stringResource(R.string.label_deed_type), deedOptions, deedType, { deedType = it }, icon = Icons.Filled.Verified) { it.toPersianLabel() }
+
+                    // قدمت بنا — فقط آپارتمان/ویلایی
+                    if (propertyType == PropertyType.APARTMENT || propertyType == PropertyType.VILLA) {
+                        LabeledField(buildingAge, { buildingAge = it }, stringResource(R.string.label_building_age), icon = Icons.Filled.CalendarMonth, keyboardType = KeyboardType.Number)
+                    }
+
+                    // کلاس ساختمان — آپارتمان/ویلایی/تجاری
+                    if (propertyType == PropertyType.APARTMENT || propertyType == PropertyType.VILLA || propertyType == PropertyType.COMMERCIAL) {
+                        NullableEnumDropdown(stringResource(R.string.label_building_class), BuildingClass.entries.toList(), buildingClass, { buildingClass = it }) { it.toPersianLabel() }
+                    }
                 }
+            }
+
+            // ===== آدرس =====
+            SectionCard(title = stringResource(R.string.label_address), icon = Icons.Filled.LocationOn) {
+                LabeledField(
+                    address, { address = it },
+                    stringResource(R.string.label_address),
+                    icon = Icons.Filled.LocationOn,
+                    trailingIcon = if (latitude != null) Icons.Filled.MyLocation else Icons.Filled.AddLocationAlt,
+                    onTrailingIconClick = onPickLocationOnMap,
+                    trailingIconContentDescription = if (latitude != null) stringResource(R.string.add_property_location_selected) else stringResource(R.string.add_property_pick_location)
+                )
             }
 
             // ===== ۵) توضیحات تکمیلی =====
@@ -700,17 +695,17 @@ fun AddPropertyScreen(
                         hasGym = isApartmentOrVilla && hasGym,
                         hasCourtyard = propertyType == PropertyType.APARTMENT && hasCourtyard,
 
-                        yardArea = if (propertyType == PropertyType.VILLA) yardArea.parseNumberInput() else null,
-                        terraceArea = if (isApartmentOrVilla) terraceArea.parseNumberInput() else null,
-                        masterBedroomCount = if (propertyType == PropertyType.VILLA) masterBedroomCount.parseIntInput() else null,
+                        yardArea = if (propertyType == PropertyType.APARTMENT) yardArea.parseNumberInput() else null,
+                        terraceArea = null,
+                        masterBedroomCount = if (propertyType == PropertyType.APARTMENT) masterBedroomCount.parseIntInput() else null,
                         hasCaretaker = propertyType == PropertyType.VILLA && hasCaretaker,
 
                         landUse = if (propertyType == PropertyType.LAND) landUse else null,
                         frontageWidth = if (propertyType == PropertyType.LAND || propertyType == PropertyType.COMMERCIAL) frontageWidth.parseNumberInput() else null,
                         streetWidth = if (propertyType == PropertyType.LAND) streetWidth.parseNumberInput() else null,
                         buildingPermitArea = if (propertyType == PropertyType.LAND) buildingPermitArea.parseNumberInput() else null,
-                        landPosition = if (propertyType == PropertyType.LAND) landPosition else null,
-                        landSlope = if (propertyType == PropertyType.LAND) landSlope else null,
+                        landPosition = null,
+                        landSlope = null,
                         hasWall = propertyType == PropertyType.LAND && hasWall,
                         waterRightOwned = propertyType == PropertyType.LAND && waterRightOwned,
                         waterRightObtainable = propertyType == PropertyType.LAND && waterRightObtainable,
@@ -720,11 +715,11 @@ fun AddPropertyScreen(
                         gasRightObtainable = propertyType == PropertyType.LAND && gasRightObtainable,
 
                         commercialUsage = if (propertyType == PropertyType.COMMERCIAL) commercialUsage else null,
-                        commercialFloorPosition = if (propertyType == PropertyType.COMMERCIAL) commercialFloorPosition else null,
-                        streetPosition = if (propertyType == PropertyType.COMMERCIAL) streetPosition else null,
+                        commercialFloorPosition = null,
+                        streetPosition = null,
                         ceilingHeight = if (propertyType == PropertyType.COMMERCIAL) ceilingHeight.parseNumberInput() else null,
                         hasThreePhaseElectricity = propertyType == PropertyType.COMMERCIAL && hasThreePhaseElectricity,
-                        hasKitchen = propertyType == PropertyType.COMMERCIAL && hasKitchen,
+                        hasKitchen = false,
                         hasRestroom = propertyType == PropertyType.COMMERCIAL && hasRestroom,
 
                         description = description.ifBlank { null },

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -53,7 +54,11 @@ fun LabeledField(
     icon: ImageVector? = null,
     placeholder: String? = null,
     minLines: Int = 1,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    /** آیکون فشرده‌ی سمت‌دیگر فیلد — مثلاً «انتخاب موقعیت از روی نقشه» داخل کادر آدرس، بدون اشغال یک ردیف جدا. */
+    trailingIcon: ImageVector? = null,
+    onTrailingIconClick: (() -> Unit)? = null,
+    trailingIconContentDescription: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -61,6 +66,17 @@ fun LabeledField(
         label = { Text(label) },
         placeholder = placeholder?.let { hint -> { Text(hint, style = MaterialTheme.typography.bodySmall) } },
         leadingIcon = icon?.let { i -> { Icon(i, contentDescription = null) } },
+        trailingIcon = trailingIcon?.let { i ->
+            {
+                if (onTrailingIconClick != null) {
+                    IconButton(onClick = onTrailingIconClick) {
+                        Icon(i, contentDescription = trailingIconContentDescription)
+                    }
+                } else {
+                    Icon(i, contentDescription = trailingIconContentDescription)
+                }
+            }
+        },
         minLines = minLines,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         shape = MaterialTheme.shapes.small,

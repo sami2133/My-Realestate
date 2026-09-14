@@ -408,8 +408,8 @@
     <string name="label_building_class">کلاس ساختمان</string>
     <string name="label_heating_cooling">سیستم سرمایش/گرمایش</string>
     <string name="label_street_position">موقعیت نسبت به گذر</string>
-    <string name="label_frontage_width_land">طول بر (متر)</string>
-    <string name="label_frontage_width_commercial">عرض ویترین (متر)</string>
+    <string name="label_frontage_width_land">طول ورودی (متر)</string>
+    <string name="label_frontage_width_commercial">طول ورودی (متر)</string>
 
     <string name="label_unit_direction">جهت واحد</string>
     <string name="label_unit_condition">وضعیت واحد</string>
@@ -457,6 +457,10 @@
     <string name="spec_section_villa">مشخصات ویلایی</string>
     <string name="spec_section_building_amenities">امکانات ساختمان</string>
     <string name="spec_section_land_rights">امتیازات آب/برق/گاز</string>
+    <string name="spec_section_amenities_apartment">امکانات آپارتمان</string>
+    <string name="spec_section_amenities_villa">امکانات ویلایی</string>
+    <string name="spec_section_amenities_commercial">امکانات تجاری</string>
+    <string name="spec_section_land_amenities">امکانات زمین</string>
 
     <string name="label_area_built">مساحت بنا (متر)</string>
     <string name="label_area_total">مساحت کل (متر)</string>
@@ -467,9 +471,9 @@
     <string name="label_ceiling_covering">سقف‌پوش</string>
     <string name="label_cooling_system">سیستم سرمایش</string>
     <string name="label_heating_system">سیستم گرمایش</string>
-    <string name="label_yard_area">مساحت حیاط (متر)</string>
+    <string name="label_yard_area">حیاط اختصاصی (مترمربع)</string>
     <string name="label_terrace_area">مساحت تراس (متر)</string>
-    <string name="label_master_bedroom_count">تعداد خواب مستر</string>
+    <string name="label_master_bedroom_count">تعداد مستر</string>
     <string name="label_building_permit_area">پروانه ساختمانی به‌مساحت (متر)</string>
     <string name="label_commercial_usage">کاربرد</string>
 
