@@ -400,7 +400,7 @@
 
     <string name="label_building_age">سن بنا (سال)</string>
     <string name="label_floor">طبقه</string>
-    <string name="label_total_floors">تعداد کل طبقات</string>
+    <string name="label_total_floors">تعداد طبقات</string>
     <string name="label_deed_type">نوع سند</string>
     <string name="label_water_status">امتیاز آب</string>
     <string name="label_electricity_status">امتیاز برق</string>
@@ -465,13 +465,13 @@
     <string name="label_area_built">مساحت بنا (متر)</string>
     <string name="label_area_total">مساحت کل (متر)</string>
     <string name="label_area_balcony">مساحت بالکن (متر)</string>
-    <string name="label_units_per_floor">تعداد واحد در طبقه</string>
+    <string name="label_units_per_floor">تعداد واحدها</string>
     <string name="label_cabinet_material">جنس کابینت</string>
     <string name="label_wall_covering">دیوارپوش</string>
     <string name="label_ceiling_covering">سقف‌پوش</string>
     <string name="label_cooling_system">سیستم سرمایش</string>
     <string name="label_heating_system">سیستم گرمایش</string>
-    <string name="label_yard_area">حیاط اختصاصی (مترمربع)</string>
+    <string name="label_yard_area">حیاط‌اختصاصی (متر)</string>
     <string name="label_terrace_area">مساحت تراس (متر)</string>
     <string name="label_master_bedroom_count">تعداد مستر</string>
     <string name="label_building_permit_area">پروانه ساختمانی به‌مساحت (متر)</string>
@@ -515,7 +515,7 @@
     <string name="commercial_usage_workshop">کارگاه</string>
     <string name="commercial_usage_warehouse">سوله</string>
 
-    <string name="amenity_kitchen_island">جزیره آشپزخانه</string>
+    <string name="amenity_kitchen_island">جزیره</string>
     <string name="amenity_kitchenette">مطبخ</string>
     <string name="amenity_barbecue">باربیکیو</string>
     <string name="amenity_iranian_toilet">سرویس ایرانی</string>
@@ -523,7 +523,7 @@
     <string name="amenity_jacuzzi">وان و جکوزی</string>
     <string name="amenity_private_parking_path">مسیر پارکینگ اختصاصی</string>
     <string name="amenity_shared_parking_path">مسیر پارکینگ اشتراکی</string>
-    <string name="amenity_automatic_parking_door">درب پارکینگ اتوماتیک</string>
+    <string name="amenity_automatic_parking_door">درب پارکینگ اتوماتیک ریموت‌دار</string>
     <string name="amenity_private_water">آب اختصاصی</string>
     <string name="amenity_shared_water">آب اشتراکی</string>
     <string name="amenity_private_electricity">برق اختصاصی</string>
