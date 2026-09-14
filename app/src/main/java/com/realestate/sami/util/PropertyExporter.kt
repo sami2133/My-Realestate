@@ -129,7 +129,6 @@ private fun com.realestate.sami.data.local.entity.PropertyType.toExportLabel(): 
     com.realestate.sami.data.local.entity.PropertyType.VILLA -> "ویلایی"
     com.realestate.sami.data.local.entity.PropertyType.LAND -> "زمین"
     com.realestate.sami.data.local.entity.PropertyType.COMMERCIAL -> "تجاری"
-    com.realestate.sami.data.local.entity.PropertyType.OFFICE -> "اداری"
 }
 
 private fun com.realestate.sami.data.local.entity.DealType.toExportLabel(): String = when (this) {

@@ -41,3 +41,21 @@ fun String.parseTomanInput(): Long? {
 /** پارس کردن متراژ/تعداد با پشتیبانی از ارقام فارسی (مثلاً «۸۵» یا «85»). */
 fun String.parseNumberInput(): Double? = this.toEnglishDigits().trim().toDoubleOrNull()
 fun String.parseIntInput(): Int? = this.toEnglishDigits().trim().toIntOrNull()
+
+/**
+ * برای فیلدهای قیمت‌گذاری: رشته‌ی رقم خام رو با جداکننده‌ی هزارگان («٬») و ارقام فارسی
+ * گروه‌بندی می‌کنه (مثلاً «۲۳۵۰۰۰۰۰۰» -> «۲٬۳۵۰٬۰۰۰٬۰۰۰») تا وارد کردن اعداد بزرگ خواناتر باشه.
+ * ورودی می‌تونه شامل ارقام فارسی/انگلیسی و جداکننده‌ی قبلی هم باشه — همه چیز غیر-رقم فیلتر می‌شه.
+ */
+fun String.toGroupedDigitsDisplay(): String {
+    val digits = this.toEnglishDigits().filter { it.isDigit() }
+    if (digits.isEmpty()) return ""
+    val grouped = StringBuilder()
+    val n = digits.length
+    for (i in 0 until n) {
+        val posFromEnd = n - i
+        if (i != 0 && posFromEnd % 3 == 0) grouped.append('٬')
+        grouped.append(digits[i])
+    }
+    return grouped.toString().toPersianDigits()
+}

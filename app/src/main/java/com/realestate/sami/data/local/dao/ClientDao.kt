@@ -59,8 +59,8 @@ interface ClientDao {
           AND desiredDealType = :dealType
           AND (minArea IS NULL OR minArea <= :area)
           AND (maxArea IS NULL OR maxArea >= :area)
-          AND (minRooms IS NULL OR minRooms <= :rooms)
-          AND (maxRooms IS NULL OR maxRooms >= :rooms)
+          AND (minRooms IS NULL OR :rooms IS NULL OR minRooms <= :rooms)
+          AND (maxRooms IS NULL OR :rooms IS NULL OR maxRooms >= :rooms)
           AND (maxTotalPrice IS NULL OR :totalPrice IS NULL OR maxTotalPrice >= :totalPrice)
           AND (maxDepositPrice IS NULL OR :depositPrice IS NULL OR maxDepositPrice >= :depositPrice)
           AND (maxRentPrice IS NULL OR :rentPrice IS NULL OR maxRentPrice >= :rentPrice)
@@ -74,7 +74,7 @@ interface ClientDao {
         propertyType: PropertyType,
         dealType: DealType,
         area: Double,
-        rooms: Int,
+        rooms: Int?,
         totalPrice: Long?,
         depositPrice: Long?,
         rentPrice: Long?,

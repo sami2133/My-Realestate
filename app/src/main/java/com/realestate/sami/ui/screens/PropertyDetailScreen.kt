@@ -205,7 +205,7 @@ fun PropertyDetailScreen(
 
                 SectionCard(title = stringResource(R.string.property_detail_specs_section)) {
                     InfoRow(stringResource(R.string.label_area), stringResource(R.string.property_detail_area_value, current.area.toInt()))
-                    InfoRow(stringResource(R.string.label_rooms), "${current.rooms}")
+                    current.rooms?.let { InfoRow(stringResource(R.string.label_rooms), it.toString()) }
                     InfoRow(stringResource(R.string.amenity_parking), if (current.hasParking) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
                     InfoRow(stringResource(R.string.amenity_storage), if (current.hasStorage) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
                     InfoRow(stringResource(R.string.amenity_elevator), if (current.hasElevator) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
@@ -282,83 +282,120 @@ fun PropertyDetailScreen(
 }
 
 /**
- * فاز ۵.۵/۵.۶ — نمایش مشخصات تکمیلیِ بسته به نوع ملک که در فرم ثبت وارد شده (نوع سند، جهت واحد،
- * کلاس ساختمان، امتیازات آب/برق/گاز، مشخصات زمین/تجاری/اداری و…). اگر برای این رکورد هیچ‌کدام
- * پر نشده باشد (مثلاً رکوردهای قدیمی‌تر از قبل از این فاز)، اصلاً کارتی نشان داده نمی‌شود.
+ * فاز ۶ — نمایش مشخصات تکمیلیِ بسته به نوع ملک که در فرم ثبت وارد شده، مطابق بازطراحی کامل فرم
+ * (آپارتمان/ویلایی/تجاری/زمین). نوع «اداری» دیگر جدا نیست؛ به‌صورت [property.commercialUsage]
+ * زیر تجاری نشان داده می‌شود. اگر برای این رکورد هیچ‌کدام پر نشده باشد، کارتی نشان داده نمی‌شود.
  */
 @Composable
 private fun PropertyDetailedSpecsSection(property: PropertyEntity) {
     val type = property.propertyType
+    val isApartmentOrVilla = type == PropertyType.APARTMENT || type == PropertyType.VILLA
+    val hasFinishes = isApartmentOrVilla || type == PropertyType.COMMERCIAL
     val rows = mutableListOf<Pair<String, String>>()
 
     property.deedType?.let { rows += stringResource(R.string.label_deed_type) to it.toPersianLabel() }
+    if (type == PropertyType.VILLA) {
+        property.totalArea?.let { rows += stringResource(R.string.label_area_total) to it.toPlainSpecString() }
+    }
+    if (type == PropertyType.COMMERCIAL) {
+        property.balconyArea?.let { rows += stringResource(R.string.label_area_balcony) to it.toPlainSpecString() }
+    }
     if (type != PropertyType.LAND) {
-        property.buildingAge?.let { rows += stringResource(R.string.label_building_age) to it.toString() }
         property.floor?.let { rows += stringResource(R.string.label_floor) to it.toString() }
         property.totalFloors?.let { rows += stringResource(R.string.label_total_floors) to it.toString() }
+        if (type == PropertyType.APARTMENT) property.unitsPerFloor?.let { rows += stringResource(R.string.label_units_per_floor) to it.toString() }
+        if (isApartmentOrVilla) property.buildingAge?.let { rows += stringResource(R.string.label_building_age) to it.toString() }
     }
-    if (type == PropertyType.APARTMENT || type == PropertyType.VILLA || type == PropertyType.LAND) {
-        property.waterStatus?.let { rows += stringResource(R.string.label_water_status) to it.toPersianLabel() }
-        property.electricityStatus?.let { rows += stringResource(R.string.label_electricity_status) to it.toPersianLabel() }
-        property.gasStatus?.let { rows += stringResource(R.string.label_gas_status) to it.toPersianLabel() }
+    if (hasFinishes) property.buildingClass?.let { rows += stringResource(R.string.label_building_class) to it.toPersianLabel() }
+
+    if (isApartmentOrVilla) {
+        property.cabinetMaterial?.let { rows += stringResource(R.string.label_cabinet_material) to it.toPersianLabel() }
     }
-    if (type == PropertyType.APARTMENT || type == PropertyType.OFFICE) {
-        property.buildingClass?.let { rows += stringResource(R.string.label_building_class) to it.toPersianLabel() }
-        property.heatingCoolingSystem?.let { rows += stringResource(R.string.label_heating_cooling) to it.toPersianLabel() }
+    if (hasFinishes) {
+        property.flooring?.let { rows += stringResource(R.string.label_flooring) to it.toPersianLabel() }
+        property.wallCovering?.let { rows += stringResource(R.string.label_wall_covering) to it.toPersianLabel() }
+        property.ceilingCovering?.let { rows += stringResource(R.string.label_ceiling_covering) to it.toPersianLabel() }
+        property.coolingSystem?.let { rows += stringResource(R.string.label_cooling_system) to it.toPersianLabel() }
+        property.heatingSystem?.let { rows += stringResource(R.string.label_heating_system) to it.toPersianLabel() }
     }
-    if (type == PropertyType.COMMERCIAL || type == PropertyType.OFFICE) {
-        property.streetPosition?.let { rows += stringResource(R.string.label_street_position) to it.toPersianLabel() }
+
+    if (isApartmentOrVilla) {
+        property.terraceArea?.let { rows += stringResource(R.string.label_terrace_area) to it.toPlainSpecString() }
     }
-    if (type == PropertyType.LAND || type == PropertyType.COMMERCIAL) {
-        val frontageLabel = if (type == PropertyType.LAND) stringResource(R.string.label_frontage_width_land)
-        else stringResource(R.string.label_frontage_width_commercial)
-        property.frontageWidth?.let { rows += frontageLabel to it.toPlainSpecString() }
+    if (type == PropertyType.VILLA) {
+        property.yardArea?.let { rows += stringResource(R.string.label_yard_area) to it.toPlainSpecString() }
+        property.masterBedroomCount?.let { rows += stringResource(R.string.label_master_bedroom_count) to it.toString() }
     }
 
     when (type) {
-        PropertyType.APARTMENT -> {
-            property.unitDirection?.let { rows += stringResource(R.string.label_unit_direction) to it.toPersianLabel() }
-            property.unitCondition?.let { rows += stringResource(R.string.label_unit_condition) to it.toPersianLabel() }
-            property.flooring?.let { rows += stringResource(R.string.label_flooring) to it.toPersianLabel() }
-            property.facade?.let { rows += stringResource(R.string.label_facade) to it.toPersianLabel() }
-            property.bathroomCount?.let { rows += stringResource(R.string.label_bathroom_count) to it.toString() }
-        }
         PropertyType.LAND -> {
             property.landUse?.let { rows += stringResource(R.string.label_land_use) to it.toPersianLabel() }
+            property.frontageWidth?.let { rows += stringResource(R.string.label_frontage_width_land) to it.toPlainSpecString() }
             property.streetWidth?.let { rows += stringResource(R.string.label_street_width) to it.toPlainSpecString() }
-            property.allowedDensity?.let { rows += stringResource(R.string.label_allowed_density) to "$it٪" }
-            property.allowedFloors?.let { rows += stringResource(R.string.label_allowed_floors) to it.toString() }
+            property.buildingPermitArea?.let { rows += stringResource(R.string.label_building_permit_area) to it.toPlainSpecString() }
             property.landPosition?.let { rows += stringResource(R.string.label_land_position) to it.toPersianLabel() }
             property.landSlope?.let { rows += stringResource(R.string.label_land_slope) to it.toPersianLabel() }
         }
         PropertyType.COMMERCIAL -> {
-            property.keyMoney?.let { rows += stringResource(R.string.label_key_money) to it.toTomanDisplay() }
+            property.commercialUsage?.let { rows += stringResource(R.string.label_commercial_usage) to it.toPersianLabel() }
             property.commercialFloorPosition?.let { rows += stringResource(R.string.label_commercial_floor_position) to it.toPersianLabel() }
+            property.streetPosition?.let { rows += stringResource(R.string.label_street_position) to it.toPersianLabel() }
+            property.frontageWidth?.let { rows += stringResource(R.string.label_frontage_width_commercial) to it.toPlainSpecString() }
             property.ceilingHeight?.let { rows += stringResource(R.string.label_ceiling_height) to it.toPlainSpecString() }
-            if (!property.businessLicenseType.isNullOrBlank()) rows += stringResource(R.string.label_business_license_type) to property.businessLicenseType
         }
-        PropertyType.OFFICE -> {
-            property.partitionCount?.let { rows += stringResource(R.string.label_partition_count) to it.toString() }
-        }
-        PropertyType.VILLA -> Unit
+        else -> Unit
     }
 
     // امکانات بولی — فقط مواردی که واقعاً موجودن نشون داده می‌شن (نه یک لیست بلند از «ندارد»)
     val amenities = buildList {
-        if (property.hasBalcony) add(stringResource(R.string.amenity_balcony))
-        if (property.hasPool) add(stringResource(R.string.amenity_pool))
-        if (property.hasSauna) add(stringResource(R.string.amenity_sauna))
-        if (property.hasGym) add(stringResource(R.string.amenity_gym))
-        if (property.hasVideoIntercom) add(stringResource(R.string.amenity_video_intercom))
-        if (property.hasLobby) add(stringResource(R.string.amenity_lobby))
-        if (property.hasSecurityGuard) add(stringResource(R.string.amenity_security_guard))
-        if (property.hasWall) add(stringResource(R.string.amenity_wall))
-        if (property.hasBuildingPermit) add(stringResource(R.string.amenity_building_permit))
-        if (property.hasThreePhaseElectricity) add(stringResource(R.string.amenity_three_phase_electricity))
-        if (property.hasRestroom) add(stringResource(R.string.amenity_restroom))
-        if (property.hasFalseFloor) add(stringResource(R.string.amenity_false_floor))
-        if (property.hasFalseCeiling) add(stringResource(R.string.amenity_false_ceiling))
-        if (property.hasConferenceRoom) add(stringResource(R.string.amenity_conference_room))
+        if (isApartmentOrVilla) {
+            if (property.hasKitchenIsland) add(stringResource(R.string.amenity_kitchen_island))
+            if (property.hasKitchenette) add(stringResource(R.string.amenity_kitchenette))
+            if (property.hasBarbecue) add(stringResource(R.string.amenity_barbecue))
+            if (property.hasIranianToilet) add(stringResource(R.string.amenity_iranian_toilet))
+            if (property.hasWesternToilet) add(stringResource(R.string.amenity_western_toilet))
+            if (property.hasJacuzzi) add(stringResource(R.string.amenity_jacuzzi))
+            if (property.hasBuiltInCloset) add(stringResource(R.string.amenity_built_in_closet))
+            if (property.hasVideoIntercom) add(stringResource(R.string.amenity_video_intercom))
+            if (property.hasAutomaticParkingDoor) add(stringResource(R.string.amenity_automatic_parking_door))
+            if (property.hasCaretaker) add(stringResource(R.string.amenity_caretaker))
+        }
+        if (type == PropertyType.APARTMENT) {
+            if (property.hasPrivateParkingPath) add(stringResource(R.string.amenity_private_parking_path))
+            if (property.hasSharedParkingPath) add(stringResource(R.string.amenity_shared_parking_path))
+            if (property.hasLobby) add(stringResource(R.string.amenity_lobby))
+            if (property.hasSecurityGuard) add(stringResource(R.string.amenity_security_guard))
+            if (property.hasCourtyard) add(stringResource(R.string.amenity_courtyard))
+        }
+        if (isApartmentOrVilla) {
+            if (property.hasPool) add(stringResource(R.string.amenity_pool))
+            if (property.hasGym) add(stringResource(R.string.amenity_gym))
+        }
+        if (isApartmentOrVilla || type == PropertyType.COMMERCIAL) {
+            if (property.hasStorage) add(stringResource(R.string.amenity_storage))
+            if (property.hasElevator) add(stringResource(R.string.amenity_elevator))
+            if (property.hasParking) add(stringResource(R.string.amenity_parking))
+            if (property.hasPrivateWater) add(stringResource(R.string.amenity_private_water))
+            if (property.hasSharedWater) add(stringResource(R.string.amenity_shared_water))
+            if (property.hasPrivateElectricity) add(stringResource(R.string.amenity_private_electricity))
+            if (property.hasSharedElectricity) add(stringResource(R.string.amenity_shared_electricity))
+            if (property.hasPrivateGas) add(stringResource(R.string.amenity_private_gas))
+            if (property.hasSharedGas) add(stringResource(R.string.amenity_shared_gas))
+        }
+        if (type == PropertyType.COMMERCIAL) {
+            if (property.hasThreePhaseElectricity) add(stringResource(R.string.amenity_three_phase_electricity))
+            if (property.hasKitchen) add(stringResource(R.string.amenity_kitchen))
+            if (property.hasRestroom) add(stringResource(R.string.amenity_restroom))
+        }
+        if (type == PropertyType.LAND) {
+            if (property.hasWall) add(stringResource(R.string.amenity_wall))
+            if (property.waterRightOwned) add(stringResource(R.string.amenity_water_right_owned))
+            if (property.waterRightObtainable) add(stringResource(R.string.amenity_water_right_obtainable))
+            if (property.electricityRightOwned) add(stringResource(R.string.amenity_electricity_right_owned))
+            if (property.electricityRightObtainable) add(stringResource(R.string.amenity_electricity_right_obtainable))
+            if (property.gasRightOwned) add(stringResource(R.string.amenity_gas_right_owned))
+            if (property.gasRightObtainable) add(stringResource(R.string.amenity_gas_right_obtainable))
+        }
     }
 
     if (rows.isEmpty() && amenities.isEmpty()) return

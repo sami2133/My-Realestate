@@ -121,7 +121,12 @@ fun ClientDetailScreen(
                     matchingProperties.forEach { prop ->
                         ListItem(
                             headlineContent = { Text(prop.address) },
-                            supportingContent = { Text(stringResource(R.string.property_row_area_rooms, prop.area.toInt(), prop.rooms)) },
+                            supportingContent = {
+                                Text(
+                                    prop.rooms?.let { stringResource(R.string.property_row_area_rooms, prop.area.toInt(), it) }
+                                        ?: stringResource(R.string.property_card_area_only, prop.area.toInt())
+                                )
+                            },
                             trailingContent = {
                                 Text(prop.totalPrice?.toTomanDisplay() ?: prop.rentPrice?.toTomanDisplay().orEmpty())
                             },

@@ -25,9 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyType
+import com.realestate.sami.util.toEnglishDigits
+import com.realestate.sami.util.toPersianDigits
 
 // توجه: کارت بخش‌های فرم (SectionCard) و برچسب زیربخش (FormSubsectionLabel) از قبل در
 // CommonComponents.kt همین پکیج تعریف شده‌ن (فقط SectionCard رو با پارامتر icon اختیاری
@@ -83,6 +89,67 @@ fun AmenityChip(
     )
 }
 
+/**
+ * VisualTransformation برای فیلدهای قیمت‌گذاری: رشته‌ی رقم خامِ ذخیره‌شده در state رو با
+ * جداکننده‌ی هزارگان فارسی («٬») و ارقام فارسی نمایش می‌ده، بدون این‌که مقدار واقعی state
+ * (که برای parseTomanInput لازمه رقم خام بمونه) تغییر کنه. نگاشت مکان‌نما (cursor) با شمردن
+ * رقم‌ها محاسبه می‌شه تا تایپ وسط عدد هم درست کار کنه.
+ */
+private class ThousandsSeparatorTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val digits = text.text.toEnglishDigits().filter { it.isDigit() }
+        if (digits.isEmpty()) return TransformedText(text, OffsetMapping.Identity)
+
+        val n = digits.length
+        val grouped = StringBuilder()
+        val digitEndOffset = IntArray(n + 1)
+        digitEndOffset[0] = 0
+        for (i in 0 until n) {
+            val posFromEnd = n - i
+            if (i != 0 && posFromEnd % 3 == 0) grouped.append('٬')
+            grouped.append(digits[i])
+            digitEndOffset[i + 1] = grouped.length
+        }
+        val transformed = AnnotatedString(grouped.toString().toPersianDigits())
+
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int =
+                digitEndOffset[offset.coerceIn(0, n)]
+
+            override fun transformedToOriginal(offset: Int): Int {
+                for (i in 0..n) if (digitEndOffset[i] >= offset) return i
+                return n
+            }
+        }
+        return TransformedText(transformed, offsetMapping)
+    }
+}
+
+/**
+ * فیلد قیمت‌گذاری با جداکننده‌ی هزارگان زنده (هنگام تایپ) — برای مبالغ فروش/رهن/اجاره.
+ * [value] همیشه رشته‌ی رقم خام (بدون جداکننده) است؛ فقط نمایش گروه‌بندی می‌شود، نه مقدار state
+ * (که با parseTomanInput مستقیماً به Long تبدیل می‌شود).
+ */
+@Composable
+fun PriceField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { raw -> onValueChange(raw.toEnglishDigits().filter { it.isDigit() }) },
+        label = { Text(label) },
+        leadingIcon = icon?.let { i -> { Icon(i, contentDescription = null) } },
+        visualTransformation = ThousandsSeparatorTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = MaterialTheme.shapes.small,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
 /** ردیف سوییچ برای گزینه‌های «روشن/خاموش» که فیلدهای اضافی رو نمایان می‌کنن (مثل «قابل معاوضه»). */
 @Composable
 fun SwitchRow(
@@ -106,7 +173,6 @@ fun PropertyType.icon(): ImageVector = when (this) {
     PropertyType.VILLA -> Icons.Filled.Villa
     PropertyType.LAND -> Icons.Filled.Terrain
     PropertyType.COMMERCIAL -> Icons.Filled.Storefront
-    PropertyType.OFFICE -> Icons.Filled.Business
 }
 
 // آیکون هر نوع معامله.

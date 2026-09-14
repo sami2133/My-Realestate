@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sami Real Estate</string>
+    <string name="app_name">My RealEstate</string>
 
     <!-- Navigation -->
     <string name="nav_properties">Properties</string>
@@ -448,4 +448,94 @@
     <!-- Phase 5.6: free-form personal/internal note, separate from the customer-facing description -->
     <string name="label_additional_notes">Additional notes (internal)</string>
     <string name="add_property_additional_notes_hint">Any personal note for you or your colleagues; not shown to the customer</string>
+
+    <!-- Phase 6: full redesign of property specs to match the new forms (apartment/villa/commercial/land) -->
+    <string name="spec_section_kitchen">Kitchen</string>
+    <string name="spec_section_finishes">Flooring/Walls/Ceiling</string>
+    <string name="spec_section_bathroom">Bathroom</string>
+    <string name="spec_section_hvac">Heating &amp; Cooling</string>
+    <string name="spec_section_villa">Villa specs</string>
+    <string name="spec_section_building_amenities">Building amenities</string>
+    <string name="spec_section_land_rights">Water/electricity/gas rights</string>
+
+    <string name="label_area_built">Built area (m²)</string>
+    <string name="label_area_total">Total area (m²)</string>
+    <string name="label_area_balcony">Balcony area (m²)</string>
+    <string name="label_units_per_floor">Units per floor</string>
+    <string name="label_cabinet_material">Cabinet material</string>
+    <string name="label_wall_covering">Wall covering</string>
+    <string name="label_ceiling_covering">Ceiling covering</string>
+    <string name="label_cooling_system">Cooling system</string>
+    <string name="label_heating_system">Heating system</string>
+    <string name="label_yard_area">Yard area (m²)</string>
+    <string name="label_terrace_area">Terrace area (m²)</string>
+    <string name="label_master_bedroom_count">Master bedrooms</string>
+    <string name="label_building_permit_area">Building permit area (m²)</string>
+    <string name="label_commercial_usage">Usage</string>
+
+    <string name="building_class_a_plus">Class A+</string>
+    <string name="deed_type_undivided">Undivided</string>
+    <string name="flooring_concrete">Concrete</string>
+    <string name="land_use_unplanned">No zoning plan</string>
+
+    <string name="cabinet_material_high_gloss">High gloss</string>
+    <string name="cabinet_material_mdf">MDF</string>
+    <string name="cabinet_material_membrane">Membrane</string>
+    <string name="cabinet_material_wood">Wood</string>
+    <string name="cabinet_material_metal">Metal</string>
+
+    <string name="wall_covering_plaster">Plaster</string>
+    <string name="wall_covering_wallpaper">Wallpaper</string>
+    <string name="wall_covering_paint">Paint</string>
+    <string name="wall_covering_ceramic">Ceramic</string>
+    <string name="wall_covering_concrete">Concrete</string>
+
+    <string name="ceiling_covering_plaster">Plaster</string>
+    <string name="ceiling_covering_gypsum_board">Gypsum board</string>
+    <string name="ceiling_covering_paint">Paint</string>
+    <string name="ceiling_covering_suspended">Suspended ceiling</string>
+
+    <string name="cooling_split">Split</string>
+    <string name="cooling_cooler">Air cooler</string>
+    <string name="cooling_central">Central</string>
+
+    <string name="heating_package">Package unit</string>
+    <string name="heating_water_heater">Water heater</string>
+    <string name="heating_radiator">Radiator</string>
+    <string name="heating_fan_coil">Fan coil</string>
+    <string name="heating_central">Central</string>
+
+    <string name="commercial_usage_retail">Retail</string>
+    <string name="commercial_usage_complex">Commercial complex</string>
+    <string name="commercial_usage_office">Office</string>
+    <string name="commercial_usage_workshop">Workshop</string>
+    <string name="commercial_usage_warehouse">Warehouse</string>
+
+    <string name="amenity_kitchen_island">Kitchen island</string>
+    <string name="amenity_kitchenette">Kitchenette</string>
+    <string name="amenity_barbecue">Barbecue</string>
+    <string name="amenity_iranian_toilet">Iranian-style toilet</string>
+    <string name="amenity_western_toilet">Western-style toilet</string>
+    <string name="amenity_jacuzzi">Bathtub &amp; jacuzzi</string>
+    <string name="amenity_private_parking_path">Private parking path</string>
+    <string name="amenity_shared_parking_path">Shared parking path</string>
+    <string name="amenity_automatic_parking_door">Automatic parking door</string>
+    <string name="amenity_private_water">Private water</string>
+    <string name="amenity_shared_water">Shared water</string>
+    <string name="amenity_private_electricity">Private electricity</string>
+    <string name="amenity_shared_electricity">Shared electricity</string>
+    <string name="amenity_private_gas">Private gas</string>
+    <string name="amenity_shared_gas">Shared gas</string>
+    <string name="amenity_built_in_closet">Built-in closet</string>
+    <string name="amenity_courtyard">Courtyard</string>
+    <string name="amenity_caretaker">Caretaker</string>
+    <string name="amenity_kitchen">Kitchen</string>
+    <string name="amenity_water_right_owned">Private water right</string>
+    <string name="amenity_water_right_obtainable">Water right obtainable</string>
+    <string name="amenity_electricity_right_owned">Private electricity right</string>
+    <string name="amenity_electricity_right_obtainable">Electricity right obtainable</string>
+    <string name="amenity_gas_right_owned">Private gas right</string>
+    <string name="amenity_gas_right_obtainable">Gas right obtainable</string>
+
+    <string name="property_card_area_only">%1$d m²</string>
 </resources>

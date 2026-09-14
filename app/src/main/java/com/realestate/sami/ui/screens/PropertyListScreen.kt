@@ -417,7 +417,8 @@ private fun PropertyCard(property: PropertyEntity, onClick: () -> Unit) {
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    stringResource(R.string.property_card_area_rooms, property.area.toInt(), property.rooms),
+                    property.rooms?.let { stringResource(R.string.property_card_area_rooms, property.area.toInt(), it) }
+                        ?: stringResource(R.string.property_card_area_only, property.area.toInt()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

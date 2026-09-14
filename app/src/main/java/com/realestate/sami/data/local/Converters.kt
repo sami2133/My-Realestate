@@ -52,10 +52,9 @@ class Converters {
     @TypeConverter
     fun toVisitResult(value: String): VisitResult = VisitResult.valueOf(value)
 
-    // ===== فاز ۵.۵ — کانورترهای enum های جدید مشخصات تکمیلی ملک =====
-    // همه‌ی این فیلدها روی PropertyEntity nullable هستن؛ Room خودش null را با استفاده از همین
-    // کانورترهای غیر-nullable مدیریت می‌کنه (دقیقاً مثل exchangePreferredType: PropertyType? که
-    // از قبل با همین الگو کار می‌کنه).
+    // ===== فاز ۶ — کانورترهای enum های مشخصات تکمیلی ملک (فرم بازطراحی‌شده) =====
+    // همه‌ی این فیلدها روی PropertyEntity nullable هستن؛ Room خودش null را با همین کانورترهای
+    // غیر-nullable مدیریت می‌کنه.
 
     @TypeConverter
     fun fromDeedType(value: DeedType): String = value.name
@@ -63,29 +62,14 @@ class Converters {
     fun toDeedType(value: String): DeedType = DeedType.valueOf(value)
 
     @TypeConverter
-    fun fromUtilityStatus(value: UtilityStatus): String = value.name
-    @TypeConverter
-    fun toUtilityStatus(value: String): UtilityStatus = UtilityStatus.valueOf(value)
-
-    @TypeConverter
     fun fromBuildingClass(value: BuildingClass): String = value.name
     @TypeConverter
     fun toBuildingClass(value: String): BuildingClass = BuildingClass.valueOf(value)
 
     @TypeConverter
-    fun fromHeatingCoolingSystem(value: HeatingCoolingSystem): String = value.name
+    fun fromCabinetMaterial(value: CabinetMaterial): String = value.name
     @TypeConverter
-    fun toHeatingCoolingSystem(value: String): HeatingCoolingSystem = HeatingCoolingSystem.valueOf(value)
-
-    @TypeConverter
-    fun fromUnitDirection(value: UnitDirection): String = value.name
-    @TypeConverter
-    fun toUnitDirection(value: String): UnitDirection = UnitDirection.valueOf(value)
-
-    @TypeConverter
-    fun fromUnitCondition(value: UnitCondition): String = value.name
-    @TypeConverter
-    fun toUnitCondition(value: String): UnitCondition = UnitCondition.valueOf(value)
+    fun toCabinetMaterial(value: String): CabinetMaterial = CabinetMaterial.valueOf(value)
 
     @TypeConverter
     fun fromFlooringType(value: FlooringType): String = value.name
@@ -93,9 +77,24 @@ class Converters {
     fun toFlooringType(value: String): FlooringType = FlooringType.valueOf(value)
 
     @TypeConverter
-    fun fromFacadeType(value: FacadeType): String = value.name
+    fun fromWallCovering(value: WallCovering): String = value.name
     @TypeConverter
-    fun toFacadeType(value: String): FacadeType = FacadeType.valueOf(value)
+    fun toWallCovering(value: String): WallCovering = WallCovering.valueOf(value)
+
+    @TypeConverter
+    fun fromCeilingCovering(value: CeilingCovering): String = value.name
+    @TypeConverter
+    fun toCeilingCovering(value: String): CeilingCovering = CeilingCovering.valueOf(value)
+
+    @TypeConverter
+    fun fromCoolingSystem(value: CoolingSystem): String = value.name
+    @TypeConverter
+    fun toCoolingSystem(value: String): CoolingSystem = CoolingSystem.valueOf(value)
+
+    @TypeConverter
+    fun fromHeatingSystem(value: HeatingSystem): String = value.name
+    @TypeConverter
+    fun toHeatingSystem(value: String): HeatingSystem = HeatingSystem.valueOf(value)
 
     @TypeConverter
     fun fromLandUse(value: LandUse): String = value.name
@@ -111,6 +110,11 @@ class Converters {
     fun fromLandSlope(value: LandSlope): String = value.name
     @TypeConverter
     fun toLandSlope(value: String): LandSlope = LandSlope.valueOf(value)
+
+    @TypeConverter
+    fun fromCommercialUsage(value: CommercialUsage): String = value.name
+    @TypeConverter
+    fun toCommercialUsage(value: String): CommercialUsage = CommercialUsage.valueOf(value)
 
     @TypeConverter
     fun fromCommercialPosition(value: CommercialPosition): String = value.name

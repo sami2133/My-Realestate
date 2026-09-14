@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">املاک سامی</string>
+    <string name="app_name">املاک من</string>
 
     <!-- ناوبری -->
     <string name="nav_properties">ملک‌ها</string>
@@ -448,4 +448,94 @@
     <!-- فاز ۵.۶: یادداشت آزاد شخصی/داخلی، جدا از توضیحات نمایش‌داده‌شده به مشتری -->
     <string name="label_additional_notes">توضیحات اضافی (یادداشت داخلی)</string>
     <string name="add_property_additional_notes_hint">هر نکته‌ی شخصی که فقط برای خودتان یا همکارانتان لازم است؛ به مشتری نشان داده نمی‌شود</string>
+
+    <!-- فاز ۶: بازطراحی کامل مشخصات ملک مطابق فرم‌های جدید (آپارتمان/ویلایی/تجاری/زمین) -->
+    <string name="spec_section_kitchen">آشپزخانه</string>
+    <string name="spec_section_finishes">کف‌پوش/دیوارپوش/سقف‌پوش</string>
+    <string name="spec_section_bathroom">سرویس بهداشتی</string>
+    <string name="spec_section_hvac">سرمایش/گرمایش</string>
+    <string name="spec_section_villa">مشخصات ویلایی</string>
+    <string name="spec_section_building_amenities">امکانات ساختمان</string>
+    <string name="spec_section_land_rights">امتیازات آب/برق/گاز</string>
+
+    <string name="label_area_built">مساحت بنا (متر)</string>
+    <string name="label_area_total">مساحت کل (متر)</string>
+    <string name="label_area_balcony">مساحت بالکن (متر)</string>
+    <string name="label_units_per_floor">تعداد واحد در طبقه</string>
+    <string name="label_cabinet_material">جنس کابینت</string>
+    <string name="label_wall_covering">دیوارپوش</string>
+    <string name="label_ceiling_covering">سقف‌پوش</string>
+    <string name="label_cooling_system">سیستم سرمایش</string>
+    <string name="label_heating_system">سیستم گرمایش</string>
+    <string name="label_yard_area">مساحت حیاط (متر)</string>
+    <string name="label_terrace_area">مساحت تراس (متر)</string>
+    <string name="label_master_bedroom_count">تعداد خواب مستر</string>
+    <string name="label_building_permit_area">پروانه ساختمانی به‌مساحت (متر)</string>
+    <string name="label_commercial_usage">کاربرد</string>
+
+    <string name="building_class_a_plus">کلاس +A</string>
+    <string name="deed_type_undivided">تفکیک نشده</string>
+    <string name="flooring_concrete">بتن</string>
+    <string name="land_use_unplanned">فاقد طرح کاربری</string>
+
+    <string name="cabinet_material_high_gloss">های‌گلاس</string>
+    <string name="cabinet_material_mdf">ام‌دی‌اف</string>
+    <string name="cabinet_material_membrane">ممبران</string>
+    <string name="cabinet_material_wood">چوبی</string>
+    <string name="cabinet_material_metal">فلزی</string>
+
+    <string name="wall_covering_plaster">گچ</string>
+    <string name="wall_covering_wallpaper">کاغذ دیواری</string>
+    <string name="wall_covering_paint">رنگ‌آمیزی</string>
+    <string name="wall_covering_ceramic">سرامیک</string>
+    <string name="wall_covering_concrete">بتن</string>
+
+    <string name="ceiling_covering_plaster">گچ</string>
+    <string name="ceiling_covering_gypsum_board">کناف</string>
+    <string name="ceiling_covering_paint">رنگ‌آمیزی</string>
+    <string name="ceiling_covering_suspended">سقف کاذب</string>
+
+    <string name="cooling_split">اسپلیت</string>
+    <string name="cooling_cooler">کولر گازی</string>
+    <string name="cooling_central">مرکزی</string>
+
+    <string name="heating_package">پکیج</string>
+    <string name="heating_water_heater">آبگرمکن</string>
+    <string name="heating_radiator">شوفاژ</string>
+    <string name="heating_fan_coil">فن‌کوئل</string>
+    <string name="heating_central">مرکزی</string>
+
+    <string name="commercial_usage_retail">تجاری</string>
+    <string name="commercial_usage_complex">مجتمع تجاری</string>
+    <string name="commercial_usage_office">اداری</string>
+    <string name="commercial_usage_workshop">کارگاه</string>
+    <string name="commercial_usage_warehouse">سوله</string>
+
+    <string name="amenity_kitchen_island">جزیره آشپزخانه</string>
+    <string name="amenity_kitchenette">مطبخ</string>
+    <string name="amenity_barbecue">باربیکیو</string>
+    <string name="amenity_iranian_toilet">سرویس ایرانی</string>
+    <string name="amenity_western_toilet">سرویس فرنگی</string>
+    <string name="amenity_jacuzzi">وان و جکوزی</string>
+    <string name="amenity_private_parking_path">مسیر پارکینگ اختصاصی</string>
+    <string name="amenity_shared_parking_path">مسیر پارکینگ اشتراکی</string>
+    <string name="amenity_automatic_parking_door">درب پارکینگ اتوماتیک</string>
+    <string name="amenity_private_water">آب اختصاصی</string>
+    <string name="amenity_shared_water">آب اشتراکی</string>
+    <string name="amenity_private_electricity">برق اختصاصی</string>
+    <string name="amenity_shared_electricity">برق اشتراکی</string>
+    <string name="amenity_private_gas">گاز اختصاصی</string>
+    <string name="amenity_shared_gas">گاز اشتراکی</string>
+    <string name="amenity_built_in_closet">کمد دیواری</string>
+    <string name="amenity_courtyard">محوطه حیاط</string>
+    <string name="amenity_caretaker">سرایداری</string>
+    <string name="amenity_kitchen">آشپزخانه</string>
+    <string name="amenity_water_right_owned">امتیاز آب اختصاصی</string>
+    <string name="amenity_water_right_obtainable">امکان اخذ امتیاز آب</string>
+    <string name="amenity_electricity_right_owned">امتیاز برق اختصاصی</string>
+    <string name="amenity_electricity_right_obtainable">امکان اخذ امتیاز برق</string>
+    <string name="amenity_gas_right_owned">امتیاز گاز اختصاصی</string>
+    <string name="amenity_gas_right_obtainable">امکان اخذ امتیاز گاز</string>
+
+    <string name="property_card_area_only">%1$d متر</string>
 </resources>
