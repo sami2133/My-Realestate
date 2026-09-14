@@ -20,6 +20,7 @@
     <string name="label_phone">شماره تماس</string>
     <string name="label_address">آدرس</string>
     <string name="label_registered_at">تاریخ ثبت</string>
+    <string name="action_show_on_map">نمایش روی نقشه</string>
     <string name="label_area">متراژ</string>
     <string name="label_rooms">تعداد اتاق</string>
     <string name="value_yes">دارد</string>

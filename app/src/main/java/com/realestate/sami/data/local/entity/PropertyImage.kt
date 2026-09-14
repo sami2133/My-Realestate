@@ -13,4 +13,4 @@ package com.realestate.sami.data.local.entity
 data class PropertyImage(
     val localUri: String? = null,
     val driveFileId: String? = null
-)
+) : java.io.Serializable

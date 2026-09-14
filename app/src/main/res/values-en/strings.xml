@@ -20,6 +20,7 @@
     <string name="label_phone">Phone Number</string>
     <string name="label_address">Address</string>
     <string name="label_registered_at">Registered On</string>
+    <string name="action_show_on_map">Show on map</string>
     <string name="label_area">Area</string>
     <string name="label_rooms">Rooms</string>
     <string name="value_yes">Yes</string>

@@ -37,6 +37,28 @@ import java.util.Locale
 /** مرکز پیش‌فرض نقشه: تهران — وقتی هنوز موقعیتی انتخاب نشده. */
 private val DEFAULT_LOCATION = LatLng(35.6892, 51.3890)
 
+/**
+ * آدرس نهایی را از اجزای ساخت‌یافته‌ی [android.location.Address] می‌سازد (خیابان، محله، شهر)
+ * به‌جای [android.location.Address.getAddressLine] خام. بعضی وقت‌ها getAddressLine(0) به‌جای
+ * آدرس معمولی، یک Plus Code گوگل (مثل «GXXX+XX تهران») برمی‌گرداند که برای کاربر قابل‌فهم نیست؛
+ * ساختن آدرس از thoroughfare/subLocality/locality این مشکل را حل می‌کند و اگر هیچ‌کدام موجود
+ * نبود، به همان addressLine (در صورت نبودن الگوی Plus Code) برمی‌گردد.
+ */
+private fun buildStandardAddress(address: android.location.Address): String? {
+    val plusCodePattern = Regex("^[23456789CFGHJMPQRVWX]{4,8}\\+[23456789CFGHJMPQRVWX]{2,3}")
+    val parts = listOfNotNull(
+        address.thoroughfare,
+        address.subLocality,
+        address.locality ?: address.subAdminArea,
+        address.adminArea
+    ).filter { it.isNotBlank() }
+
+    if (parts.isNotEmpty()) return parts.distinct().joinToString("، ")
+
+    val line = address.getAddressLine(0)
+    return if (line != null && !plusCodePattern.containsMatchIn(line)) line else null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPickerScreen(
@@ -96,9 +118,10 @@ fun LocationPickerScreen(
                                 val address = withContext(Dispatchers.IO) {
                                     try {
                                         @Suppress("DEPRECATION")
-                                        Geocoder(context, Locale("fa"))
+                                        val result = Geocoder(context, Locale("fa", "IR"))
                                             .getFromLocation(selectedPosition.latitude, selectedPosition.longitude, 1)
-                                            ?.firstOrNull()?.getAddressLine(0)
+                                            ?.firstOrNull()
+                                        result?.let { buildStandardAddress(it) }
                                     } catch (_: Exception) {
                                         null
                                     }

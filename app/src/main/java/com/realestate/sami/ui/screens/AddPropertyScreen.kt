@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -76,113 +77,113 @@ fun AddPropertyScreen(
     }
 
     // ===== ۱) معرف/مالک =====
-    var ownerName by remember { mutableStateOf("") }
-    var ownerPhone by remember { mutableStateOf("") }
+    var ownerName by rememberSaveable { mutableStateOf("") }
+    var ownerPhone by rememberSaveable { mutableStateOf("") }
 
     // ===== ۲) عکس‌ها =====
-    var images by remember { mutableStateOf(listOf<PropertyImage>()) }
+    var images by rememberSaveable { mutableStateOf(listOf<PropertyImage>()) }
 
     // ===== ۳) مشخصات پایه =====
-    var propertyType by remember { mutableStateOf(PropertyType.APARTMENT) }
-    var dealType by remember { mutableStateOf(DealType.SALE) }
-    var address by remember { mutableStateOf("") }
-    var latitude by remember { mutableStateOf<Double?>(null) }
-    var longitude by remember { mutableStateOf<Double?>(null) }
-    var area by remember { mutableStateOf("") }           // مساحت بنا (یا مساحت‌کل برای زمین)
-    var totalArea by remember { mutableStateOf("") }      // مساحت‌کل — فقط ویلایی
-    var balconyArea by remember { mutableStateOf("") }    // مساحت بالکن — فقط تجاری
-    var rooms by remember { mutableStateOf("") }
-    var floor by remember { mutableStateOf("") }
-    var totalFloors by remember { mutableStateOf("") }
-    var unitsPerFloor by remember { mutableStateOf("") }
-    var buildingAge by remember { mutableStateOf("") }
+    var propertyType by rememberSaveable { mutableStateOf(PropertyType.APARTMENT) }
+    var dealType by rememberSaveable { mutableStateOf(DealType.SALE) }
+    var address by rememberSaveable { mutableStateOf("") }
+    var latitude by rememberSaveable { mutableStateOf<Double?>(null) }
+    var longitude by rememberSaveable { mutableStateOf<Double?>(null) }
+    var area by rememberSaveable { mutableStateOf("") }           // مساحت بنا (یا مساحت‌کل برای زمین)
+    var totalArea by rememberSaveable { mutableStateOf("") }      // مساحت‌کل — فقط ویلایی
+    var balconyArea by rememberSaveable { mutableStateOf("") }    // مساحت بالکن — فقط تجاری
+    var rooms by rememberSaveable { mutableStateOf("") }
+    var floor by rememberSaveable { mutableStateOf("") }
+    var totalFloors by rememberSaveable { mutableStateOf("") }
+    var unitsPerFloor by rememberSaveable { mutableStateOf("") }
+    var buildingAge by rememberSaveable { mutableStateOf("") }
 
     // ===== ۴) مشخصات تکمیلی =====
-    var deedType by remember { mutableStateOf<DeedType?>(null) }
-    var buildingClass by remember { mutableStateOf<BuildingClass?>(null) }
+    var deedType by rememberSaveable { mutableStateOf<DeedType?>(null) }
+    var buildingClass by rememberSaveable { mutableStateOf<BuildingClass?>(null) }
 
     // آشپزخانه — آپارتمان/ویلایی
-    var cabinetMaterial by remember { mutableStateOf<CabinetMaterial?>(null) }
-    var hasKitchenIsland by remember { mutableStateOf(false) }
-    var hasKitchenette by remember { mutableStateOf(false) }
-    var hasBarbecue by remember { mutableStateOf(false) }
+    var cabinetMaterial by rememberSaveable { mutableStateOf<CabinetMaterial?>(null) }
+    var hasKitchenIsland by rememberSaveable { mutableStateOf(false) }
+    var hasKitchenette by rememberSaveable { mutableStateOf(false) }
+    var hasBarbecue by rememberSaveable { mutableStateOf(false) }
 
     // کف‌پوش/دیوارپوش/سقف‌پوش — آپارتمان/ویلایی/تجاری
-    var flooring by remember { mutableStateOf<FlooringType?>(null) }
-    var wallCovering by remember { mutableStateOf<WallCovering?>(null) }
-    var ceilingCovering by remember { mutableStateOf<CeilingCovering?>(null) }
+    var flooring by rememberSaveable { mutableStateOf<FlooringType?>(null) }
+    var wallCovering by rememberSaveable { mutableStateOf<WallCovering?>(null) }
+    var ceilingCovering by rememberSaveable { mutableStateOf<CeilingCovering?>(null) }
 
     // سرویس بهداشتی — آپارتمان/ویلایی
-    var hasIranianToilet by remember { mutableStateOf(false) }
-    var hasWesternToilet by remember { mutableStateOf(false) }
-    var hasJacuzzi by remember { mutableStateOf(false) }
+    var hasIranianToilet by rememberSaveable { mutableStateOf(false) }
+    var hasWesternToilet by rememberSaveable { mutableStateOf(false) }
+    var hasJacuzzi by rememberSaveable { mutableStateOf(false) }
 
     // سرمایش/گرمایش — آپارتمان/ویلایی/تجاری
-    var coolingSystem by remember { mutableStateOf<CoolingSystem?>(null) }
-    var heatingSystem by remember { mutableStateOf<HeatingSystem?>(null) }
+    var coolingSystem by rememberSaveable { mutableStateOf<CoolingSystem?>(null) }
+    var heatingSystem by rememberSaveable { mutableStateOf<HeatingSystem?>(null) }
 
     // امکانات آپارتمان/ویلایی/تجاری
-    var hasStorage by remember { mutableStateOf(false) }
-    var hasElevator by remember { mutableStateOf(false) }
-    var hasParking by remember { mutableStateOf(false) }
-    var hasPrivateParkingPath by remember { mutableStateOf(false) }
-    var hasSharedParkingPath by remember { mutableStateOf(false) }
-    var hasAutomaticParkingDoor by remember { mutableStateOf(false) }
-    var hasPrivateWater by remember { mutableStateOf(false) }
-    var hasSharedWater by remember { mutableStateOf(false) }
-    var hasPrivateElectricity by remember { mutableStateOf(false) }
-    var hasSharedElectricity by remember { mutableStateOf(false) }
-    var hasPrivateGas by remember { mutableStateOf(false) }
-    var hasSharedGas by remember { mutableStateOf(false) }
-    var hasBuiltInCloset by remember { mutableStateOf(false) }
-    var hasVideoIntercom by remember { mutableStateOf(false) }
+    var hasStorage by rememberSaveable { mutableStateOf(false) }
+    var hasElevator by rememberSaveable { mutableStateOf(false) }
+    var hasParking by rememberSaveable { mutableStateOf(false) }
+    var hasPrivateParkingPath by rememberSaveable { mutableStateOf(false) }
+    var hasSharedParkingPath by rememberSaveable { mutableStateOf(false) }
+    var hasAutomaticParkingDoor by rememberSaveable { mutableStateOf(false) }
+    var hasPrivateWater by rememberSaveable { mutableStateOf(false) }
+    var hasSharedWater by rememberSaveable { mutableStateOf(false) }
+    var hasPrivateElectricity by rememberSaveable { mutableStateOf(false) }
+    var hasSharedElectricity by rememberSaveable { mutableStateOf(false) }
+    var hasPrivateGas by rememberSaveable { mutableStateOf(false) }
+    var hasSharedGas by rememberSaveable { mutableStateOf(false) }
+    var hasBuiltInCloset by rememberSaveable { mutableStateOf(false) }
+    var hasVideoIntercom by rememberSaveable { mutableStateOf(false) }
 
     // امکانات ساختمان — عمدتاً آپارتمان
-    var hasLobby by remember { mutableStateOf(false) }
-    var hasSecurityGuard by remember { mutableStateOf(false) }
-    var hasPool by remember { mutableStateOf(false) }
-    var hasGym by remember { mutableStateOf(false) }
-    var hasCourtyard by remember { mutableStateOf(false) }
+    var hasLobby by rememberSaveable { mutableStateOf(false) }
+    var hasSecurityGuard by rememberSaveable { mutableStateOf(false) }
+    var hasPool by rememberSaveable { mutableStateOf(false) }
+    var hasGym by rememberSaveable { mutableStateOf(false) }
+    var hasCourtyard by rememberSaveable { mutableStateOf(false) }
 
     // آپارتمان — حیاط اختصاصی و تعداد مستر
-    var yardArea by remember { mutableStateOf("") }
-    var masterBedroomCount by remember { mutableStateOf("") }
+    var yardArea by rememberSaveable { mutableStateOf("") }
+    var masterBedroomCount by rememberSaveable { mutableStateOf("") }
 
     // ویلایی
-    var hasCaretaker by remember { mutableStateOf(false) }
+    var hasCaretaker by rememberSaveable { mutableStateOf(false) }
 
     // زمین
-    var landUse by remember { mutableStateOf<LandUse?>(null) }
-    var frontageWidth by remember { mutableStateOf("") }
-    var streetWidth by remember { mutableStateOf("") }
-    var buildingPermitArea by remember { mutableStateOf("") }
-    var hasWall by remember { mutableStateOf(false) }
-    var waterRightOwned by remember { mutableStateOf(false) }
-    var waterRightObtainable by remember { mutableStateOf(false) }
-    var electricityRightOwned by remember { mutableStateOf(false) }
-    var electricityRightObtainable by remember { mutableStateOf(false) }
-    var gasRightOwned by remember { mutableStateOf(false) }
-    var gasRightObtainable by remember { mutableStateOf(false) }
+    var landUse by rememberSaveable { mutableStateOf<LandUse?>(null) }
+    var frontageWidth by rememberSaveable { mutableStateOf("") }
+    var streetWidth by rememberSaveable { mutableStateOf("") }
+    var buildingPermitArea by rememberSaveable { mutableStateOf("") }
+    var hasWall by rememberSaveable { mutableStateOf(false) }
+    var waterRightOwned by rememberSaveable { mutableStateOf(false) }
+    var waterRightObtainable by rememberSaveable { mutableStateOf(false) }
+    var electricityRightOwned by rememberSaveable { mutableStateOf(false) }
+    var electricityRightObtainable by rememberSaveable { mutableStateOf(false) }
+    var gasRightOwned by rememberSaveable { mutableStateOf(false) }
+    var gasRightObtainable by rememberSaveable { mutableStateOf(false) }
 
     // تجاری (شامل اداری سابق)
-    var commercialUsage by remember { mutableStateOf<CommercialUsage?>(null) }
-    var ceilingHeight by remember { mutableStateOf("") }
-    var hasThreePhaseElectricity by remember { mutableStateOf(false) }
-    var hasRestroom by remember { mutableStateOf(false) }
+    var commercialUsage by rememberSaveable { mutableStateOf<CommercialUsage?>(null) }
+    var ceilingHeight by rememberSaveable { mutableStateOf("") }
+    var hasThreePhaseElectricity by rememberSaveable { mutableStateOf(false) }
+    var hasRestroom by rememberSaveable { mutableStateOf(false) }
 
     // ===== ۵) توضیحات =====
-    var description by remember { mutableStateOf("") }
-    var additionalNotes by remember { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var additionalNotes by rememberSaveable { mutableStateOf("") }
 
     // ===== ۶) قیمت‌گذاری =====
-    var totalPrice by remember { mutableStateOf("") }
-    var depositPrice by remember { mutableStateOf("") }
-    var rentPrice by remember { mutableStateOf("") }
-    var isExchangeable by remember { mutableStateOf(false) }
-    var exchangePreferredType by remember { mutableStateOf<PropertyType?>(null) }
-    var exchangeNote by remember { mutableStateOf("") }
-    var isDepositNegotiable by remember { mutableStateOf(false) }
-    var minAdjustableDeposit by remember { mutableStateOf("") }
+    var totalPrice by rememberSaveable { mutableStateOf("") }
+    var depositPrice by rememberSaveable { mutableStateOf("") }
+    var rentPrice by rememberSaveable { mutableStateOf("") }
+    var isExchangeable by rememberSaveable { mutableStateOf(false) }
+    var exchangePreferredType by rememberSaveable { mutableStateOf<PropertyType?>(null) }
+    var exchangeNote by rememberSaveable { mutableStateOf("") }
+    var isDepositNegotiable by rememberSaveable { mutableStateOf(false) }
+    var minAdjustableDeposit by rememberSaveable { mutableStateOf("") }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -344,17 +345,6 @@ fun AddPropertyScreen(
                 )
             }
 
-            // ===== ۳-الف) کاربری/کاربرد — فقط زمین و تجاری، پیش از «مشخصات ملک» =====
-            if (propertyType == PropertyType.LAND) {
-                SectionCard(title = stringResource(R.string.label_land_use), icon = Icons.Filled.Category) {
-                    NullableEnumDropdown(stringResource(R.string.label_land_use), LandUse.entries.toList(), landUse, { landUse = it }, icon = Icons.Filled.Category) { it.toPersianLabel() }
-                }
-            } else if (propertyType == PropertyType.COMMERCIAL) {
-                SectionCard(title = stringResource(R.string.label_commercial_usage), icon = Icons.Filled.Business) {
-                    NullableEnumDropdown(stringResource(R.string.label_commercial_usage), CommercialUsage.entries.toList(), commercialUsage, { commercialUsage = it }, icon = Icons.Filled.Business) { it.toPersianLabel() }
-                }
-            }
-
             // ===== ۳) مشخصات ملک =====
             SectionCard(title = stringResource(R.string.add_property_specs_section), icon = propertyType.icon()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -366,6 +356,14 @@ fun AddPropertyScreen(
                         icon = propertyType.icon(),
                         display = { it.toPersianLabel() }
                     )
+
+                    // ===== کاربری/کاربرد — فقط زمین و تجاری، دقیقاً زیر «نوع ملک» =====
+                    if (propertyType == PropertyType.LAND) {
+                        NullableEnumDropdown(stringResource(R.string.label_land_use), LandUse.entries.toList(), landUse, { landUse = it }, icon = Icons.Filled.Category) { it.toPersianLabel() }
+                    } else if (propertyType == PropertyType.COMMERCIAL) {
+                        NullableEnumDropdown(stringResource(R.string.label_commercial_usage), CommercialUsage.entries.toList(), commercialUsage, { commercialUsage = it }, icon = Icons.Filled.Business) { it.toPersianLabel() }
+                    }
+
                     DropdownSelector(
                         label = stringResource(R.string.add_property_deal_type_label),
                         options = DealType.entries.filterNot { it == DealType.MORTGAGE || it == DealType.EXCHANGE },

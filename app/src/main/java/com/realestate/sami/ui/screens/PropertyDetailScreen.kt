@@ -1,5 +1,7 @@
 package com.realestate.sami.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +44,7 @@ fun PropertyDetailScreen(
     onDeleted: () -> Unit,
     viewModel: PropertyDetailViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val property by viewModel.property.collectAsState()
     val matchingClients by viewModel.matchingClients.collectAsState()
     val contactLogs by viewModel.contactLogs.collectAsState()
@@ -211,6 +215,32 @@ fun PropertyDetailScreen(
                     InfoRow(stringResource(R.string.amenity_elevator), if (current.hasElevator) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
                     InfoRow(stringResource(R.string.label_address), current.address)
                     InfoRow(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
+                    val lat = current.latitude
+                    val lng = current.longitude
+                    if (lat != null && lng != null) {
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = {
+                                val uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng(${Uri.encode(current.address)})")
+                                val intent = Intent(Intent.ACTION_VIEW, uri)
+                                if (intent.resolveActivity(context.packageManager) != null) {
+                                    context.startActivity(intent)
+                                } else {
+                                    context.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://maps.google.com/maps?q=$lat,$lng")
+                                        )
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Filled.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.action_show_on_map))
+                        }
+                    }
                 }
 
                 // فاز ۵.۵/۵.۶ — مشخصات تکمیلیِ بسته به نوع ملک، فقط اگر چیزی برای نشان دادن باشد.
