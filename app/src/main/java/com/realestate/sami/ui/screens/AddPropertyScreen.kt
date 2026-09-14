@@ -468,14 +468,14 @@ fun AddPropertyScreen(
                                     AmenityChip(stringResource(R.string.amenity_shared_parking_path), Icons.Filled.LocalParking, hasSharedParkingPath) { hasSharedParkingPath = it }
                                 }
                                 AmenityChip(stringResource(R.string.amenity_automatic_parking_door), Icons.Filled.LocalParking, hasAutomaticParkingDoor) { hasAutomaticParkingDoor = it }
+                                AmenityChip(stringResource(R.string.amenity_video_intercom), Icons.Filled.Videocam, hasVideoIntercom) { hasVideoIntercom = it }
                                 AmenityChip(stringResource(R.string.amenity_private_water), Icons.Filled.WaterDrop, hasPrivateWater) { hasPrivateWater = it }
                                 AmenityChip(stringResource(R.string.amenity_shared_water), Icons.Filled.WaterDrop, hasSharedWater) { hasSharedWater = it }
                                 AmenityChip(stringResource(R.string.amenity_private_electricity), Icons.Filled.Bolt, hasPrivateElectricity) { hasPrivateElectricity = it }
                                 AmenityChip(stringResource(R.string.amenity_shared_electricity), Icons.Filled.Bolt, hasSharedElectricity) { hasSharedElectricity = it }
                                 AmenityChip(stringResource(R.string.amenity_private_gas), Icons.Filled.LocalFireDepartment, hasPrivateGas) { hasPrivateGas = it }
                                 AmenityChip(stringResource(R.string.amenity_shared_gas), Icons.Filled.LocalFireDepartment, hasSharedGas) { hasSharedGas = it }
-                                AmenityChip(stringResource(R.string.amenity_built_in_closet), Icons.Filled.Checkroom, hasBuiltInCloset) { hasBuiltInCloset = it }
-                                AmenityChip(stringResource(R.string.amenity_video_intercom), Icons.Filled.Videocam, hasVideoIntercom) { hasVideoIntercom = it }
+                                AmenityChip(stringResource(R.string.amenity_built_in_closet), Icons.Filled.Checkroom, hasBuiltInCloset) { hasBuiltInCloset = it }                                
                                 if (propertyType == PropertyType.VILLA) {
                                     AmenityChip(stringResource(R.string.amenity_caretaker), Icons.Filled.Security, hasCaretaker) { hasCaretaker = it }
                                     AmenityChip(stringResource(R.string.amenity_pool), Icons.Filled.Pool, hasPool) { hasPool = it }

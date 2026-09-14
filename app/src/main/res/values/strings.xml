@@ -534,11 +534,11 @@
     <string name="amenity_courtyard">محوطه حیاط</string>
     <string name="amenity_caretaker">سرایداری</string>
     <string name="amenity_kitchen">آشپزخانه</string>
-    <string name="amenity_water_right_owned">امتیاز آب اختصاصی</string>
+    <string name="amenity_water_right_owned">امتیاز آب</string>
     <string name="amenity_water_right_obtainable">امکان اخذ امتیاز آب</string>
-    <string name="amenity_electricity_right_owned">امتیاز برق اختصاصی</string>
+    <string name="amenity_electricity_right_owned">امتیاز برق</string>
     <string name="amenity_electricity_right_obtainable">امکان اخذ امتیاز برق</string>
-    <string name="amenity_gas_right_owned">امتیاز گاز اختصاصی</string>
+    <string name="amenity_gas_right_owned">امتیاز گاز</string>
     <string name="amenity_gas_right_obtainable">امکان اخذ امتیاز گاز</string>
 
     <string name="property_card_area_only">%1$d متر</string>
