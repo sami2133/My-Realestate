@@ -1,12 +1,21 @@
 package com.realestate.sami.ui.screens
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.ContactPage
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
@@ -15,6 +24,8 @@ import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.viewmodel.ClientViewModel
 import com.realestate.sami.ui.screens.common.CheckboxRow
+import com.realestate.sami.ui.screens.common.LabeledField
+import com.realestate.sami.ui.screens.common.PriceField
 import com.realestate.sami.util.parseIntInput
 import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
@@ -31,6 +42,7 @@ fun AddClientScreen(
 ) {
     val isEditMode = clientId != null
     val existingClient by viewModel.editingClient.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(clientId) {
         if (clientId != null) viewModel.loadForEdit(clientId) else viewModel.clearEditing()
@@ -72,6 +84,22 @@ fun AddClientScreen(
         }
     }
 
+    // انتخاب متقاضی از لیست مخاطبین گوشی — دقیقاً همون روش استفاده‌شده برای معرف/مالک در
+    // AddPropertyScreen: پیکر مستقیم روی Phone.CONTENT_URI، بدون نیاز به مجوز READ_CONTACTS.
+    val contactPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val contactUri = result.data?.data ?: return@rememberLauncherForActivityResult
+        context.contentResolver.query(contactUri, null, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val nameIndex = cursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                val numberIndex = cursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (nameIndex >= 0) cursor.getString(nameIndex)?.let { fullName = it }
+                if (numberIndex >= 0) cursor.getString(numberIndex)?.let { phone = it }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,8 +117,17 @@ fun AddClientScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(stringResource(R.string.add_client_info_section), style = MaterialTheme.typography.titleMedium)
-            OutlinedTextField(fullName, { fullName = it }, label = { Text(stringResource(R.string.add_client_full_name)) }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(phone, { phone = it }, label = { Text(stringResource(R.string.label_phone)) }, modifier = Modifier.fillMaxWidth())
+            LabeledField(
+                fullName, { fullName = it }, stringResource(R.string.add_client_full_name),
+                icon = Icons.Filled.Person,
+                trailingIcon = Icons.Filled.ContactPage,
+                onTrailingIconClick = {
+                    val intent = Intent(Intent.ACTION_PICK, android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                    contactPicker.launch(intent)
+                },
+                trailingIconContentDescription = stringResource(R.string.add_property_pick_from_contacts)
+            )
+            LabeledField(phone, { phone = it }, stringResource(R.string.label_phone), icon = Icons.Filled.Call, keyboardType = KeyboardType.Phone)
 
             Divider()
             Text(stringResource(R.string.add_client_desired_section), style = MaterialTheme.typography.titleMedium)
@@ -116,10 +153,10 @@ fun AddClientScreen(
             Text(stringResource(R.string.add_client_budget_section), style = MaterialTheme.typography.titleMedium)
             when (dealType) {
                 DealType.SALE, DealType.EXCHANGE ->
-                    OutlinedTextField(maxTotalPrice, { maxTotalPrice = it }, label = { Text(stringResource(R.string.add_client_max_total_price)) }, modifier = Modifier.fillMaxWidth())
+                    PriceField(maxTotalPrice, { maxTotalPrice = it }, stringResource(R.string.add_client_max_total_price))
                 DealType.RENT, DealType.MORTGAGE -> {
-                    OutlinedTextField(maxDepositPrice, { maxDepositPrice = it }, label = { Text(stringResource(R.string.add_client_max_deposit)) }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(maxRentPrice, { maxRentPrice = it }, label = { Text(stringResource(R.string.add_client_max_rent)) }, modifier = Modifier.fillMaxWidth())
+                    PriceField(maxDepositPrice, { maxDepositPrice = it }, stringResource(R.string.add_client_max_deposit))
+                    PriceField(maxRentPrice, { maxRentPrice = it }, stringResource(R.string.add_client_max_rent))
                 }
             }
 
