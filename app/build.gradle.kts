@@ -22,8 +22,8 @@ android {
         applicationId = "com.realestate.sami"
         minSdk = 26
         targetSdk = 34
-        versionCode = 34
-        versionName = "0.3.4"
+        versionCode = 41
+        versionName = "0.4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         

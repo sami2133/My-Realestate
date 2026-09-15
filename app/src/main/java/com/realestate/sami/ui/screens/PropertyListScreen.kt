@@ -11,20 +11,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -48,7 +44,6 @@ import com.realestate.sami.ui.viewmodel.PropertyFilter
 import com.realestate.sami.ui.viewmodel.PropertySortOption
 import com.realestate.sami.ui.viewmodel.PropertyViewMode
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
-import com.realestate.sami.util.PropertyExporter
 import com.realestate.sami.util.parseTomanInput
 import com.realestate.sami.util.toTomanShort
 
@@ -82,7 +77,6 @@ fun PropertyListScreen(
                             contentDescription = stringResource(if (viewMode == PropertyViewMode.LIST) R.string.nav_map else R.string.property_list_title)
                         )
                     }
-                    PropertyExportButton(properties = properties)
                     PropertyFilterButton(filter = filter, onApply = viewModel::onFilterChanged)
                     PropertySortMenu(current = sortOption, onSelect = viewModel::onSortOptionChanged)
                     IconButton(onClick = onOpenSettings) {
@@ -233,42 +227,6 @@ private fun PropertyMapBody(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun PropertyExportButton(properties: List<PropertyEntity>) {
-    val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Filled.FileDownload, contentDescription = stringResource(R.string.reports_export_section))
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.reports_export_pdf)) },
-                leadingIcon = { Icon(Icons.Filled.PictureAsPdf, contentDescription = null) },
-                onClick = {
-                    expanded = false
-                    PropertyExporter.exportToPdf(context, properties)?.let {
-                        PropertyExporter.shareFile(context, it, "application/pdf")
-                    }
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.reports_export_excel)) },
-                leadingIcon = { Icon(Icons.Filled.TableChart, contentDescription = null) },
-                onClick = {
-                    expanded = false
-                    PropertyExporter.exportToExcel(context, properties)?.let {
-                        PropertyExporter.shareFile(
-                            context, it,
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        )
-                    }
-                }
-            )
         }
     }
 }

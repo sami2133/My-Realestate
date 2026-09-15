@@ -225,7 +225,7 @@
     <string name="image_not_downloaded_yet">این عکس هنوز روی این دستگاه دانلود نشده</string>
 
     <!-- فاز ۵: گزارش‌ها -->
-    <string name="nav_reports">گزارش‌ها</string>
+    <string name="nav_reports">ابزارها</string>
 
     <!-- فاز ۵: یادآوری پیگیری -->
     <string name="follow_up_section_label">یادآوری پیگیری بعدی</string>
@@ -281,6 +281,11 @@
     <string name="commission_calculator_hint">مبلغ معامله رو وارد کنید تا حق‌العمل طبق نرخ‌نامه و روش محاسبه‌ی فعلی (قابل تغییر از تنظیمات) محاسبه بشه.</string>
     <string name="commission_calculator_amount_label">مبلغ معامله (تومان)</string>
 
+    <string name="commission_calculator_rent_section">ماشین‌حساب حق‌العمل اجاره</string>
+    <string name="commission_calculator_rent_hint">رهن و اجاره‌ی ماهانه رو وارد کنید تا حق‌العمل طبق نرخ حق‌العمل اجاره و نرخ تبدیل رهن↔اجاره‌ی فعلی (قابل تغییر از تنظیمات) محاسبه بشه.</string>
+    <string name="commission_calculator_deposit_label">مبلغ رهن (تومان)</string>
+    <string name="commission_calculator_monthly_rent_label">اجاره‌ی ماهانه (تومان)</string>
+
     <string name="commission_rent_section">نرخ حق‌العمل اجاره</string>
     <string name="commission_rent_hint">کل حق‌العمل اجاره برابر این درصد از (اجاره‌ی ماهانه + معادلِ اجاره‌ای رهن) است؛ نصف آن با موجر و نصف با مستاجر. برای تبدیل رهن به معادل اجاره از نرخ «تبدیل رهن↔اجاره» در همین صفحه استفاده می‌شود.</string>
     <string name="commission_rent_percent_label">درصد کل حق‌العمل اجاره</string>
@@ -298,6 +303,16 @@
     <string name="reports_export_hint">خروجی PDF یا اکسل از لیست کامل ملک‌ها، برای ارسال یا چاپ.</string>
     <string name="reports_export_pdf">خروجی PDF</string>
     <string name="reports_export_excel">خروجی اکسل</string>
+
+    <string name="backup_restore_section">پشتیبان‌گیری و بازیابی</string>
+    <string name="backup_restore_hint">یک فایل پشتیبان از کل اطلاعات اپ (ملک‌ها، مشتری‌ها، تماس‌ها، بازدیدها) بساز و جایی نگه دار، یا از یک فایل پشتیبانِ قبلی بازیابی کن.</string>
+    <string name="backup_create_action">تهیه پشتیبان</string>
+    <string name="backup_restore_action">بازیابی از پشتیبان</string>
+    <string name="backup_create_failed">تهیه‌ی فایل پشتیبان ناموفق بود.</string>
+    <string name="backup_restore_confirm_title">بازیابی نسخه‌ی پشتیبان</string>
+    <string name="backup_restore_confirm_message">با بازیابی، تمام اطلاعات فعلی اپ (ملک‌ها، مشتری‌ها، تماس‌ها، بازدیدها) با محتوای این فایل پشتیبان جایگزین می‌شود و قابل بازگشت نیست. اپ بلافاصله بعد از بازیابی دوباره باز می‌شود. ادامه می‌دهید؟</string>
+    <string name="backup_restore_failed">بازیابی از فایل پشتیبان ناموفق بود؛ فایل انتخاب‌شده معتبر نیست.</string>
+    <string name="backup_restore_action_confirm">بازیابی</string>
 
     <!-- فاز ۵: عنوان رویداد تقویم هنگام «افزودن به تقویم» -->
     <string name="visit_calendar_event_title_property">بازدید %1$s از ملک %2$s</string>

@@ -3,7 +3,7 @@ package com.realestate.sami.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
@@ -58,7 +58,7 @@ fun AppNavigation() {
                     val icon = when (screen) {
                         Screen.PropertyList -> Icons.Filled.Home
                         Screen.Sync -> Icons.Filled.Groups
-                        Screen.Reports -> Icons.Filled.Assessment
+                        Screen.Reports -> Icons.Filled.Build
                         else -> Icons.Filled.People
                     }
                     val label = stringResource(screen.labelRes)

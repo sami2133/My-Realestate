@@ -1,10 +1,15 @@
 package com.realestate.sami.ui.screens
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.TableChart
@@ -121,6 +126,45 @@ fun ReportsScreen(onOpenSettings: () -> Unit, viewModel: ReportsViewModel = hilt
                 }
             }
 
+            SectionCard(title = stringResource(R.string.commission_calculator_rent_section)) {
+                Text(
+                    stringResource(R.string.commission_calculator_rent_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(8.dp))
+                var depositInput by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = depositInput,
+                    onValueChange = { depositInput = it.toGroupedDigitsDisplay() },
+                    label = { Text(stringResource(R.string.commission_calculator_deposit_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                Spacer(Modifier.height(8.dp))
+                var monthlyRentInput by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = monthlyRentInput,
+                    onValueChange = { monthlyRentInput = it.toGroupedDigitsDisplay() },
+                    label = { Text(stringResource(R.string.commission_calculator_monthly_rent_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                val deposit = depositInput.parseTomanInput() ?: 0L
+                val monthlyRent = monthlyRentInput.parseTomanInput() ?: 0L
+                if (deposit > 0L || monthlyRent > 0L) {
+                    val result = viewModel.calculateLiveRentCommission(deposit, monthlyRent)
+                    Spacer(Modifier.height(12.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        LiveCalcRow(stringResource(R.string.commission_result_total), result.total.toTomanDisplay(), emphasize = true)
+                        LiveCalcRow(stringResource(R.string.commission_result_tenant), result.partyAShare.toTomanDisplay())
+                        LiveCalcRow(stringResource(R.string.commission_result_landlord), result.partyBShare.toTomanDisplay())
+                    }
+                }
+            }
+
             SectionCard(title = stringResource(R.string.reports_upcoming_visits_section, stats.upcomingVisits)) {
                 if (upcomingVisits.isEmpty()) {
                     Text(stringResource(R.string.reports_no_upcoming_visits), style = MaterialTheme.typography.bodySmall)
@@ -171,6 +215,18 @@ fun ReportsScreen(onOpenSettings: () -> Unit, viewModel: ReportsViewModel = hilt
                         Text(stringResource(R.string.reports_export_excel))
                     }
                 }
+
+                Divider(modifier = Modifier.padding(vertical = 14.dp))
+
+                Text(stringResource(R.string.backup_restore_section), style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    stringResource(R.string.backup_restore_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(10.dp))
+                BackupRestoreButtons(viewModel = viewModel)
             }
 
             Spacer(Modifier.height(20.dp))
@@ -190,6 +246,74 @@ private fun StatCard(title: String, value: String, modifier: Modifier = Modifier
             Spacer(Modifier.height(4.dp))
             Text(title, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+/**
+ * دو دکمه‌ی «تهیه پشتیبان» و «بازیابی از پشتیبان». بازیابی چون داده‌ی فعلی رو کامل جایگزین
+ * می‌کنه، قبلش یک دیالوگ تأیید نشون داده می‌شه؛ بعد از بازیابیِ موفق، اپ خودکار دوباره باز می‌شه
+ * (چون Room باید با فایل دیتابیس جدید از نو ساخته بشه).
+ */
+@Composable
+private fun BackupRestoreButtons(viewModel: ReportsViewModel) {
+    val context = LocalContext.current
+    var pendingRestoreUri by remember { mutableStateOf<android.net.Uri?>(null) }
+
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> if (uri != null) pendingRestoreUri = uri }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        OutlinedButton(
+            onClick = {
+                val backupFile = viewModel.createBackup(context)
+                if (backupFile != null) {
+                    viewModel.shareBackup(context, backupFile)
+                } else {
+                    Toast.makeText(context, context.getString(R.string.backup_create_failed), Toast.LENGTH_LONG).show()
+                }
+            },
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(Icons.Filled.CloudUpload, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(R.string.backup_create_action))
+        }
+        OutlinedButton(
+            onClick = { restoreLauncher.launch(arrayOf("*/*")) },
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(Icons.Filled.CloudDownload, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(R.string.backup_restore_action))
+        }
+    }
+
+    val uriToRestore = pendingRestoreUri
+    if (uriToRestore != null) {
+        AlertDialog(
+            onDismissRequest = { pendingRestoreUri = null },
+            title = { Text(stringResource(R.string.backup_restore_confirm_title)) },
+            text = { Text(stringResource(R.string.backup_restore_confirm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val success = viewModel.restoreBackup(context, uriToRestore)
+                    pendingRestoreUri = null
+                    if (success) {
+                        viewModel.restartApp(context)
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.backup_restore_failed), Toast.LENGTH_LONG).show()
+                    }
+                }) {
+                    Text(stringResource(R.string.backup_restore_action_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingRestoreUri = null }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
     }
 }
 
