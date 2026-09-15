@@ -21,6 +21,12 @@
     <string name="label_address">آدرس</string>
     <string name="label_registered_at">تاریخ ثبت</string>
     <string name="action_show_on_map">نمایش روی نقشه</string>
+    <string name="commission_result_section">حق‌العمل طبق نرخ‌نامه</string>
+    <string name="commission_result_total">مجموع حق‌العمل</string>
+    <string name="commission_result_buyer">سهم خریدار</string>
+    <string name="commission_result_seller">سهم فروشنده</string>
+    <string name="commission_result_tenant">سهم مستاجر</string>
+    <string name="commission_result_landlord">سهم موجر</string>
     <string name="label_area">متراژ</string>
     <string name="label_rooms">تعداد اتاق</string>
     <string name="value_yes">دارد</string>
@@ -258,6 +264,20 @@
     <string name="reports_commission_section">نرخ کمیسیون</string>
     <string name="reports_commission_hint">این نرخ برای برآورد درآمد کمیسیون از معاملات موفق استفاده می‌شود؛ فقط روی همین گوشی ذخیره می‌شود.</string>
     <string name="reports_commission_percent_label">درصد کمیسیون</string>
+
+    <string name="commission_tariff_section">نرخ‌نامه‌ی حق‌العمل فروش</string>
+    <string name="commission_tariff_hint">نرخ‌نامه‌ی پلکانی رسمی: هر بازه فقط روی همان بخش از مبلغ معامله اعمال می‌شود، نه کل مبلغ. سهم خریدار و فروشنده در هر بازه همیشه مساوی است. مبالغ به تومان‌اند (اعداد ریالی نرخ‌نامه تقسیم بر ۱۰).</string>
+    <string name="commission_tariff_threshold_1_label">سقف بازه‌ی اول (تومان)</string>
+    <string name="commission_tariff_rate_1_label">نرخ بازه‌ی اول (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_threshold_2_label">سقف بازه‌ی دوم (تومان)</string>
+    <string name="commission_tariff_rate_2_label">نرخ بازه‌ی دوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_threshold_3_label">سقف بازه‌ی سوم (تومان)</string>
+    <string name="commission_tariff_rate_3_label">نرخ بازه‌ی سوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_rate_4_label">نرخ مازاد بر سقف سوم (درصد کل، نصف‌نصف)</string>
+
+    <string name="commission_rent_section">نرخ حق‌العمل اجاره</string>
+    <string name="commission_rent_hint">کل حق‌العمل اجاره برابر این درصد از (اجاره‌ی ماهانه + معادلِ اجاره‌ای رهن) است؛ نصف آن با موجر و نصف با مستاجر. برای تبدیل رهن به معادل اجاره از نرخ «تبدیل رهن↔اجاره» در همین صفحه استفاده می‌شود.</string>
+    <string name="commission_rent_percent_label">درصد کل حق‌العمل اجاره</string>
 
     <!-- فاز ۵.۲: نرخ تبدیل رهن↔اجاره -->
     <string name="reports_rent_conversion_section">نرخ تبدیل رهن↔اجاره</string>

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.local.entity.ContactLogEntity
+import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.local.entity.PropertyStatus
 import com.realestate.sami.data.local.entity.RelatedType
@@ -14,6 +15,9 @@ import com.realestate.sami.data.repository.ContactLogRepository
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.data.repository.VisitRepository
 import com.realestate.sami.domain.matching.MatchingEngine
+import com.realestate.sami.util.CommissionCalculator
+import com.realestate.sami.util.CommissionResult
+import com.realestate.sami.util.CommissionTariffPreferences
 import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -27,7 +31,8 @@ class PropertyDetailViewModel @Inject constructor(
     private val contactLogRepository: ContactLogRepository,
     private val visitRepository: VisitRepository,
     private val matchingEngine: MatchingEngine,
-    private val rentPreferences: RentPreferences
+    private val rentPreferences: RentPreferences,
+    private val commissionTariffPreferences: CommissionTariffPreferences
 ) : ViewModel() {
 
     private val propertyId: Long = checkNotNull(savedStateHandle["propertyId"])
@@ -37,6 +42,32 @@ class PropertyDetailViewModel @Inject constructor(
 
     private val _property = MutableStateFlow<PropertyEntity?>(null)
     val property: StateFlow<PropertyEntity?> = _property
+
+    /**
+     * فاز ۶ — حق‌العمل واقعی این ملک طبق نرخ‌نامه‌ی رسمی (نه نرخ ثابت تخمینیِ داشبورد گزارش‌ها).
+     * برای فروش/معاوضه روی [PropertyEntity.totalPrice] پلکانی حساب می‌شود؛ برای اجاره/رهن،
+     * رهن با نرخ [RentPreferences.conversionPercent] به معادل اجاره تبدیل و با اجاره‌ی ماهانه جمع
+     * می‌شود. اگر مبلغی ثبت نشده باشد null برمی‌گردد (چیزی برای محاسبه نیست).
+     */
+    val commissionResult: StateFlow<CommissionResult?> = _property
+        .map { p ->
+            when {
+                p == null -> null
+                p.dealType == DealType.SALE || p.dealType == DealType.EXCHANGE ->
+                    p.totalPrice?.let { CommissionCalculator.calculateSaleCommission(it, commissionTariffPreferences) }
+                p.dealType == DealType.RENT || p.dealType == DealType.MORTGAGE ->
+                    if ((p.rentPrice ?: 0L) > 0L || (p.depositPrice ?: 0L) > 0L) {
+                        CommissionCalculator.calculateRentCommission(
+                            monthlyRent = p.rentPrice ?: 0L,
+                            depositAmount = p.depositPrice ?: 0L,
+                            tariff = commissionTariffPreferences,
+                            rentConversionPercent = rentConversionPercent
+                        )
+                    } else null
+                else -> null
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val matchingClients: StateFlow<List<ClientEntity>> = _property
         .filterNotNull()

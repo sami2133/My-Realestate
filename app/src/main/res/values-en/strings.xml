@@ -21,6 +21,12 @@
     <string name="label_address">Address</string>
     <string name="label_registered_at">Registered On</string>
     <string name="action_show_on_map">Show on map</string>
+    <string name="commission_result_section">Commission per tariff</string>
+    <string name="commission_result_total">Total commission</string>
+    <string name="commission_result_buyer">Buyer share</string>
+    <string name="commission_result_seller">Seller share</string>
+    <string name="commission_result_tenant">Tenant share</string>
+    <string name="commission_result_landlord">Landlord share</string>
     <string name="label_area">Area</string>
     <string name="label_rooms">Rooms</string>
     <string name="value_yes">Yes</string>
@@ -258,6 +264,20 @@
     <string name="reports_commission_section">Commission rate</string>
     <string name="reports_commission_hint">Used to estimate commission income from closed deals; stored only on this device.</string>
     <string name="reports_commission_percent_label">Commission percent</string>
+
+    <string name="commission_tariff_section">Sale Commission Tariff</string>
+    <string name="commission_tariff_hint">Official marginal tariff: each bracket applies only to the portion of the deal amount within it, not the whole amount. The buyer and seller share is always split evenly per bracket. Amounts are in Toman (tariff Rial figures divided by 10).</string>
+    <string name="commission_tariff_threshold_1_label">Bracket 1 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_1_label">Bracket 1 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_threshold_2_label">Bracket 2 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_2_label">Bracket 2 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_threshold_3_label">Bracket 3 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_3_label">Bracket 3 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_rate_4_label">Rate above bracket 3 (% of total, split evenly)</string>
+
+    <string name="commission_rent_section">Rent Commission Rate</string>
+    <string name="commission_rent_hint">Total rent commission equals this percent of (monthly rent + deposit\'s rent-equivalent); split evenly between landlord and tenant. The deposit is converted using the \"deposit↔rent conversion\" rate on this page.</string>
+    <string name="commission_rent_percent_label">Total rent commission percent</string>
 
     <!-- Phase 5.2: rent-deposit conversion rate -->
     <string name="reports_rent_conversion_section">Rent↔Deposit conversion rate</string>

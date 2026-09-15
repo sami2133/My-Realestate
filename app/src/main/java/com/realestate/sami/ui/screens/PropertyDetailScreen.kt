@@ -46,6 +46,7 @@ fun PropertyDetailScreen(
 ) {
     val context = LocalContext.current
     val property by viewModel.property.collectAsState()
+    val commissionResult by viewModel.commissionResult.collectAsState()
     val matchingClients by viewModel.matchingClients.collectAsState()
     val contactLogs by viewModel.contactLogs.collectAsState()
     val visits by viewModel.visits.collectAsState()
@@ -240,6 +241,20 @@ fun PropertyDetailScreen(
                             Spacer(Modifier.width(8.dp))
                             Text(stringResource(R.string.action_show_on_map))
                         }
+                    }
+                }
+
+                commissionResult?.let { result ->
+                    Spacer(Modifier.height(12.dp))
+                    SectionCard(title = stringResource(R.string.commission_result_section), icon = Icons.Filled.Payments) {
+                        InfoRow(stringResource(R.string.commission_result_total), result.total.toTomanDisplay())
+                        val (labelA, labelB) = if (current.dealType == DealType.RENT || current.dealType == DealType.MORTGAGE) {
+                            stringResource(R.string.commission_result_tenant) to stringResource(R.string.commission_result_landlord)
+                        } else {
+                            stringResource(R.string.commission_result_buyer) to stringResource(R.string.commission_result_seller)
+                        }
+                        InfoRow(labelA, result.partyAShare.toTomanDisplay())
+                        InfoRow(labelB, result.partyBShare.toTomanDisplay())
                     }
                 }
 
