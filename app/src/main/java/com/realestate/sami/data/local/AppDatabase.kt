@@ -19,29 +19,10 @@ import com.realestate.sami.data.local.entity.VisitEntity
         ContactLogEntity::class,
         VisitEntity::class
     ],
-    // نسخه ۲: افزودن ستون isDeleted برای پشتیبانی از soft-delete (sync حذف رکورد).
-    // نسخه ۳: افزودن remoteId/relatedRemoteId/updatedAt/isSynced/isDeleted به ContactLogEntity
-    // (برای sync تاریخچه‌ی تماس) و تبدیل PropertyEntity.imageUris (رشته‌ی ساده) به
-    // PropertyEntity.images (لیست PropertyImage با پشتیبانی از sync عکس روی Drive).
-    // نسخه ۴ (فاز ۵.۲): افزودن PropertyEntity.minAdjustableDeposit؛ و ادغام DealType.MORTGAGE
-    // در DealType.RENT (رهن کامل و اجاره در ایران یک فرآیندند). این تبدیل با یک migration واقعی
-    // انجام می‌شه (به data/local/Migrations.kt نگاه کن) نه destructive — چون اپ در حال استفاده‌ی
-    // واقعیه و نباید داده‌ی sync‌نشده‌ی کسی پاک بشه. SyncManager هم هنگام دانلود از Drive مقدار
-    // MORTGAGE قدیمی رو به RENT تبدیل می‌کنه، برای سازگاری با فایل‌های JSON قدیمی‌تر.
-    // نسخه ۵ (فاز ۵.۳): افزودن PropertyEntity.isExchangeable/exchangePreferredType/exchangeNote؛
-    // و ادغام DealType.EXCHANGE در DealType.SALE (معاوضه یک زیرحالت فروشه، نه نوع معامله‌ی جدا).
-    // با MIGRATION_4_5 (data/local/Migrations.kt) و بدون از دست رفتن داده انجام می‌شه.
-    // نسخه ۶ (فاز ۵.۵): افزودن ~۳۷ ستون nullable/پیش‌فرض-false برای مشخصات تکمیلی بسته به نوع
-    // ملک (نوع سند، جهت/وضعیت واحد، کلاس ساختمان، امتیازات آب/برق/گاز، مشخصات زمین/تجاری/اداری).
-    // با MIGRATION_5_6 و بدون از دست رفتن داده انجام می‌شه.
-    // نسخه ۷ (فاز ۵.۶): افزودن PropertyEntity.additionalNotes (یادداشت آزاد شخصی/داخلی، جدا از
-    // توضیحات نمایش‌داده‌شده به مشتری). با MIGRATION_6_7 و بدون از دست رفتن داده.
-    // نسخه ۸ (فاز ۶): بازطراحی کامل مشخصات ملک مطابق فرم‌های جدید (آپارتمان/ویلایی/تجاری/زمین)؛
-    // نوع ملک «اداری» حذف و به‌عنوان کاربرد زیر «تجاری» ادغام شد و چند ده ستون قدیمی جایگزین
-    // فیلدهای جدید شدند. طبق تصمیم صریح توسعه‌دهنده این‌بار داده‌ی محلی موجود اهمیتی نداشت، پس
-    // برخلاف نسخه‌های قبلی یک Migration واقعی نوشته نشد — این نسخه با fallbackToDestructiveMigration
-    // (پایین‌تر در AppModule) هندل می‌شود، یعنی دیتابیس محلی روی آپدیت این نسخه پاک و از نو ساخته می‌شود.
-    version = 8,
+    // اپ هنوز رسمی منتشر نشده، پس نیازی به حفظ تاریخچه‌ی migration نسخه‌های قبلی نیست.
+    // این نسخه ۱ به‌عنوان baseline تازه در نظر گرفته شده (ساختار جدول‌ها = آخرین طرح فاز ۶).
+    // از اینجا به بعد، هر تغییر ساختاری بعد از انتشار باید با migration واقعی انجام بشه.
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

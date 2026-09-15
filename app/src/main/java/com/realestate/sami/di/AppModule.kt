@@ -3,10 +3,6 @@ package com.realestate.sami.di
 import android.content.Context
 import androidx.room.Room
 import com.realestate.sami.data.local.AppDatabase
-import com.realestate.sami.data.local.MIGRATION_3_4
-import com.realestate.sami.data.local.MIGRATION_4_5
-import com.realestate.sami.data.local.MIGRATION_5_6
-import com.realestate.sami.data.local.MIGRATION_6_7
 import com.realestate.sami.data.local.dao.ClientDao
 import com.realestate.sami.data.local.dao.ContactLogDao
 import com.realestate.sami.data.local.dao.PropertyDao
@@ -26,11 +22,9 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
-            .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
-            // fallbackToDestructiveMigration فقط برای گوشی‌هایی که به‌هر دلیلی هنوز خیلی عقب‌تر
-            // (نسخه ۱ یا ۲) موندن اجرا می‌شه — که آپدیت‌شون هم قبلاً همین‌طور destructive بوده.
-            // برای مسیر واقعی و رایج (نسخه ۳ -> ۴ -> ۵ -> ۶) از MIGRATION_3_4 و MIGRATION_4_5 و
-            // MIGRATION_5_6 بالا استفاده می‌شه و هیچ داده‌ای پاک نمی‌شه.
+            // اپ هنوز منتشر نشده، پس migration واقعی لازم نیست. این fallback فقط به‌عنوان
+            // safety net برای توسعه‌ی محلی نگه داشته شده؛ بعد از انتشار رسمی باید برای هر
+            // تغییر ساختاری، migration واقعی نوشته بشه (نه destructive).
             .fallbackToDestructiveMigration()
             .build()
 
