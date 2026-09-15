@@ -1,5 +1,6 @@
 package com.realestate.sami.ui.screens
 
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -311,6 +312,24 @@ fun AddPropertyScreen(
         }
     }
 
+    // انتخاب معرف/مالک از لیست مخاطبین گوشی. چون Intent.ACTION_PICK مستقیم روی
+    // Phone.CONTENT_URI اجرا می‌شه (نه Contacts.CONTENT_URI عمومی)، سیستم‌عامل خودش یک اپ
+    // انتخاب مخاطب نشون می‌ده و فقط اجازه‌ی خواندن همون یک ردیف انتخاب‌شده رو به اپ می‌ده —
+    // برای همین این روش بدون نیاز به مجوز READ_CONTACTS کار می‌کنه.
+    val contactPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val contactUri = result.data?.data ?: return@rememberLauncherForActivityResult
+        context.contentResolver.query(contactUri, null, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val nameIndex = cursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                val numberIndex = cursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (nameIndex >= 0) cursor.getString(nameIndex)?.let { ownerName = it }
+                if (numberIndex >= 0) cursor.getString(numberIndex)?.let { ownerPhone = it }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -332,7 +351,16 @@ fun AddPropertyScreen(
         ) {
             // ===== ۱) اطلاعات معرف/مالک =====
             SectionCard(title = stringResource(R.string.add_property_owner_section), icon = Icons.Filled.Person) {
-                LabeledField(ownerName, { ownerName = it }, stringResource(R.string.add_property_owner_name), icon = Icons.Filled.Person)
+                LabeledField(
+                    ownerName, { ownerName = it }, stringResource(R.string.add_property_owner_name),
+                    icon = Icons.Filled.Person,
+                    trailingIcon = Icons.Filled.ContactPage,
+                    onTrailingIconClick = {
+                        val intent = Intent(Intent.ACTION_PICK, android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                        contactPicker.launch(intent)
+                    },
+                    trailingIconContentDescription = stringResource(R.string.add_property_pick_from_contacts)
+                )
                 LabeledField(ownerPhone, { ownerPhone = it }, stringResource(R.string.label_phone), icon = Icons.Filled.Call, keyboardType = KeyboardType.Phone)
             }
 

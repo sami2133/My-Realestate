@@ -77,6 +77,7 @@
     <string name="add_property_title">Add New Property</string>
     <string name="add_property_owner_section">Referrer / Owner Info</string>
     <string name="add_property_owner_name">Referrer/Owner Name</string>
+    <string name="add_property_pick_from_contacts">Pick from contacts</string>
     <string name="add_property_photos_section">Property Photos</string>
     <string name="add_property_specs_section">Property Details</string>
     <string name="add_property_type_label">Property Type</string>

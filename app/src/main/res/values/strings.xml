@@ -77,6 +77,7 @@
     <string name="add_property_title">ثبت ملک جدید</string>
     <string name="add_property_owner_section">اطلاعات معرف / مالک</string>
     <string name="add_property_owner_name">نام معرف/مالک</string>
+    <string name="add_property_pick_from_contacts">انتخاب از مخاطبین</string>
     <string name="add_property_photos_section">عکس‌های ملک</string>
     <string name="add_property_specs_section">مشخصات ملک</string>
     <string name="add_property_type_label">نوع ملک</string>
