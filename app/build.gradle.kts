@@ -22,8 +22,8 @@ android {
         applicationId = "com.realestate.sami"
         minSdk = 26
         targetSdk = 34
-        versionCode = 45
-        versionName = "0.4.5"
+        versionCode = 46
+        versionName = "0.4.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -31,6 +31,15 @@ android {
                 System.getenv("MAPS_API_KEY")
                     ?: localProps.getProperty("MAPS_API_KEY")
                     ?: ""
+
+        buildConfigField(
+            "String", "DRIVE_PICKER_API_KEY",
+            "\"${System.getenv("DRIVE_PICKER_API_KEY") ?: localProps.getProperty("DRIVE_PICKER_API_KEY") ?: ""}\""
+        )
+        buildConfigField(
+            "String", "DRIVE_APP_ID",
+            "\"${System.getenv("DRIVE_APP_ID") ?: localProps.getProperty("DRIVE_APP_ID") ?: ""}\""
+        )
     }
     
     signingConfigs {
@@ -59,6 +68,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"

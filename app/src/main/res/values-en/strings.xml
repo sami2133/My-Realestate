@@ -177,6 +177,8 @@
     <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
     <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
     <string name="sync_team_folder_join_button">Join existing team</string>
+    <string name="sync_team_folder_picker_hint">To join a folder a teammate has shared with you, pick it from Drive instead of typing the ID manually:</string>
+    <string name="sync_team_folder_picker_button">Pick folder from Google Drive</string>
 
     <!-- Network type setting for background auto-sync -->
     <string name="sync_auto_wifi_only_title">Auto-sync on Wi-Fi only</string>

@@ -8,6 +8,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
+import com.realestate.sami.sync.AccessTokenResult
+import com.realestate.sami.sync.DrivePickerActivity
 import com.realestate.sami.sync.GoogleAuthManager
 import com.realestate.sami.sync.JoinTeamResult
 import com.realestate.sami.sync.SyncManager
@@ -35,7 +37,9 @@ data class SyncUiState(
     val joinTeamMessage: String? = null,
     val isJoiningTeam: Boolean = false,
     /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
-    val autoSyncWifiOnly: Boolean = false
+    val autoSyncWifiOnly: Boolean = false,
+    /** وقتی مقدار داره، صفحه باید DrivePickerActivity رو با این Intent باز کنه (یک‌بار‌مصرف). */
+    val pickerLaunchIntent: Intent? = null
 )
 
 @HiltViewModel
@@ -113,6 +117,9 @@ class SyncViewModel @Inject constructor(
      * به یک پوشه‌ی تیمی موجود (که یک همکار ساخته و Share کرده) با شناسه‌ی Drive می‌پیوندد،
      * تا به‌جای ساخت یه پوشه‌ی جدا و جدید، مستقیم به همون داده‌ی تیمی وصل بشه.
      * بعد از پیوستن موفق، یه sync کامل خودکار اجرا می‌شه.
+     *
+     * منبع folderId می‌تونه یا ورودی دستی کاربر باشه یا نتیجه‌ی [onFolderPicked] از Google Picker —
+     * منطق پیوستن برای هر دو یکسانه.
      */
     fun joinTeamFolder(folderId: String) {
         val account = _uiState.value.account ?: return
@@ -137,6 +144,39 @@ class SyncViewModel @Inject constructor(
 
     fun clearJoinTeamMessage() {
         _uiState.value = _uiState.value.copy(joinTeamMessage = null)
+    }
+
+    /**
+     * توکن دسترسی فعلی رو می‌گیره و Intent مربوط به DrivePickerActivity رو در state می‌ذاره تا
+     * صفحه (SyncSettingsScreen) اون رو با یک ActivityResultLauncher باز کنه. اگه هنوز consent Drive
+     * داده نشده، مثل بقیه‌ی جاها pendingConsentIntent ست می‌شه.
+     */
+    fun requestFolderPicker() {
+        val account = _uiState.value.account ?: return
+        viewModelScope.launch {
+            when (val tokenResult = authManager.getAccessToken(context, account)) {
+                is AccessTokenResult.Success -> _uiState.value = _uiState.value.copy(
+                    pickerLaunchIntent = Intent(context, DrivePickerActivity::class.java)
+                        .putExtra(DrivePickerActivity.EXTRA_ACCESS_TOKEN, tokenResult.token)
+                )
+                is AccessTokenResult.ConsentRequired -> _uiState.value = _uiState.value.copy(
+                    pendingConsentIntent = tokenResult.intent
+                )
+                is AccessTokenResult.Failure -> _uiState.value = _uiState.value.copy(
+                    errorMessage = tokenResult.message
+                )
+            }
+        }
+    }
+
+    /** بعد از این‌که صفحه Intent رو لانچ کرد، یک‌بار‌مصرف بودنش رو با پاک کردن از state تضمین کن. */
+    fun clearPickerLaunchIntent() {
+        _uiState.value = _uiState.value.copy(pickerLaunchIntent = null)
+    }
+
+    /** نتیجه‌ی DrivePickerActivity؛ اگه کاربر پوشه‌ای انتخاب کرده باشه (لغو نکرده باشه)، بهش می‌پیونده. */
+    fun onFolderPicked(folderId: String?) {
+        if (!folderId.isNullOrBlank()) joinTeamFolder(folderId)
     }
 
     /** تغییر تنظیم «sync خودکار فقط با Wi-Fi»؛ ذخیره می‌شود و کار دوره‌ای فوراً با محدودیت شبکه‌ی جدید دوباره زمان‌بندی می‌شود. */

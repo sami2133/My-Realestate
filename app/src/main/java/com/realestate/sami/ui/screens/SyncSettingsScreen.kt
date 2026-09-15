@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudSync
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Share
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
+import com.realestate.sami.sync.DrivePickerActivity
 import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.SyncStatus
 import com.realestate.sami.ui.viewmodel.SyncViewModel
@@ -49,9 +51,27 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
         }
     }
 
+    // Google Picker (انتخاب پوشه‌ی تیمی از Drive) رو باز می‌کنه؛ نتیجه شناسه/نام پوشه‌ی انتخاب‌شده است.
+    val pickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val folderId = result.data?.getStringExtra(DrivePickerActivity.EXTRA_RESULT_FOLDER_ID)
+            viewModel.onFolderPicked(folderId)
+        }
+    }
+
     // وقتی SyncManager بگه نیاز به consent هست، خودکار Intent مربوطه رو باز کن
     LaunchedEffect(state.pendingConsentIntent) {
         state.pendingConsentIntent?.let { consentLauncher.launch(it) }
+    }
+
+    // وقتی ViewModel یک Intent برای Picker آماده کرده، بازش کن و بعد از state پاکش کن (یک‌بار‌مصرف)
+    LaunchedEffect(state.pickerLaunchIntent) {
+        state.pickerLaunchIntent?.let {
+            pickerLauncher.launch(it)
+            viewModel.clearPickerLaunchIntent()
+        }
     }
 
     val context = LocalContext.current
@@ -200,6 +220,25 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
                             Spacer(Modifier.width(8.dp))
                             Text(stringResource(R.string.sync_team_folder_share_button))
                         }
+                        Spacer(Modifier.height(16.dp))
+                    }
+
+                    // روش اصلی و توصیه‌شده برای پیوستن: Google Picker. چون با اسکوپ drive.file،
+                    // فقط انتخاب صریح از طریق Picker است که به اپ دسترسی واقعی به پوشه‌ی Share‌شده می‌ده.
+                    Text(
+                        stringResource(R.string.sync_team_folder_picker_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { viewModel.requestFolderPicker() },
+                        enabled = !state.isJoiningTeam,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Filled.FolderOpen, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.sync_team_folder_picker_button))
                     }
 
                     Spacer(Modifier.height(16.dp))

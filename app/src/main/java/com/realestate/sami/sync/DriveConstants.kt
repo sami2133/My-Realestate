@@ -2,9 +2,12 @@ package com.realestate.sami.sync
 
 /** ثابت‌های مربوط به همگام‌سازی تیمی روی Google Drive (فاز ۴). */
 object DriveConstants {
-    /** Scope کامل Drive — چون تیم کوچک (۲ تا ۵ نفر) در حالت Testing در Google Cloud Console می‌ماند،
-     *  نیازی به تایید (verification) گوگل نیست؛ فقط باید ایمیل هر عضو تیم را به‌عنوان test user اضافه کنید. */
-    const val DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
+    /** Scope محدود drive.file (به‌جای drive کامل) — چون قرار است چند تیم/گروه مختلف از اپ منتشرشده
+     *  استفاده کنند، دیگر نمی‌توان در حالت Testing با افزودن دستی هر کاربر ماند. drive.file جزو
+     *  اسکوپ‌های حساس/محدود گوگل نیست، پس انتشار اپ (Publishing) بدون نیاز به بررسی امنیتی CASA
+     *  ممکن است. محدودیتش: اپ فقط به فایل‌هایی دسترسی دارد که خودش ساخته یا کاربر با
+     *  Google Picker صریحاً انتخاب کرده (به همین دلیل DrivePickerActivity اضافه شده است). */
+    const val DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file"
     const val DRIVE_SCOPE_OAUTH = "oauth2:$DRIVE_SCOPE"
 
     /** نام پوشه‌ی مشترک تیمی که در Drive هر عضو ساخته/پیدا می‌شود. */

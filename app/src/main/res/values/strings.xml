@@ -177,6 +177,8 @@
     <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
     <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
+    <string name="sync_team_folder_picker_hint">برای پیوستن به پوشه‌ای که یک همکار باهات Share کرده، به‌جای وارد کردن دستی شناسه، از Drive انتخابش کن:</string>
+    <string name="sync_team_folder_picker_button">انتخاب پوشه از Google Drive</string>
 
     <!-- تنظیم نوع اتصال برای sync خودکار پس‌زمینه -->
     <string name="sync_auto_wifi_only_title">همگام‌سازی خودکار فقط با Wi-Fi</string>
