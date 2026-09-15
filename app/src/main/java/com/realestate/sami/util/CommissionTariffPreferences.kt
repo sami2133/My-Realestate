@@ -6,6 +6,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
+ * روش محاسبه‌ی حق‌العمل فروش:
+ * - [MARGINAL] پلکانی/مرزی: هر بازه فقط روی همان بخش از مبلغ که داخل آن بازه است حساب می‌شود
+ *   (شبیه پلکان مالیاتی).
+ * - [FLAT] غیرپلکانی: کل مبلغ معامله با نرخِ همان بازه‌ای که مبلغ در آن قرار می‌گیرد ضرب می‌شود —
+ *   طبق متن نرخ‌نامه‌ی ابلاغی («بالاتر از X تا Y، فلان درصد از دو طرف»)، خوانشِ رایج همین حالت است.
+ */
+enum class CommissionCalculationMode { MARGINAL, FLAT }
+
+/**
  * نرخ‌نامه‌ی حق‌العمل مشاور املاک — طبق نرخ‌نامه‌ی ابلاغی اتحادیه (نمونه‌ی پیوست‌شده توسط کاربر).
  *
  * تمام مبالغ زیر «تومان» ذخیره می‌شوند (چون [PropertyEntity.totalPrice] و بقیه‌ی قیمت‌های اپ هم
@@ -61,6 +70,13 @@ class CommissionTariffPreferences @Inject constructor(@ApplicationContext contex
         get() = prefs.getFloat(KEY_RENT_COMMISSION_PERCENT, DEFAULT_RENT_COMMISSION_PERCENT)
         set(value) = prefs.edit().putFloat(KEY_RENT_COMMISSION_PERCENT, value).apply()
 
+    /** روش محاسبه‌ی فروش: پلکانی یا غیرپلکانی. پیش‌فرض غیرپلکانی (خوانش رایج از متن نرخ‌نامه). */
+    var calculationMode: CommissionCalculationMode
+        get() = CommissionCalculationMode.valueOf(
+            prefs.getString(KEY_CALCULATION_MODE, DEFAULT_CALCULATION_MODE.name) ?: DEFAULT_CALCULATION_MODE.name
+        )
+        set(value) = prefs.edit().putString(KEY_CALCULATION_MODE, value.name).apply()
+
     companion object {
         private const val KEY_SALE_THRESHOLD_1 = "sale_threshold_1"
         private const val KEY_SALE_THRESHOLD_2 = "sale_threshold_2"
@@ -70,6 +86,7 @@ class CommissionTariffPreferences @Inject constructor(@ApplicationContext contex
         private const val KEY_SALE_RATE_3 = "sale_rate_3"
         private const val KEY_SALE_RATE_4 = "sale_rate_4"
         private const val KEY_RENT_COMMISSION_PERCENT = "rent_commission_percent"
+        private const val KEY_CALCULATION_MODE = "commission_calculation_mode"
 
         // ریال‌های نرخ‌نامه ÷ ۱۰ = تومان
         const val DEFAULT_SALE_THRESHOLD_1 = 2_000_000_000L   // تا ۲۰ میلیارد ریال
@@ -82,5 +99,6 @@ class CommissionTariffPreferences @Inject constructor(@ApplicationContext contex
         const val DEFAULT_SALE_RATE_4 = 0.5f   // نیم درصد (۲۵صدم-۲۵صدم)
 
         const val DEFAULT_RENT_COMMISSION_PERCENT = 100f / 3f // یک‌سوم اجاره (یک‌ششم - یک‌ششم)
+        val DEFAULT_CALCULATION_MODE = CommissionCalculationMode.FLAT
     }
 }

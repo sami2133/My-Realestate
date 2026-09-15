@@ -10,6 +10,9 @@ import com.realestate.sami.data.local.entity.VisitEntity
 import com.realestate.sami.data.repository.ClientRepository
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.data.repository.VisitRepository
+import com.realestate.sami.util.CommissionCalculator
+import com.realestate.sami.util.CommissionResult
+import com.realestate.sami.util.CommissionTariffPreferences
 import com.realestate.sami.util.ReportPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +37,8 @@ class ReportsViewModel @Inject constructor(
     private val propertyRepository: PropertyRepository,
     private val clientRepository: ClientRepository,
     private val visitRepository: VisitRepository,
-    private val reportPreferences: ReportPreferences
+    private val reportPreferences: ReportPreferences,
+    private val commissionTariffPreferences: CommissionTariffPreferences
 ) : ViewModel() {
 
     // فاز ۵.۳: نرخ کمیسیون و نرخ تبدیل رهن↔اجاره از اینجا قابل‌ویرایش نیستن؛ فقط برای محاسبه‌ی
@@ -76,6 +80,15 @@ class ReportsViewModel @Inject constructor(
     fun refreshCommissionPercent() {
         _commissionPercent.value = reportPreferences.commissionPercent
     }
+
+    /**
+     * فاز ۶.۱ — ماشین‌حساب زنده‌ی حق‌العمل فروش، برای بخش «نرخ کمیسیون» در گزارش‌ها.
+     * هر بار مستقیم از [CommissionTariffPreferences] (یعنی آخرین تنظیمات ذخیره‌شده، شامل
+     * روش محاسبه‌ی پلکانی/غیرپلکانی) می‌خواند — نیازی به refresh جدا نیست چون خودِ همین
+     * تابع در لحظه‌ی فراخوانی SharedPreferences را می‌خواند.
+     */
+    fun calculateLiveSaleCommission(dealAmountToman: Long): CommissionResult =
+        CommissionCalculator.calculateSaleCommission(dealAmountToman, commissionTariffPreferences)
 }
 
 /**

@@ -2,6 +2,7 @@ package com.realestate.sami.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PictureAsPdf
@@ -12,12 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
 import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.ReportsViewModel
 import com.realestate.sami.util.PropertyExporter
+import com.realestate.sami.util.parseTomanInput
+import com.realestate.sami.util.toGroupedDigitsDisplay
 import com.realestate.sami.util.toPersianDateString
 import com.realestate.sami.util.toTomanDisplay
 
@@ -86,6 +90,34 @@ fun ReportsScreen(onOpenSettings: () -> Unit, viewModel: ReportsViewModel = hilt
                     Icon(Icons.Filled.Settings, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(R.string.settings_open_action))
+                }
+            }
+
+            SectionCard(title = stringResource(R.string.commission_calculator_section)) {
+                Text(
+                    stringResource(R.string.commission_calculator_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(8.dp))
+                var calculatorInput by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = calculatorInput,
+                    onValueChange = { calculatorInput = it.toGroupedDigitsDisplay() },
+                    label = { Text(stringResource(R.string.commission_calculator_amount_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                val amount = calculatorInput.parseTomanInput()
+                if (amount != null && amount > 0L) {
+                    val result = viewModel.calculateLiveSaleCommission(amount)
+                    Spacer(Modifier.height(12.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        LiveCalcRow(stringResource(R.string.commission_result_total), result.total.toTomanDisplay(), emphasize = true)
+                        LiveCalcRow(stringResource(R.string.commission_result_buyer), result.partyAShare.toTomanDisplay())
+                        LiveCalcRow(stringResource(R.string.commission_result_seller), result.partyBShare.toTomanDisplay())
+                    }
                 }
             }
 
@@ -158,5 +190,17 @@ private fun StatCard(title: String, value: String, modifier: Modifier = Modifier
             Spacer(Modifier.height(4.dp))
             Text(title, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+@Composable
+private fun LiveCalcRow(label: String, value: String, emphasize: Boolean = false) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(label, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            value,
+            style = if (emphasize) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
+            color = if (emphasize) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        )
     }
 }

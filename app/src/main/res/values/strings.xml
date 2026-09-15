@@ -274,6 +274,12 @@
     <string name="commission_tariff_threshold_3_label">سقف بازه‌ی سوم (تومان)</string>
     <string name="commission_tariff_rate_3_label">نرخ بازه‌ی سوم (درصد کل، نصف‌نصف)</string>
     <string name="commission_tariff_rate_4_label">نرخ مازاد بر سقف سوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_calculation_mode_label">روش محاسبه</string>
+    <string name="commission_calculation_mode_flat">غیرپلکانی (کل مبلغ × نرخ همان بازه)</string>
+    <string name="commission_calculation_mode_marginal">پلکانی (هر بازه روی سهم خودش)</string>
+    <string name="commission_calculator_section">ماشین‌حساب حق‌العمل فروش</string>
+    <string name="commission_calculator_hint">مبلغ معامله رو وارد کنید تا حق‌العمل طبق نرخ‌نامه و روش محاسبه‌ی فعلی (قابل تغییر از تنظیمات) محاسبه بشه.</string>
+    <string name="commission_calculator_amount_label">مبلغ معامله (تومان)</string>
 
     <string name="commission_rent_section">نرخ حق‌العمل اجاره</string>
     <string name="commission_rent_hint">کل حق‌العمل اجاره برابر این درصد از (اجاره‌ی ماهانه + معادلِ اجاره‌ای رهن) است؛ نصف آن با موجر و نصف با مستاجر. برای تبدیل رهن به معادل اجاره از نرخ «تبدیل رهن↔اجاره» در همین صفحه استفاده می‌شود.</string>

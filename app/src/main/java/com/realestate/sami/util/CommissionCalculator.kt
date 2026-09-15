@@ -16,11 +16,14 @@ data class CommissionResult(
 object CommissionCalculator {
 
     /**
-     * حق‌العمل فروش/معاوضه — پلکانی روی [dealAmount]:
-     * هر بازه فقط روی همان بخش از مبلغ که داخل آن بازه است حساب می‌شود (نه کل مبلغ)، درست مثل
-     * نمونه‌ی نرخ‌نامه: مثلاً برای معامله‌ی ۵۰ میلیارد ریالی (۵ میلیارد تومان)، ۲۰ میلیارد ریال
-     * اول با نرخ ۱٪، ۲۰ میلیارد بعدی با نرخ ۰٫۸٪ و ۱۰ میلیارد باقی‌مانده با نرخ ۰٫۶٪ حساب می‌شود؛
-     * این سه رقم با هم جمع می‌شوند و نتیجه، حق‌العمل کل معامله است.
+     * حق‌العمل فروش/معاوضه روی [dealAmount]. روش محاسبه از [CommissionTariffPreferences.calculationMode]
+     * خوانده می‌شود:
+     * - پلکانی: هر بازه فقط روی همان بخش از مبلغ که داخل آن بازه است حساب می‌شود؛ مثلاً برای معامله‌ی
+     *   ۵۰ میلیارد ریالی (۵ میلیارد تومان)، ۲۰ میلیارد ریال اول با نرخ ۱٪، ۲۰ میلیارد بعدی با نرخ ۰٫۸٪
+     *   و ۱۰ میلیارد باقی‌مانده با نرخ ۰٫۶٪ حساب و با هم جمع می‌شوند.
+     * - غیرپلکانی (پیش‌فرض — خوانش رایج از نرخ‌نامه): کل مبلغ معامله فقط با نرخِ همان بازه‌ای که در
+     *   آن قرار می‌گیرد ضرب می‌شود؛ یعنی برای همان مثال، چون ۵ میلیارد بین ۴ تا ۶ میلیارده، کل ۵ میلیارد
+     *   با نرخ ۰٫۶٪ حساب می‌شود.
      */
     fun calculateSaleCommission(
         dealAmount: Long,
@@ -28,6 +31,24 @@ object CommissionCalculator {
     ): CommissionResult {
         if (dealAmount <= 0L) return CommissionResult(0, 0, 0)
 
+        val total = when (tariff.calculationMode) {
+            CommissionCalculationMode.FLAT -> calculateFlat(dealAmount, tariff)
+            CommissionCalculationMode.MARGINAL -> calculateMarginal(dealAmount, tariff)
+        }
+        return total.splitEvenly()
+    }
+
+    private fun calculateFlat(dealAmount: Long, tariff: CommissionTariffPreferences): Long {
+        val rate = when {
+            dealAmount <= tariff.saleThreshold1 -> tariff.saleRate1
+            dealAmount <= tariff.saleThreshold2 -> tariff.saleRate2
+            dealAmount <= tariff.saleThreshold3 -> tariff.saleRate3
+            else -> tariff.saleRate4
+        }
+        return (dealAmount * rate / 100.0).toLong()
+    }
+
+    private fun calculateMarginal(dealAmount: Long, tariff: CommissionTariffPreferences): Long {
         val t1 = tariff.saleThreshold1
         val t2 = tariff.saleThreshold2
         val t3 = tariff.saleThreshold3
@@ -52,9 +73,7 @@ object CommissionCalculator {
         if (remaining > 0) {
             totalExact += remaining * tariff.saleRate4 / 100.0
         }
-
-        val total = totalExact.toLong()
-        return total.splitEvenly()
+        return totalExact.toLong()
     }
 
     /**

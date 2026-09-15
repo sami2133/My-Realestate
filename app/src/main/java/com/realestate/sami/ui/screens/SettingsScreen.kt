@@ -2,6 +2,8 @@ package com.realestate.sami.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -11,12 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
 import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.SettingsViewModel
+import com.realestate.sami.util.CommissionCalculationMode
 import com.realestate.sami.util.toEnglishDigits
 import com.realestate.sami.util.toGroupedDigitsDisplay
 import com.realestate.sami.util.toPlainPercentString
@@ -49,6 +53,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
     val saleRate3 by viewModel.saleRate3.collectAsState()
     val saleRate4 by viewModel.saleRate4.collectAsState()
     val rentCommissionPercent by viewModel.rentCommissionPercent.collectAsState()
+    val calculationMode by viewModel.calculationMode.collectAsState()
 
     var t1Input by remember(saleThreshold1) { mutableStateOf(saleThreshold1.toString().toGroupedDigitsDisplay()) }
     var t2Input by remember(saleThreshold2) { mutableStateOf(saleThreshold2.toString().toGroupedDigitsDisplay()) }
@@ -155,6 +160,43 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Spacer(Modifier.height(10.dp))
+                Text(stringResource(R.string.commission_calculation_mode_label), style = MaterialTheme.typography.labelLarge)
+                Spacer(Modifier.height(4.dp))
+                Column(Modifier.selectableGroup()) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = calculationMode == CommissionCalculationMode.FLAT,
+                                onClick = { viewModel.setCalculationMode(CommissionCalculationMode.FLAT) },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = calculationMode == CommissionCalculationMode.FLAT,
+                            onClick = null
+                        )
+                        Text(stringResource(R.string.commission_calculation_mode_flat), style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = calculationMode == CommissionCalculationMode.MARGINAL,
+                                onClick = { viewModel.setCalculationMode(CommissionCalculationMode.MARGINAL) },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = calculationMode == CommissionCalculationMode.MARGINAL,
+                            onClick = null
+                        )
+                        Text(stringResource(R.string.commission_calculation_mode_marginal), style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = t1Input,

@@ -274,6 +274,12 @@
     <string name="commission_tariff_threshold_3_label">Bracket 3 ceiling (Toman)</string>
     <string name="commission_tariff_rate_3_label">Bracket 3 rate (% of total, split evenly)</string>
     <string name="commission_tariff_rate_4_label">Rate above bracket 3 (% of total, split evenly)</string>
+    <string name="commission_calculation_mode_label">Calculation method</string>
+    <string name="commission_calculation_mode_flat">Flat (whole amount × that bracket\'s rate)</string>
+    <string name="commission_calculation_mode_marginal">Marginal (each bracket on its own portion)</string>
+    <string name="commission_calculator_section">Sale Commission Calculator</string>
+    <string name="commission_calculator_hint">Enter the deal amount to calculate the commission per the tariff and the current calculation method (changeable in Settings).</string>
+    <string name="commission_calculator_amount_label">Deal amount (Toman)</string>
 
     <string name="commission_rent_section">Rent Commission Rate</string>
     <string name="commission_rent_hint">Total rent commission equals this percent of (monthly rent + deposit\'s rent-equivalent); split evenly between landlord and tenant. The deposit is converted using the \"deposit↔rent conversion\" rate on this page.</string>

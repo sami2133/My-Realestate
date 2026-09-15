@@ -1,6 +1,7 @@
 package com.realestate.sami.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.realestate.sami.util.CommissionCalculationMode
 import com.realestate.sami.util.CommissionTariffPreferences
 import com.realestate.sami.util.ReportPreferences
 import com.realestate.sami.util.RentPreferences
@@ -59,6 +60,14 @@ class SettingsViewModel @Inject constructor(
 
     private val _rentCommissionPercent = MutableStateFlow(commissionTariffPreferences.rentCommissionPercent)
     val rentCommissionPercent: StateFlow<Float> = _rentCommissionPercent
+
+    private val _calculationMode = MutableStateFlow(commissionTariffPreferences.calculationMode)
+    val calculationMode: StateFlow<CommissionCalculationMode> = _calculationMode
+
+    fun setCalculationMode(mode: CommissionCalculationMode) {
+        commissionTariffPreferences.calculationMode = mode
+        _calculationMode.value = mode
+    }
 
     fun setSaleThreshold1(value: Long) { commissionTariffPreferences.saleThreshold1 = value; _saleThreshold1.value = value }
     fun setSaleThreshold2(value: Long) { commissionTariffPreferences.saleThreshold2 = value; _saleThreshold2.value = value }
