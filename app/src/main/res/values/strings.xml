@@ -346,6 +346,8 @@
     <!-- فاز ۵.۳: منوی تنظیمات -->
     <string name="nav_settings">تنظیمات</string>
     <string name="settings_title">تنظیمات</string>
+    <string name="settings_language_section">زبان برنامه</string>
+    <string name="settings_language_hint">زبان نمایش متن‌های برنامه را انتخاب کنید.</string>
     <string name="settings_owner_contact_section">محافظت از اطلاعات تماس مالک/معرف</string>
     <string name="settings_owner_contact_hint">وقتی روشن باشد، نام و شماره‌ی واقعی مالک/معرف هر ملک فقط روی همین دستگاه (که آن را ثبت کرده) باقی می‌ماند و هرگز برای بقیه‌ی اعضای تیم فرستاده نمی‌شود؛ به‌جایش نام و شماره‌ی زیر برای آن‌ها نمایش داده می‌شود.</string>
     <string name="settings_owner_contact_toggle_label">محافظت از اطلاعات تماس مالک برای تیم</string>

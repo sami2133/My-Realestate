@@ -1,9 +1,12 @@
 package com.realestate.sami.ui.viewmodel
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import com.realestate.sami.sync.SyncPreferences
 import com.realestate.sami.util.CommissionCalculationMode
 import com.realestate.sami.util.CommissionTariffPreferences
+import com.realestate.sami.util.LanguagePreferences
 import com.realestate.sami.util.ReportPreferences
 import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,8 +25,21 @@ class SettingsViewModel @Inject constructor(
     private val reportPreferences: ReportPreferences,
     private val rentPreferences: RentPreferences,
     private val commissionTariffPreferences: CommissionTariffPreferences,
-    private val syncPreferences: SyncPreferences
+    private val syncPreferences: SyncPreferences,
+    private val languagePreferences: LanguagePreferences
 ) : ViewModel() {
+
+    // ===== زبان برنامه (فارسی/انگلیسی) — اولین گزینه‌ی صفحه‌ی تنظیمات =====
+
+    private val _languageTag = MutableStateFlow(languagePreferences.languageTag)
+    val languageTag: StateFlow<String> = _languageTag
+
+    fun setLanguage(tag: String) {
+        languagePreferences.languageTag = tag
+        _languageTag.value = tag
+        // اعمال فوری: اکتیویتی به‌طور خودکار با کانفیگ جدید بازسازی می‌شود.
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+    }
 
     private val _commissionPercent = MutableStateFlow(reportPreferences.commissionPercent)
     val commissionPercent: StateFlow<Float> = _commissionPercent

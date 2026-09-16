@@ -21,6 +21,7 @@ import com.realestate.sami.R
 import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.SettingsViewModel
 import com.realestate.sami.util.CommissionCalculationMode
+import com.realestate.sami.util.LanguagePreferences
 import com.realestate.sami.util.toEnglishDigits
 import com.realestate.sami.util.toGroupedDigitsDisplay
 import com.realestate.sami.util.toPlainPercentString
@@ -36,6 +37,7 @@ import com.realestate.sami.util.toPlainPercentString
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+    val languageTag by viewModel.languageTag.collectAsState()
     val commissionPercent by viewModel.commissionPercent.collectAsState()
     val rentConversionPercent by viewModel.rentConversionPercent.collectAsState()
 
@@ -82,6 +84,50 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             Modifier.padding(padding).fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
+            // فاز ۷ — انتخاب زبان برنامه (فارسی/انگلیسی)، همیشه اولین گزینه‌ی صفحه‌ی تنظیمات.
+            SectionCard(title = stringResource(R.string.settings_language_section)) {
+                Text(
+                    stringResource(R.string.settings_language_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(10.dp))
+                Column(Modifier.selectableGroup()) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = languageTag == LanguagePreferences.LANGUAGE_FA,
+                                onClick = { viewModel.setLanguage(LanguagePreferences.LANGUAGE_FA) },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = languageTag == LanguagePreferences.LANGUAGE_FA,
+                            onClick = null
+                        )
+                        Text("فارسی", style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = languageTag == LanguagePreferences.LANGUAGE_EN,
+                                onClick = { viewModel.setLanguage(LanguagePreferences.LANGUAGE_EN) },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = languageTag == LanguagePreferences.LANGUAGE_EN,
+                            onClick = null
+                        )
+                        Text("English", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+
             SectionCard(title = stringResource(R.string.reports_rent_conversion_section)) {
                 Text(
                     stringResource(R.string.reports_rent_conversion_hint),

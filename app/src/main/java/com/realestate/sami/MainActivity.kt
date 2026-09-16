@@ -16,17 +16,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
+import androidx.core.os.ConfigurationCompat
 import com.realestate.sami.ui.navigation.AppNavigation
 import com.realestate.sami.ui.theme.RealEstateConsultantTheme
+import com.realestate.sami.util.LanguagePreferences
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // محتوای اپ همیشه فارسی است؛ صرف‌نظر از locale دستگاه، چیدمان راست‌به‌چپ اجباری می‌شود.
-            CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides LayoutDirection.Rtl) {
+            // جهت چیدمان (راست‌به‌چپ/چپ‌به‌راست) بر اساس زبان انتخابی واقعی اپ تعیین می‌شود،
+            // نه بر اساس زبان سیستم؛ فارسی همیشه راست‌به‌چپ است، انگلیسی چپ‌به‌راست.
+            val currentLocale = ConfigurationCompat.getLocales(resources.configuration)[0]
+                ?: Locale.getDefault()
+            val layoutDirection = if (currentLocale.language == LanguagePreferences.LANGUAGE_FA) {
+                LayoutDirection.Rtl
+            } else {
+                LayoutDirection.Ltr
+            }
+            CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides layoutDirection) {
                 RealEstateConsultantTheme {
                     Surface(modifier = Modifier.fillMaxSize()) {
                         NotificationPermissionRequester()
