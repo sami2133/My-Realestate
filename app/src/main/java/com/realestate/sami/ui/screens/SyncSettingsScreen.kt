@@ -78,7 +78,15 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
     var joinFolderIdInput by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.sync_title)) }) }
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.sync_title)) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier

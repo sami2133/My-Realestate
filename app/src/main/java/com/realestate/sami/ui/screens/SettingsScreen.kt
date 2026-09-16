@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.realestate.sami.R
+import com.realestate.sami.ui.screens.common.SavedBadge
 import com.realestate.sami.ui.screens.common.SectionCard
 import com.realestate.sami.ui.viewmodel.SettingsViewModel
 import com.realestate.sami.util.CommissionCalculationMode
@@ -71,6 +72,12 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
                 title = { Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -146,15 +153,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    if (rentConversionSaved) {
-                        Text(
-                            stringResource(R.string.settings_saved),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Spacer(Modifier)
-                    }
+                    SavedBadge(visible = rentConversionSaved)
                     Button(onClick = {
                         rentConversionInput.toEnglishDigits().toFloatOrNull()?.let {
                             viewModel.setRentConversionPercent(it)
@@ -182,15 +181,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    if (commissionSaved) {
-                        Text(
-                            stringResource(R.string.settings_saved),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Spacer(Modifier)
-                    }
+                    SavedBadge(visible = commissionSaved)
                     Button(onClick = {
                         commissionInput.toEnglishDigits().toFloatOrNull()?.let {
                             viewModel.setCommissionPercent(it)
@@ -312,15 +303,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    if (tariffSaved) {
-                        Text(
-                            stringResource(R.string.settings_saved),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Spacer(Modifier)
-                    }
+                    SavedBadge(visible = tariffSaved)
                     Button(onClick = {
                         val t1 = t1Input.toEnglishDigits().filter { it.isDigit() }.toLongOrNull()
                         val t2 = t2Input.toEnglishDigits().filter { it.isDigit() }.toLongOrNull()
@@ -361,15 +344,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    if (rentCommissionSaved) {
-                        Text(
-                            stringResource(R.string.settings_saved),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Spacer(Modifier)
-                    }
+                    SavedBadge(visible = rentCommissionSaved)
                     Button(onClick = {
                         rentCommissionInput.toEnglishDigits().toFloatOrNull()?.let {
                             viewModel.setRentCommissionPercent(it)
@@ -436,15 +411,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     )
                     Spacer(Modifier.height(8.dp))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        if (contactSettingsSaved) {
-                            Text(
-                                stringResource(R.string.settings_saved),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        } else {
-                            Spacer(Modifier)
-                        }
+                        SavedBadge(visible = contactSettingsSaved)
                         Button(onClick = {
                             viewModel.setMyDisplayName(displayNameInput)
                             viewModel.setMyDisplayPhone(displayPhoneInput)

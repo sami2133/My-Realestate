@@ -1,6 +1,8 @@
 package com.realestate.sami.ui.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -87,10 +89,30 @@ fun AppNavigation() {
             }
         }
     ) { padding ->
+        // انیمیشن ظریف اسلاید+فِید بین صفحه‌ها (به‌جای پرش خشک پیش‌فرض)؛ جهت اسلاید با
+        // LocalLayoutDirection هماهنگه، پس در حالت راست‌به‌چپ (فارسی) خودکار درست می‌چرخه.
+        val transitionSpec = tween<androidx.compose.ui.unit.IntOffset>(durationMillis = 260)
+        val fadeSpec = tween<Float>(durationMillis = 220)
         NavHost(
             navController = navController,
             startDestination = Screen.PropertyList.route,
-            modifier = androidx.compose.ui.Modifier.padding(padding)
+            modifier = androidx.compose.ui.Modifier.padding(padding),
+            enterTransition = {
+                androidx.compose.animation.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    androidx.compose.animation.fadeIn(fadeSpec)
+            },
+            exitTransition = {
+                androidx.compose.animation.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    androidx.compose.animation.fadeOut(fadeSpec)
+            },
+            popEnterTransition = {
+                androidx.compose.animation.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    androidx.compose.animation.fadeIn(fadeSpec)
+            },
+            popExitTransition = {
+                androidx.compose.animation.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    androidx.compose.animation.fadeOut(fadeSpec)
+            }
         ) {
             composable(Screen.PropertyList.route) {
                 PropertyListScreen(

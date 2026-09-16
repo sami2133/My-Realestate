@@ -73,6 +73,12 @@ fun PropertyDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
                 title = { Text(property?.address ?: stringResource(R.string.property_detail_title_fallback), maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {

@@ -9,15 +9,19 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -54,14 +58,25 @@ fun DealType.color(): Color = when (this) {
     DealType.EXCHANGE -> DealExchangeColor
 }
 
+/** آیکون کوچک مخصوص هر نوع معامله — کنار برچسب رنگی، برای خوانایی سریع‌تر بدون نیاز به خواندن متن. */
+fun DealType.icon(): ImageVector = when (this) {
+    DealType.SALE -> Icons.Filled.Sell
+    DealType.RENT -> Icons.Filled.Key
+    DealType.MORTGAGE -> Icons.Filled.AccountBalance
+    DealType.EXCHANGE -> Icons.Filled.SwapHoriz
+}
+
 @Composable
 fun DealTypeChip(dealType: DealType, label: String) {
     val color = dealType.color()
-    Box(
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(color.copy(alpha = 0.12f), RoundedCornerShape(8.dp))
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
+        Icon(dealType.icon(), contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+        Spacer(Modifier.width(4.dp))
         Text(label, color = color, style = MaterialTheme.typography.labelMedium)
     }
 }
@@ -250,7 +265,8 @@ fun SectionCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -264,6 +280,40 @@ fun SectionCard(
                 Spacer(Modifier.height(10.dp))
             }
             content()
+        }
+    }
+}
+
+/**
+ * نشان کوچک «ذخیره شد» که با یک fade+scale ظریف ظاهر می‌شه (به‌جای پرش خشک متن)، کنار دکمه‌ی
+ * ثبت هر بخش از تنظیمات/فرم‌ها. حالت خالی هم یک Spacer نگه می‌داره تا چیدمان Row جابه‌جا نشه.
+ */
+@Composable
+fun SavedBadge(visible: Boolean, modifier: Modifier = Modifier) {
+    if (!visible) {
+        Spacer(modifier)
+        return
+    }
+    androidx.compose.animation.AnimatedVisibility(
+        visible = true,
+        enter = androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(200)) +
+            androidx.compose.animation.scaleIn(initialScale = 0.85f, animationSpec = androidx.compose.animation.core.tween(200)),
+        exit = androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(150)),
+        modifier = modifier
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Filled.Check,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                stringResource(R.string.settings_saved),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

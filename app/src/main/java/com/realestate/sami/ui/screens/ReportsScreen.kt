@@ -45,6 +45,12 @@ fun ReportsScreen(onOpenSettings: () -> Unit, viewModel: ReportsViewModel = hilt
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
                 title = { Text(stringResource(R.string.nav_reports), style = MaterialTheme.typography.titleLarge) },
                 actions = {
                     IconButton(onClick = onOpenSettings) {

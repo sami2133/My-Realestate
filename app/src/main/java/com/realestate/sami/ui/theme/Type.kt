@@ -2,36 +2,40 @@ package com.realestate.sami.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.realestate.sami.R
 
 /**
- * فونت پیش‌فرض این پروژه «وزیرمتن» (Vazirmatn) در نظر گرفته شده — یک فونت فارسی مدرن،
- * هندسی و بسیار خوانا که این روزها استاندارد اپ‌های فارسی باکیفیت است.
+ * فونت این پروژه «وزیرمتن» (Vazirmatn) است — یک فونت فارسی مدرن، هندسی و بسیار خوانا که این
+ * روزها استاندارد اپ‌های فارسی باکیفیت است.
  *
- * چون این محیط توسعه به اینترنت دسترسی ندارد، فایل‌های فونت به‌صورت باینری اضافه نشده‌اند.
- * برای فعال‌سازی فونت واقعی:
- *   ۱. از https://fonts.google.com/specimen/Vazirmatn فایل‌های Regular/Medium/Bold/SemiBold رو دانلود کن
- *   ۲. بریز داخل app/src/main/res/font/ با نام‌های:
- *      vazirmatn_regular.ttf, vazirmatn_medium.ttf, vazirmatn_semibold.ttf, vazirmatn_bold.ttf
- *   ۳. بلوک کامنت‌شده پایین همین فایل رو از حالت کامنت خارج کن و بلوک فعلی (System Default) رو حذف کن
+ * چون محیط توسعه‌ی اولیه‌ی این پروژه به اینترنت دسترسی نداشت، به‌جای باندل‌کردن فایل‌های .ttf
+ * داخل اپ، از API «فونت‌های دانلودی» گوگل استفاده شده: فونت اولین بار که دستگاه کاربر به
+ * اینترنت وصله (از طریق Google Play Services) دانلود و کش می‌شه — بدون افزایش حجم فایل APK و
+ * بدون نیاز به دانلود دستی فایل فونت توسط توسعه‌دهنده.
+ * (values/font_certs.xml گواهی‌های لازم برای تایید هویت این سرویس رو نگه می‌داره.)
  *
- * تا قبل از اون، اپ با فونت پیش‌فرض سیستم (که در اندروید مدرن به‌خوبی از فارسی پشتیبانی می‌کنه) اجرا می‌شه.
+ * روی دستگاه‌هایی که Google Play Services ندارند (بعضی گوشی‌های چینی خاص)، این API به‌صورت
+ * خودکار به فونت پیش‌فرض سیستم برمی‌گرده — یعنی اپ کرش نمی‌کنه، فقط فونت سفارشی نمایش داده نمی‌شه.
  */
-private val AppFontFamily = FontFamily.SansSerif
-
-/*
-// --- نسخه نهایی با فونت وزیرمتن — بعد از اضافه کردن فایل‌های .ttf از حالت کامنت خارج کن ---
-private val AppFontFamily = FontFamily(
-    Font(R.font.vazirmatn_regular, FontWeight.Normal),
-    Font(R.font.vazirmatn_medium, FontWeight.Medium),
-    Font(R.font.vazirmatn_semibold, FontWeight.SemiBold),
-    Font(R.font.vazirmatn_bold, FontWeight.Bold)
+private val vazirmatnProvider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
 )
-*/
+
+private val vazirmatn = GoogleFont("Vazirmatn")
+
+private val AppFontFamily = FontFamily(
+    Font(googleFont = vazirmatn, fontProvider = vazirmatnProvider, weight = FontWeight.Normal),
+    Font(googleFont = vazirmatn, fontProvider = vazirmatnProvider, weight = FontWeight.Medium),
+    Font(googleFont = vazirmatn, fontProvider = vazirmatnProvider, weight = FontWeight.SemiBold),
+    Font(googleFont = vazirmatn, fontProvider = vazirmatnProvider, weight = FontWeight.Bold)
+)
 
 val AppTypography = Typography(
     displayLarge = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 42.sp, letterSpacing = 0.sp),

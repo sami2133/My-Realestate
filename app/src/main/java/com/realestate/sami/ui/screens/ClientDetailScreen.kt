@@ -60,6 +60,12 @@ fun ClientDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
                 title = { Text(client?.fullName ?: stringResource(R.string.client_detail_title_fallback)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {

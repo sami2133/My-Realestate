@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
 import androidx.core.os.ConfigurationCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.realestate.sami.ui.navigation.AppNavigation
 import com.realestate.sami.ui.theme.RealEstateConsultantTheme
 import com.realestate.sami.util.LanguagePreferences
@@ -26,6 +27,8 @@ import java.util.Locale
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // باید قبل از super.onCreate و قبل از setContentView/setContent صدا زده بشه.
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             // جهت چیدمان (راست‌به‌چپ/چپ‌به‌راست) بر اساس زبان انتخابی واقعی اپ تعیین می‌شود،

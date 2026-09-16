@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,10 +22,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -67,6 +71,12 @@ fun PropertyListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
                 title = { Text(stringResource(R.string.property_list_title), style = MaterialTheme.typography.titleLarge) },
                 actions = {
                     IconButton(onClick = {
@@ -362,7 +372,34 @@ private fun PropertyCard(property: PropertyEntity, onClick: () -> Unit) {
                     .fillMaxHeight()
                     .background(property.dealType.color())
             )
-            Column(Modifier.padding(14.dp).weight(1f)) {
+            // بندانگشتی اولین عکس ملک — اگر عکسی ثبت نشده، یک باکس نمادین به‌جاش نشون داده می‌شه؛
+            // بدون این، لیست ملک‌ها فقط متن بود و کمتر شبیه یک اپ حرفه‌ای‌ املاک به نظر می‌رسید.
+            val thumbnailUri = property.images.firstOrNull()?.localUri
+            Box(
+                Modifier
+                    .padding(vertical = 10.dp, horizontal = 10.dp)
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(property.dealType.color().copy(alpha = 0.10f)),
+                contentAlignment = Alignment.Center
+            ) {
+                if (thumbnailUri != null) {
+                    AsyncImage(
+                        model = thumbnailUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        Icons.Filled.Home,
+                        contentDescription = null,
+                        tint = property.dealType.color().copy(alpha = 0.5f),
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+            }
+            Column(Modifier.padding(top = 14.dp, bottom = 14.dp, start = 4.dp, end = 14.dp).weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     DealTypeChip(property.dealType, property.dealType.toPersianLabel())
                     Text(property.propertyType.toPersianLabel(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
