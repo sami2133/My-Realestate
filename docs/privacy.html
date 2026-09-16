@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>حریم خصوصی — املاک من</title>
+  <style>
+    :root {
+      --bg: #0f1a14;
+      --card: #16241c;
+      --emerald: #2fae72;
+      --gold: #d4af6a;
+      --text: #eef4ef;
+      --muted: #a9bcb0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+    .card {
+      max-width: 640px;
+      width: 100%;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px 24px;
+      border: 1px solid rgba(212, 175, 106, 0.25);
+    }
+    h1 { color: var(--gold); font-size: 1.5rem; margin-top: 0; }
+    h2 { color: var(--emerald); font-size: 1.1rem; margin-top: 28px; }
+    p, li { line-height: 1.9; color: var(--muted); }
+    ul { padding-inline-start: 20px; }
+    code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      direction: ltr;
+      display: inline-block;
+      font-size: 0.85em;
+    }
+    footer {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 16px;
+    }
+    .updated { color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>حریم خصوصی — املاک من</h1>
+    <p class="updated">آخرین به‌روزرسانی: ۱۴۰۵/۰۶/۲۵</p>
+
+    <p>
+      این سند توضیح می‌دهد اپلیکیشن «املاک من» (پکیج <code>com.realestate.sami</code>) چه داده‌ای
+      جمع‌آوری می‌کند، آن را کجا نگه می‌دارد، و در صورت استفاده از قابلیت همگام‌سازی تیمی، به چه
+      بخشی از حساب Google کاربر دسترسی دارد.
+    </p>
+
+    <h2>۱. داده‌هایی که در خود گوشی ذخیره می‌شوند</h2>
+    <p>
+      اطلاعات ملک، متقاضی، تاریخچه‌ی تماس و بازدید که کاربر وارد می‌کند، در یک پایگاه‌داده‌ی محلی
+      (Room/SQLite) روی همان گوشی ذخیره می‌شود. این اپ سروری اختصاصی ندارد و این داده‌ها به هیچ
+      شرکت یا سرویس ثالثی ارسال نمی‌شوند، مگر اینکه کاربر خودش قابلیت همگام‌سازی تیمی را فعال کند.
+    </p>
+
+    <h2>۲. دسترسی به Google Drive (اختیاری)</h2>
+    <p>
+      اگر کاربر از بخش «تیم» با حساب Google خودش وارد شود، اپ برای همگام‌سازی داده‌ها بین اعضای
+      یک تیم از Google Drive API با اسکوپ محدود زیر استفاده می‌کند:
+    </p>
+    <p><code>https://www.googleapis.com/auth/drive.file</code></p>
+    <p>این اسکوپ محدود به این معناست که اپ فقط به موارد زیر دسترسی دارد:</p>
+    <ul>
+      <li>فایل‌ها و پوشه‌هایی که خودِ همین اپ در Drive کاربر ایجاد کرده (مثل پوشه‌ی همگام‌سازی تیمی و فایل‌های JSON/تصویر داخل آن)</li>
+      <li>پوشه‌ای که کاربر به‌صورت صریح از طریق پنجره‌ی انتخاب فایل گوگل (Google Picker) انتخاب کرده باشد</li>
+    </ul>
+    <p>
+      اپ به هیچ فایل یا پوشه‌ی دیگری در Drive کاربر — که با این اپ ساخته یا انتخاب نشده باشد —
+      دسترسی ندارد. اطلاعاتی که در این پوشه ذخیره می‌شود همان اطلاعات ملک، متقاضی و تاریخچه‌ی
+      تماسی است که در بخش ۱ توضیح داده شد؛ فقط برای اشتراک‌گذاری بین اعضای همان تیم.
+    </p>
+
+    <h2>۳. اشتراک‌گذاری با اشخاص ثالث</h2>
+    <p>
+      این اپ هیچ داده‌ای را برای تبلیغات، تحلیل رفتار کاربر، یا فروش به شرکت‌های ثالث ارسال نمی‌کند.
+      تنها ارتباط شبکه‌ای اپ، تماس مستقیم با سرورهای خود Google (Drive API) برای همگام‌سازی
+      اختیاری تیمی است.
+    </p>
+
+    <h2>۴. حذف داده</h2>
+    <p>
+      کاربر می‌تواند در هر زمان از داخل اپ حساب Google خود را قطع کند (خروج از حساب)، که دسترسی اپ
+      به Drive را متوقف می‌کند. برای حذف کامل داده‌های محلی، کافی است اپ از گوشی حذف نصب شود.
+      حذف پوشه‌ی تیمی در Drive نیز مستقیماً از طریق drive.google.com در اختیار کاربر است.
+    </p>
+
+    <h2>۵. تماس</h2>
+    <p>در صورت هرگونه سؤال درباره‌ی این سیاست حریم خصوصی: <code>sami.akherati@gmail.com</code></p>
+
+    <footer>
+      <a href="./index.html" style="color: var(--emerald);">بازگشت به صفحه‌ی اصلی</a>
+    </footer>
+  </div>
+</body>
+</html>
