@@ -211,11 +211,3 @@ fun PropertyType.icon(): ImageVector = when (this) {
     PropertyType.LAND -> Icons.Filled.Terrain
     PropertyType.COMMERCIAL -> Icons.Filled.Storefront
 }
-
-// آیکون هر نوع معامله.
-fun DealType.icon(): ImageVector = when (this) {
-    DealType.SALE -> Icons.Filled.Sell
-    DealType.RENT -> Icons.Filled.CalendarMonth
-    DealType.MORTGAGE -> Icons.Filled.AccountBalance
-    DealType.EXCHANGE -> Icons.Filled.SwapHoriz
-}

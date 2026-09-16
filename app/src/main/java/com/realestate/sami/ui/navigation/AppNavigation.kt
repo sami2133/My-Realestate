@@ -3,6 +3,8 @@ package com.realestate.sami.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -98,20 +100,20 @@ fun AppNavigation() {
             startDestination = Screen.PropertyList.route,
             modifier = androidx.compose.ui.Modifier.padding(padding),
             enterTransition = {
-                androidx.compose.animation.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
-                    androidx.compose.animation.fadeIn(fadeSpec)
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    fadeIn(fadeSpec)
             },
             exitTransition = {
-                androidx.compose.animation.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
-                    androidx.compose.animation.fadeOut(fadeSpec)
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    fadeOut(fadeSpec)
             },
             popEnterTransition = {
-                androidx.compose.animation.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
-                    androidx.compose.animation.fadeIn(fadeSpec)
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    fadeIn(fadeSpec)
             },
             popExitTransition = {
-                androidx.compose.animation.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
-                    androidx.compose.animation.fadeOut(fadeSpec)
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    fadeOut(fadeSpec)
             }
         ) {
             composable(Screen.PropertyList.route) {
