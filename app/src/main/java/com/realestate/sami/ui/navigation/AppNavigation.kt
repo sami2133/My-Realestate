@@ -46,34 +46,43 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    // این چهار مورد تنها مقصدهای «سطح بالا»ی اپ هستند که باید نوار ناوبری پایین در آن‌ها دیده شود.
     val bottomItems = listOf(Screen.PropertyList, Screen.ClientList, Screen.Reports, Screen.Sync)
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    // اگه مقصد فعلی هیچ‌کدوم از چهار تب اصلی نباشد (یعنی داخل ثبت/ویرایش ملک، جزئیات، انتخاب
+    // موقعیت، ثبت/ویرایش متقاضی یا تنظیمات هستیم)، نوار پایین مخفی می‌شود و با popBackStack
+    // (دکمه‌ی برگشت یا onSaved/onBack هر صفحه) خودکار دوباره ظاهر می‌شود.
+    val showBottomBar = bottomItems.any { screen ->
+        currentDestination?.hierarchy?.any { it.route == screen.route } == true
+    }
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = backStackEntry?.destination
-
-                bottomItems.forEach { screen ->
-                    val icon = when (screen) {
-                        Screen.PropertyList -> Icons.Filled.Home
-                        Screen.Sync -> Icons.Filled.Groups
-                        Screen.Reports -> Icons.Filled.Build
-                        else -> Icons.Filled.People
-                    }
-                    val label = stringResource(screen.labelRes)
-                    NavigationBarItem(
-                        icon = { Icon(icon, contentDescription = label) },
-                        label = { Text(label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomItems.forEach { screen ->
+                        val icon = when (screen) {
+                            Screen.PropertyList -> Icons.Filled.Home
+                            Screen.Sync -> Icons.Filled.Groups
+                            Screen.Reports -> Icons.Filled.Build
+                            else -> Icons.Filled.People
                         }
-                    )
+                        val label = stringResource(screen.labelRes)
+                        NavigationBarItem(
+                            icon = { Icon(icon, contentDescription = label) },
+                            label = { Text(label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
