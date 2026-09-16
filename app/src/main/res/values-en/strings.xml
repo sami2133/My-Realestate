@@ -346,6 +346,12 @@
     <!-- Phase 5.3: settings menu -->
     <string name="nav_settings">Settings</string>
     <string name="settings_title">Settings</string>
+    <string name="settings_owner_contact_section">Owner/Referrer Contact Protection</string>
+    <string name="settings_owner_contact_hint">When on, the real name and phone number of each property\'s owner/referrer stay only on the device that registered it, and are never sent to other team members; the name and number below are shown to them instead.</string>
+    <string name="settings_owner_contact_toggle_label">Protect owner contact info from team</string>
+    <string name="settings_owner_contact_display_hint">This name and number are shown to other team members instead of the real owner, on properties you register:</string>
+    <string name="settings_owner_contact_name_label">Display name for team (e.g. your name)</string>
+    <string name="settings_owner_contact_phone_label">Display phone number for team</string>
     <string name="settings_more_soon_hint">More settings will be added here over time.</string>
     <string name="settings_open_action">Settings</string>
     <string name="settings_saved">Saved</string>

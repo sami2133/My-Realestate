@@ -333,6 +333,81 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 }
             }
 
+            // ===== محافظت از اطلاعات تماس مالک/معرف برای اعضای تیم =====
+            val protectOwnerContact by viewModel.protectOwnerContact.collectAsState()
+            val myDisplayName by viewModel.myDisplayName.collectAsState()
+            val myDisplayPhone by viewModel.myDisplayPhone.collectAsState()
+            var displayNameInput by remember(myDisplayName) { mutableStateOf(myDisplayName) }
+            var displayPhoneInput by remember(myDisplayPhone) { mutableStateOf(myDisplayPhone) }
+            var contactSettingsSaved by remember { mutableStateOf(false) }
+
+            SectionCard(title = stringResource(R.string.settings_owner_contact_section)) {
+                Text(
+                    stringResource(R.string.settings_owner_contact_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(10.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        stringResource(R.string.settings_owner_contact_toggle_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Switch(
+                        checked = protectOwnerContact,
+                        onCheckedChange = { viewModel.setProtectOwnerContact(it) }
+                    )
+                }
+                if (protectOwnerContact) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.settings_owner_contact_display_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = displayNameInput,
+                        onValueChange = { displayNameInput = it; contactSettingsSaved = false },
+                        label = { Text(stringResource(R.string.settings_owner_contact_name_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = displayPhoneInput,
+                        onValueChange = { displayPhoneInput = it; contactSettingsSaved = false },
+                        label = { Text(stringResource(R.string.settings_owner_contact_phone_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        if (contactSettingsSaved) {
+                            Text(
+                                stringResource(R.string.settings_saved),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Spacer(Modifier)
+                        }
+                        Button(onClick = {
+                            viewModel.setMyDisplayName(displayNameInput)
+                            viewModel.setMyDisplayPhone(displayPhoneInput)
+                            contactSettingsSaved = true
+                        }) { Text(stringResource(R.string.action_submit)) }
+                    }
+                }
+            }
+
             // فاز ۵.۳: جای رزرو برای تنظیمات آینده — هر بخش جدید همینجا به‌عنوان یک SectionCard دیگه اضافه می‌شه.
             Text(
                 stringResource(R.string.settings_more_soon_hint),

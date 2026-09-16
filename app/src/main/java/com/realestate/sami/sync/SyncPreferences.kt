@@ -24,9 +24,29 @@ class SyncPreferences @Inject constructor(@ApplicationContext context: Context) 
         get() = prefs.getBoolean(KEY_WIFI_ONLY, false)
         set(value) = prefs.edit().putBoolean(KEY_WIFI_ONLY, value).apply()
 
+    /** وقتی روشنه، هنگام sync به‌جای نام/شماره‌ی واقعی مالک/معرف، نام/شماره‌ی تماس خودِ این مشاور
+     *  (myDisplayName/myDisplayPhone) برای بقیه‌ی اعضای تیم فرستاده می‌شود؛ اطلاعات واقعی مالک
+     *  فقط روی همین دستگاه (که آن را ثبت کرده) باقی می‌ماند. پیش‌فرض خاموش. */
+    var protectOwnerContact: Boolean
+        get() = prefs.getBoolean(KEY_PROTECT_OWNER_CONTACT, false)
+        set(value) = prefs.edit().putBoolean(KEY_PROTECT_OWNER_CONTACT, value).apply()
+
+    /** نام و شماره‌ی تماسی که وقتی [protectOwnerContact] روشن است، به‌جای مالک واقعی به بقیه‌ی
+     *  اعضای تیم نشان داده می‌شود (معمولاً نام/شماره‌ی خودِ همین مشاور). */
+    var myDisplayName: String
+        get() = prefs.getString(KEY_MY_DISPLAY_NAME, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_MY_DISPLAY_NAME, value).apply()
+
+    var myDisplayPhone: String
+        get() = prefs.getString(KEY_MY_DISPLAY_PHONE, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_MY_DISPLAY_PHONE, value).apply()
+
     companion object {
         private const val KEY_FOLDER_ID = "team_folder_id"
         private const val KEY_LAST_SYNC = "last_synced_at"
         private const val KEY_WIFI_ONLY = "auto_sync_wifi_only"
+        private const val KEY_PROTECT_OWNER_CONTACT = "protect_owner_contact"
+        private const val KEY_MY_DISPLAY_NAME = "my_display_name"
+        private const val KEY_MY_DISPLAY_PHONE = "my_display_phone"
     }
 }

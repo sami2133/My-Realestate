@@ -219,7 +219,22 @@ class SyncManager @Inject constructor(
                 }
                 localItem != null && remoteItem != null -> {
                     if (remoteItem.updatedAt > localItem.updatedAt) {
-                        val toSave = remoteItem.copy(id = localItem.id, isSynced = true)
+                        val toSave = if (!localItem.ownerContactIsMasked && remoteItem.ownerContactIsMasked) {
+                            // این دستگاه نسخه‌ی واقعیِ اطلاعات مالک/معرف رو داره (خودش ثبت‌کننده‌ست)؛
+                            // حتی وقتی بقیه‌ی فیلدهای رکورد رو از نسخه‌ی جدیدترِ تیم می‌گیریم، نباید
+                            // نام/تلفن/یادداشتِ واقعی مالک با نسخه‌ی ماسک‌شده‌ای که خودمون قبلاً برای
+                            // تیم فرستاده بودیم (یا یه همکار دیگه fetch کرده) جایگزین بشه.
+                            remoteItem.copy(
+                                id = localItem.id,
+                                ownerName = localItem.ownerName,
+                                ownerPhone = localItem.ownerPhone,
+                                ownerNote = localItem.ownerNote,
+                                ownerContactIsMasked = false,
+                                isSynced = true
+                            )
+                        } else {
+                            remoteItem.copy(id = localItem.id, isSynced = true)
+                        }
                         propertyDao.update(toSave)
                         toSave
                     } else {
@@ -244,8 +259,30 @@ class SyncManager @Inject constructor(
             }
         }
 
+        // مرحله‌ی سوم: اگه «محافظت از اطلاعات تماس مالک» در تنظیمات روشن باشه، فقط برای همون رکوردهایی
+        // که این دستگاه اطلاعات واقعی مالک رو داره (ownerContactIsMasked == false)، یک نسخه‌ی جدا و
+        // ماسک‌شده برای آپلود می‌سازیم — نام/تلفن مالک با نام/تلفن خودِ این مشاور (از تنظیمات) جایگزین
+        // و یادداشت مالک حذف می‌شه. نسخه‌ای که در withImagesResolved برمی‌گرده (و در Room ذخیره مونده)
+        // همیشه دست‌نخورده و واقعی می‌مونه؛ فقط متنی که به Drive می‌ره ماسک می‌شه.
+        val uploadPayload = if (syncPrefs.protectOwnerContact) {
+            withImagesResolved.map { property ->
+                if (!property.ownerContactIsMasked) {
+                    property.copy(
+                        ownerName = syncPrefs.myDisplayName.ifBlank { property.ownerName },
+                        ownerPhone = syncPrefs.myDisplayPhone.ifBlank { property.ownerPhone },
+                        ownerNote = null,
+                        ownerContactIsMasked = true
+                    )
+                } else {
+                    property
+                }
+            }
+        } else {
+            withImagesResolved
+        }
+
         driveApi.uploadOrUpdateJson(
-            token, folderId, DriveConstants.PROPERTIES_FILE_NAME, gson.toJson(gcTombstones(withImagesResolved))
+            token, folderId, DriveConstants.PROPERTIES_FILE_NAME, gson.toJson(gcTombstones(uploadPayload))
         )
         return withImagesResolved
     }

@@ -1,6 +1,7 @@
 package com.realestate.sami.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.realestate.sami.sync.SyncPreferences
 import com.realestate.sami.util.CommissionCalculationMode
 import com.realestate.sami.util.CommissionTariffPreferences
 import com.realestate.sami.util.ReportPreferences
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val reportPreferences: ReportPreferences,
     private val rentPreferences: RentPreferences,
-    private val commissionTariffPreferences: CommissionTariffPreferences
+    private val commissionTariffPreferences: CommissionTariffPreferences,
+    private val syncPreferences: SyncPreferences
 ) : ViewModel() {
 
     private val _commissionPercent = MutableStateFlow(reportPreferences.commissionPercent)
@@ -79,5 +81,31 @@ class SettingsViewModel @Inject constructor(
     fun setRentCommissionPercent(value: Float) {
         commissionTariffPreferences.rentCommissionPercent = value
         _rentCommissionPercent.value = value
+    }
+
+    // ===== محافظت از اطلاعات تماس مالک/معرف برای اعضای تیم =====
+
+    private val _protectOwnerContact = MutableStateFlow(syncPreferences.protectOwnerContact)
+    val protectOwnerContact: StateFlow<Boolean> = _protectOwnerContact
+
+    private val _myDisplayName = MutableStateFlow(syncPreferences.myDisplayName)
+    val myDisplayName: StateFlow<String> = _myDisplayName
+
+    private val _myDisplayPhone = MutableStateFlow(syncPreferences.myDisplayPhone)
+    val myDisplayPhone: StateFlow<String> = _myDisplayPhone
+
+    fun setProtectOwnerContact(enabled: Boolean) {
+        syncPreferences.protectOwnerContact = enabled
+        _protectOwnerContact.value = enabled
+    }
+
+    fun setMyDisplayName(name: String) {
+        syncPreferences.myDisplayName = name
+        _myDisplayName.value = name
+    }
+
+    fun setMyDisplayPhone(phone: String) {
+        syncPreferences.myDisplayPhone = phone
+        _myDisplayPhone.value = phone
     }
 }

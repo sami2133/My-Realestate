@@ -193,6 +193,13 @@ data class PropertyEntity(
     val remoteId: String? = null,
     val isSynced: Boolean = false,
 
+    /** true یعنی مقادیر فعلی ownerName/ownerPhone/ownerNote این رکورد از نسخه‌ی ماسک‌شده‌ای
+     *  آمده‌اند که یک همکار دیگر (نه خود این دستگاه) آپلود کرده — یعنی نام/شماره‌ی واقعیِ مالک
+     *  نیستند، بلکه نام/شماره‌ی تماس همان همکار ثبت‌کننده‌اند. برای جلوگیری از این‌که merge بعدی
+     *  این مقدار ماسک‌شده را روی اطلاعات واقعیِ دستگاهِ ثبت‌کننده‌ی اصلی بنویسد استفاده می‌شود.
+     *  به‌صورت محلی همیشه false است مگر رکورد از Drive دانلود شده باشد. */
+    val ownerContactIsMasked: Boolean = false,
+
     /** soft-delete: به‌جای حذف فیزیکی، این پرچم ست می‌شود تا حذف بین دستگاه‌ها هم sync شود. */
     val isDeleted: Boolean = false
 )
