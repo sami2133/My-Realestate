@@ -22,8 +22,8 @@ android {
         applicationId = "com.realestate.sami"
         minSdk = 26
         targetSdk = 34
-        versionCode = 62
-        versionName = "1.1.7"
+        versionCode = 63
+        versionName = "1.1.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -85,6 +85,9 @@ android {
 dependencies {
     // Core / Compose
     implementation("androidx.core:core-ktx:1.13.1")
+    // برای WebViewAssetLoader — سرو کردن drive_picker.html از یک origin مجازی https به‌جای file://
+    // (Google Picker با origin از نوع file:// کار نمی‌کنه و 403 برمی‌گردونه).
+    implementation("androidx.webkit:webkit:1.11.0")
     // فقط برای AppCompatDelegate.setApplicationLocales (انتخاب زبان اپ) — بدون نیاز به AppCompatActivity
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")

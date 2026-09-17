@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.webkit.WebViewAssetLoader
 import com.realestate.sami.BuildConfig
 
 /**
@@ -44,6 +47,13 @@ class DrivePickerActivity : Activity() {
         // بدون این خط، گوگل به‌جای Picker صفحه‌ی «Can't access your Google Account» نشون می‌ده.
         CookieManager.getInstance().setAcceptCookie(true)
 
+        // ویجت Google Picker با origin از نوع file:// کار نمی‌کنه (گوگل درخواست رو با ۴۰۳ رد
+        // می‌کنه چون این origin رو معتبر نمی‌دونه)؛ برای همین asset رو از یک دامنه‌ی مجازی https
+        // (appassets.androidplatform.net) سرو می‌کنیم تا از دید گوگل یک origin واقعی http/https ببینه.
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+
         val webView = WebView(this).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -54,12 +64,17 @@ class DrivePickerActivity : Activity() {
             CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
             addJavascriptInterface(PickerBridge(), "Android")
             webViewClient = object : WebViewClient() {
+                override fun shouldInterceptRequest(
+                    view: WebView,
+                    request: WebResourceRequest
+                ): WebResourceResponse? = assetLoader.shouldInterceptRequest(request.url)
+
                 override fun onPageFinished(view: WebView, url: String) {
                     val js = "init('${token.escapeJs()}', '${BuildConfig.DRIVE_PICKER_API_KEY.escapeJs()}', '${BuildConfig.DRIVE_APP_ID.escapeJs()}')"
                     view.evaluateJavascript(js, null)
                 }
             }
-            loadUrl("file:///android_asset/drive_picker.html")
+            loadUrl("https://appassets.androidplatform.net/assets/drive_picker.html")
         }
         setContentView(webView)
     }
