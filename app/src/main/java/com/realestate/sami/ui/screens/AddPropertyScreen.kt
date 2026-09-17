@@ -917,6 +917,14 @@ fun PropertyType.toPersianLabel(): String = when (this) {
 }
 
 @Composable
+fun PropertyStatus.toPersianLabel(): String = when (this) {
+    PropertyStatus.AVAILABLE -> stringResource(R.string.property_status_available)
+    PropertyStatus.RESERVED -> stringResource(R.string.property_status_reserved)
+    PropertyStatus.SOLD_OR_RENTED -> stringResource(R.string.property_status_sold)
+    PropertyStatus.ARCHIVED -> stringResource(R.string.property_status_archived)
+}
+
+@Composable
 fun DealType.toPersianLabel(): String = when (this) {
     DealType.SALE -> stringResource(R.string.deal_type_sale)
     DealType.RENT -> stringResource(R.string.deal_type_rent)

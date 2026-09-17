@@ -1,6 +1,7 @@
 package com.realestate.sami.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -10,14 +11,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.android.gms.maps.model.CameraPosition
@@ -39,7 +38,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import com.realestate.sami.R
 import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.data.local.entity.DeedType
 import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyStatus
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.screens.common.DealTypeChip
 import com.realestate.sami.ui.screens.common.MapTypeSwitcher
@@ -48,6 +49,8 @@ import com.realestate.sami.ui.viewmodel.PropertyFilter
 import com.realestate.sami.ui.viewmodel.PropertySortOption
 import com.realestate.sami.ui.viewmodel.PropertyViewMode
 import com.realestate.sami.ui.viewmodel.PropertyViewModel
+import com.realestate.sami.util.parseIntInput
+import com.realestate.sami.util.parseNumberInput
 import com.realestate.sami.util.parseTomanInput
 import com.realestate.sami.util.toTomanShort
 
@@ -87,8 +90,12 @@ fun PropertyListScreen(
                             contentDescription = stringResource(if (viewMode == PropertyViewMode.LIST) R.string.nav_map else R.string.property_list_title)
                         )
                     }
-                    PropertyFilterButton(filter = filter, onApply = viewModel::onFilterChanged)
-                    PropertySortMenu(current = sortOption, onSelect = viewModel::onSortOptionChanged)
+                    FilterSortButton(
+                        filter = filter,
+                        sortOption = sortOption,
+                        onFilterApply = viewModel::onFilterChanged,
+                        onSortSelect = viewModel::onSortOptionChanged
+                    )
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings_title))
                     }
@@ -241,115 +248,312 @@ private fun PropertyMapBody(
     }
 }
 
-@Composable
-private fun PropertySortMenu(current: PropertySortOption, onSelect: (PropertySortOption) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    val labels = mapOf(
-        PropertySortOption.NEWEST to stringResource(R.string.sort_newest),
-        PropertySortOption.OLDEST to stringResource(R.string.sort_oldest),
-        PropertySortOption.PRICE_LOW_TO_HIGH to stringResource(R.string.property_sort_price_low_to_high),
-        PropertySortOption.PRICE_HIGH_TO_LOW to stringResource(R.string.property_sort_price_high_to_low),
-        PropertySortOption.AREA_LARGE_TO_SMALL to stringResource(R.string.property_sort_area_large_to_small)
-    )
-    Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Filled.Sort, contentDescription = stringResource(R.string.action_sort))
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            labels.forEach { (option, label) ->
-                DropdownMenuItem(
-                    text = { Text(label) },
-                    trailingIcon = { if (option == current) Icon(Icons.Filled.Check, contentDescription = null) },
-                    onClick = { onSelect(option); expanded = false }
-                )
-            }
-        }
+/** گزینه‌های بازه‌ی قدمت بنا در فیلتر — هر گزینه معادل یک بازه‌ی min/max مشخص است. */
+private enum class BuildingAgeRange(val minAge: Int?, val maxAge: Int?, val labelRes: Int) {
+    NEW(0, 2, R.string.filter_building_age_new),
+    RANGE_2_5(2, 5, R.string.filter_building_age_2_5),
+    RANGE_5_10(5, 10, R.string.filter_building_age_5_10),
+    TEN_PLUS(10, null, R.string.filter_building_age_10_plus);
+
+    companion object {
+        fun fromFilter(filter: PropertyFilter): BuildingAgeRange? =
+            entries.find { it.minAge == filter.minBuildingAge && it.maxAge == filter.maxBuildingAge }
     }
 }
 
+private enum class FilterSortTab(val labelRes: Int) {
+    FILTER(R.string.filter_sort_tab_filter),
+    SORT(R.string.filter_sort_tab_sort)
+}
+
+/** دکمه‌ی ادغام‌شده‌ی فیلتر و ترتیب — به‌جای دو آیکون جدا، یک شیت با دو تب باز می‌کند. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PropertyFilterButton(filter: PropertyFilter, onApply: (PropertyFilter) -> Unit) {
-    var showDialog by remember { mutableStateOf(false) }
-    BadgedBox(badge = { if (filter.minPrice != null || filter.maxPrice != null) Badge() }) {
-        IconButton(onClick = { showDialog = true }) {
-            Icon(Icons.Filled.FilterList, contentDescription = stringResource(R.string.action_filter))
+private fun FilterSortButton(
+    filter: PropertyFilter,
+    sortOption: PropertySortOption,
+    onFilterApply: (PropertyFilter) -> Unit,
+    onSortSelect: (PropertySortOption) -> Unit
+) {
+    var showSheet by remember { mutableStateOf(false) }
+    BadgedBox(badge = { if (filter.isActive) Badge() }) {
+        IconButton(onClick = { showSheet = true }) {
+            Icon(Icons.Filled.Tune, contentDescription = stringResource(R.string.action_filter_sort))
         }
     }
-    if (showDialog) {
-        PropertyFilterDialog(
+    if (showSheet) {
+        FilterSortBottomSheet(
             initialFilter = filter,
-            onDismiss = { showDialog = false },
-            onApply = { newFilter ->
-                onApply(newFilter)
-                showDialog = false
-            }
+            currentSort = sortOption,
+            onDismiss = { showSheet = false },
+            onApplyFilter = { onFilterApply(it); showSheet = false },
+            onSelectSort = onSortSelect
         )
     }
 }
 
-/**
- * فاز ۵.۴: چون نوع معامله (تب بالای صفحه) و نوع ملک (نوار چیپ‌ها) الان همیشه در دسترس و مستقیماً
- * قابل‌تنظیمن، این دیالوگ فقط بازه‌ی قیمت رو می‌گیره — بدون تکرار همون دو فیلتر. مقدار فعلی
- * dealType/propertyType از [initialFilter] حفظ و بدون تغییر برگردونده می‌شه.
- */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PropertyFilterDialog(
+private fun FilterSortBottomSheet(
     initialFilter: PropertyFilter,
+    currentSort: PropertySortOption,
     onDismiss: () -> Unit,
-    onApply: (PropertyFilter) -> Unit
+    onApplyFilter: (PropertyFilter) -> Unit,
+    onSelectSort: (PropertySortOption) -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var tab by remember { mutableStateOf(FilterSortTab.FILTER) }
+
+    // ===== حالت محلی فیلدهای فیلتر =====
+    var status by remember { mutableStateOf(initialFilter.status) }
     var minPrice by remember { mutableStateOf(initialFilter.minPrice?.toString() ?: "") }
     var maxPrice by remember { mutableStateOf(initialFilter.maxPrice?.toString() ?: "") }
+    var minArea by remember { mutableStateOf(initialFilter.minArea?.let { if (it == it.toLong().toDouble()) it.toLong().toString() else it.toString() } ?: "") }
+    var maxArea by remember { mutableStateOf(initialFilter.maxArea?.let { if (it == it.toLong().toDouble()) it.toLong().toString() else it.toString() } ?: "") }
+    var rooms by remember { mutableStateOf(initialFilter.rooms) }
+    var buildingAgeRange by remember { mutableStateOf(BuildingAgeRange.fromFilter(initialFilter)) }
+    var requireElevator by remember { mutableStateOf(initialFilter.requireElevator) }
+    var requireParking by remember { mutableStateOf(initialFilter.requireParking) }
+    var requireStorage by remember { mutableStateOf(initialFilter.requireStorage) }
+    var deedType by remember { mutableStateOf(initialFilter.deedType) }
+    var exchangeableOnly by remember { mutableStateOf(initialFilter.exchangeableOnly) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Card(shape = MaterialTheme.shapes.large) {
-            Column(
-                Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(stringResource(R.string.filter_dialog_title), style = MaterialTheme.typography.titleLarge)
-                Spacer(Modifier.height(16.dp))
+    fun buildFilter(): PropertyFilter = initialFilter.copy(
+        status = status,
+        minPrice = minPrice.parseTomanInput(),
+        maxPrice = maxPrice.parseTomanInput(),
+        minArea = minArea.parseNumberInput(),
+        maxArea = maxArea.parseNumberInput(),
+        rooms = rooms,
+        minBuildingAge = buildingAgeRange?.minAge,
+        maxBuildingAge = buildingAgeRange?.maxAge,
+        requireElevator = requireElevator,
+        requireParking = requireParking,
+        requireStorage = requireStorage,
+        deedType = deedType,
+        exchangeableOnly = exchangeableOnly
+    )
 
-                Text(stringResource(R.string.filter_price_range_section), style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = minPrice,
-                        onValueChange = { minPrice = it },
-                        label = { Text(stringResource(R.string.filter_min_price)) },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = maxPrice,
-                        onValueChange = { maxPrice = it },
-                        label = { Text(stringResource(R.string.filter_max_price)) },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        Column(Modifier.fillMaxWidth().heightIn(max = 560.dp)) {
+            TabRow(selectedTabIndex = tab.ordinal) {
+                FilterSortTab.entries.forEach { t ->
+                    Tab(
+                        selected = tab == t,
+                        onClick = { tab = t },
+                        text = { Text(stringResource(t.labelRes)) }
                     )
                 }
+            }
 
-                Spacer(Modifier.height(20.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(
-                        onClick = {
-                            minPrice = ""
-                            maxPrice = ""
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.filter_clear)) }
-                    Button(
-                        onClick = {
-                            onApply(
-                                initialFilter.copy(
-                                    minPrice = minPrice.parseTomanInput(),
-                                    maxPrice = maxPrice.parseTomanInput()
-                                )
+            Column(
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+            ) {
+                if (tab == FilterSortTab.FILTER) {
+                    // --- وضعیت ملک ---
+                    Text(stringResource(R.string.filter_status_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        item {
+                            FilterChip(
+                                selected = status == null,
+                                onClick = { status = null },
+                                label = { Text(stringResource(R.string.filter_option_all)) }
                             )
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.filter_apply)) }
+                        }
+                        items(PropertyStatus.entries.toList()) { s ->
+                            FilterChip(
+                                selected = status == s,
+                                onClick = { status = s },
+                                label = { Text(s.toPersianLabel()) }
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_price_range_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = minPrice,
+                            onValueChange = { minPrice = it },
+                            label = { Text(stringResource(R.string.filter_min_price)) },
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = maxPrice,
+                            onValueChange = { maxPrice = it },
+                            label = { Text(stringResource(R.string.filter_max_price)) },
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_area_range_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = minArea,
+                            onValueChange = { minArea = it },
+                            label = { Text(stringResource(R.string.filter_min_area)) },
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = maxArea,
+                            onValueChange = { maxArea = it },
+                            label = { Text(stringResource(R.string.filter_max_area)) },
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_rooms_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        item {
+                            FilterChip(
+                                selected = rooms == null,
+                                onClick = { rooms = null },
+                                label = { Text(stringResource(R.string.filter_option_all)) }
+                            )
+                        }
+                        items(listOf(1, 2, 3)) { r ->
+                            FilterChip(
+                                selected = rooms == r,
+                                onClick = { rooms = r },
+                                label = { Text(r.toString()) }
+                            )
+                        }
+                        item {
+                            FilterChip(
+                                selected = rooms == 4,
+                                onClick = { rooms = 4 },
+                                label = { Text(stringResource(R.string.filter_rooms_4_plus)) }
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_building_age_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        item {
+                            FilterChip(
+                                selected = buildingAgeRange == null,
+                                onClick = { buildingAgeRange = null },
+                                label = { Text(stringResource(R.string.filter_option_all)) }
+                            )
+                        }
+                        items(BuildingAgeRange.entries.toList()) { range ->
+                            FilterChip(
+                                selected = buildingAgeRange == range,
+                                onClick = { buildingAgeRange = range },
+                                label = { Text(stringResource(range.labelRes)) }
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_amenities_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { requireElevator = !requireElevator }) {
+                        Checkbox(checked = requireElevator, onCheckedChange = { requireElevator = it })
+                        Text(stringResource(R.string.amenity_elevator))
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { requireParking = !requireParking }) {
+                        Checkbox(checked = requireParking, onCheckedChange = { requireParking = it })
+                        Text(stringResource(R.string.amenity_parking))
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { requireStorage = !requireStorage }) {
+                        Checkbox(checked = requireStorage, onCheckedChange = { requireStorage = it })
+                        Text(stringResource(R.string.amenity_storage))
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Text(stringResource(R.string.filter_deed_type_section), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        item {
+                            FilterChip(
+                                selected = deedType == null,
+                                onClick = { deedType = null },
+                                label = { Text(stringResource(R.string.filter_option_all)) }
+                            )
+                        }
+                        items(DeedType.entries.toList()) { d ->
+                            FilterChip(
+                                selected = deedType == d,
+                                onClick = { deedType = d },
+                                label = { Text(d.toPersianLabel()) }
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { exchangeableOnly = !exchangeableOnly }) {
+                        Checkbox(checked = exchangeableOnly, onCheckedChange = { exchangeableOnly = it })
+                        Text(stringResource(R.string.filter_exchangeable_only))
+                    }
+
+                    Spacer(Modifier.height(24.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(
+                            onClick = {
+                                status = null
+                                minPrice = ""
+                                maxPrice = ""
+                                minArea = ""
+                                maxArea = ""
+                                rooms = null
+                                buildingAgeRange = null
+                                requireElevator = false
+                                requireParking = false
+                                requireStorage = false
+                                deedType = null
+                                exchangeableOnly = false
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) { Text(stringResource(R.string.filter_clear)) }
+                        Button(
+                            onClick = { onApplyFilter(buildFilter()) },
+                            modifier = Modifier.weight(1f)
+                        ) { Text(stringResource(R.string.filter_apply)) }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                } else {
+                    val sortLabels = listOf(
+                        PropertySortOption.NEWEST to stringResource(R.string.sort_newest),
+                        PropertySortOption.OLDEST to stringResource(R.string.sort_oldest),
+                        PropertySortOption.PRICE_LOW_TO_HIGH to stringResource(R.string.property_sort_price_low_to_high),
+                        PropertySortOption.PRICE_HIGH_TO_LOW to stringResource(R.string.property_sort_price_high_to_low),
+                        PropertySortOption.AREA_LARGE_TO_SMALL to stringResource(R.string.property_sort_area_large_to_small),
+                        PropertySortOption.AREA_SMALL_TO_LARGE to stringResource(R.string.property_sort_area_small_to_large),
+                        PropertySortOption.ROOMS_MOST_TO_FEWEST to stringResource(R.string.property_sort_rooms_most_to_fewest),
+                        PropertySortOption.ROOMS_FEWEST_TO_MOST to stringResource(R.string.property_sort_rooms_fewest_to_most),
+                        PropertySortOption.BUILDING_AGE_NEWEST to stringResource(R.string.property_sort_building_age_newest),
+                        PropertySortOption.BUILDING_AGE_OLDEST to stringResource(R.string.property_sort_building_age_oldest)
+                    )
+                    sortLabels.forEach { (option, label) ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(selected = option == currentSort, onClick = { onSelectSort(option) })
+                                .padding(vertical = 12.dp)
+                        ) {
+                            RadioButton(selected = option == currentSort, onClick = { onSelectSort(option) })
+                            Spacer(Modifier.width(8.dp))
+                            Text(label, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
                 }
             }
         }

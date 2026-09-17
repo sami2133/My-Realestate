@@ -208,13 +208,21 @@
     <string name="property_sort_price_low_to_high">قیمت: کم به زیاد</string>
     <string name="property_sort_price_high_to_low">قیمت: زیاد به کم</string>
     <string name="property_sort_area_large_to_small">متراژ: زیاد به کم</string>
+    <string name="property_sort_area_small_to_large">متراژ: کم به زیاد</string>
+    <string name="property_sort_rooms_most_to_fewest">تعداد اتاق: زیاد به کم</string>
+    <string name="property_sort_rooms_fewest_to_most">تعداد اتاق: کم به زیاد</string>
+    <string name="property_sort_building_age_newest">قدمت بنا: نوسازترین</string>
+    <string name="property_sort_building_age_oldest">قدمت بنا: قدیمی‌ترین</string>
 
     <!-- ترتیب لیست متقاضیان -->
     <string name="client_sort_name_a_to_z">نام: الف تا ی</string>
     <string name="client_sort_budget_high_to_low">بودجه: زیاد به کم</string>
 
-    <!-- فیلتر لیست ملک‌ها -->
+    <!-- فیلتر و ترتیب لیست ملک‌ها (شیت واحد) -->
     <string name="action_filter">فیلتر</string>
+    <string name="action_filter_sort">فیلتر و ترتیب</string>
+    <string name="filter_sort_tab_filter">فیلتر</string>
+    <string name="filter_sort_tab_sort">ترتیب</string>
     <string name="filter_dialog_title">فیلتر ملک‌ها</string>
     <string name="filter_option_all">همه</string>
     <string name="filter_price_range_section">بازه قیمت (تومان)</string>
@@ -222,6 +230,20 @@
     <string name="filter_max_price">حداکثر قیمت</string>
     <string name="filter_clear">پاک کردن فیلتر</string>
     <string name="filter_apply">اعمال فیلتر</string>
+    <string name="filter_status_section">وضعیت ملک</string>
+    <string name="filter_area_range_section">بازه متراژ (متر مربع)</string>
+    <string name="filter_min_area">حداقل متراژ</string>
+    <string name="filter_max_area">حداکثر متراژ</string>
+    <string name="filter_rooms_section">تعداد اتاق</string>
+    <string name="filter_rooms_4_plus">۴+</string>
+    <string name="filter_building_age_section">قدمت بنا</string>
+    <string name="filter_building_age_new">نوساز (۰ تا ۲ سال)</string>
+    <string name="filter_building_age_2_5">۲ تا ۵ سال</string>
+    <string name="filter_building_age_5_10">۵ تا ۱۰ سال</string>
+    <string name="filter_building_age_10_plus">بالای ۱۰ سال</string>
+    <string name="filter_amenities_section">امکانات</string>
+    <string name="filter_deed_type_section">نوع سند</string>
+    <string name="filter_exchangeable_only">فقط قابل‌تبدیل به مبادله</string>
     <string name="property_list_empty_filtered">با این فیلتر ملکی پیدا نشد.\nفیلتر را تغییر بده یا پاک کن.</string>
 
     <!-- همگام‌سازی عکس -->

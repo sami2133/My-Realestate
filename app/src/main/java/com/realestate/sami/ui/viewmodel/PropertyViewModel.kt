@@ -104,4 +104,9 @@ private fun PropertySortOption.comparator(): Comparator<PropertyEntity> = when (
     PropertySortOption.PRICE_LOW_TO_HIGH -> compareBy { it.totalPrice ?: it.rentPrice ?: Long.MAX_VALUE }
     PropertySortOption.PRICE_HIGH_TO_LOW -> compareByDescending { it.totalPrice ?: it.rentPrice ?: 0L }
     PropertySortOption.AREA_LARGE_TO_SMALL -> compareByDescending { it.area }
+    PropertySortOption.AREA_SMALL_TO_LARGE -> compareBy { it.area }
+    PropertySortOption.ROOMS_MOST_TO_FEWEST -> compareByDescending { it.rooms ?: -1 }
+    PropertySortOption.ROOMS_FEWEST_TO_MOST -> compareBy { it.rooms ?: Int.MAX_VALUE }
+    PropertySortOption.BUILDING_AGE_NEWEST -> compareBy { it.buildingAge ?: Int.MAX_VALUE }
+    PropertySortOption.BUILDING_AGE_OLDEST -> compareByDescending { it.buildingAge ?: -1 }
 }

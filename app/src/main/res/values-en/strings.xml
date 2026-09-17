@@ -208,6 +208,11 @@
     <string name="property_sort_price_low_to_high">Price: low to high</string>
     <string name="property_sort_price_high_to_low">Price: high to low</string>
     <string name="property_sort_area_large_to_small">Area: large to small</string>
+    <string name="property_sort_area_small_to_large">Area: small to large</string>
+    <string name="property_sort_rooms_most_to_fewest">Rooms: most to fewest</string>
+    <string name="property_sort_rooms_fewest_to_most">Rooms: fewest to most</string>
+    <string name="property_sort_building_age_newest">Building age: newest first</string>
+    <string name="property_sort_building_age_oldest">Building age: oldest first</string>
 
     <!-- Client list sorting -->
     <string name="client_sort_name_a_to_z">Name: A to Z</string>
@@ -215,6 +220,9 @@
 
     <!-- Property list filter -->
     <string name="action_filter">Filter</string>
+    <string name="action_filter_sort">Filter &amp; sort</string>
+    <string name="filter_sort_tab_filter">Filter</string>
+    <string name="filter_sort_tab_sort">Sort</string>
     <string name="filter_dialog_title">Filter properties</string>
     <string name="filter_option_all">All</string>
     <string name="filter_price_range_section">Price range (Toman)</string>
@@ -222,6 +230,20 @@
     <string name="filter_max_price">Max price</string>
     <string name="filter_clear">Clear filter</string>
     <string name="filter_apply">Apply filter</string>
+    <string name="filter_status_section">Property status</string>
+    <string name="filter_area_range_section">Area range (sqm)</string>
+    <string name="filter_min_area">Min area</string>
+    <string name="filter_max_area">Max area</string>
+    <string name="filter_rooms_section">Rooms</string>
+    <string name="filter_rooms_4_plus">4+</string>
+    <string name="filter_building_age_section">Building age</string>
+    <string name="filter_building_age_new">New (0-2 years)</string>
+    <string name="filter_building_age_2_5">2-5 years</string>
+    <string name="filter_building_age_5_10">5-10 years</string>
+    <string name="filter_building_age_10_plus">Over 10 years</string>
+    <string name="filter_amenities_section">Amenities</string>
+    <string name="filter_deed_type_section">Deed type</string>
+    <string name="filter_exchangeable_only">Exchange-eligible only</string>
     <string name="property_list_empty_filtered">No properties match this filter.\nChange or clear the filter.</string>
 
     <!-- Image sync -->
