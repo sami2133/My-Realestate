@@ -22,9 +22,11 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
-            // اپ هنوز منتشر نشده، پس migration واقعی لازم نیست. این fallback فقط به‌عنوان
-            // safety net برای توسعه‌ی محلی نگه داشته شده؛ بعد از انتشار رسمی باید برای هر
-            // تغییر ساختاری، migration واقعی نوشته بشه (نه destructive).
+            // migration واقعی (نه destructive) — چون کاربرها الان داده‌ی واقعی روی دستگاه‌هاشون
+            // دارن، آپدیت اپ نباید دیتابیس محلی رو پاک کنه. fallbackToDestructiveMigration فقط
+            // به‌عنوان safety net برای نسخه‌های *بعد از* آخرین migration ثبت‌شده نگه داشته شده
+            // (مثلاً روی یک build توسعه‌ی محلی که هنوز migration نداره)، نه به‌جای نوشتن migration.
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .fallbackToDestructiveMigration()
             .build()
 

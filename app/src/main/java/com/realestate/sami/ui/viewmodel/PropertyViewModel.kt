@@ -6,6 +6,7 @@ import com.realestate.sami.data.local.entity.DealType
 import com.realestate.sami.data.local.entity.PropertyEntity
 import com.realestate.sami.data.repository.PropertyRepository
 import com.realestate.sami.domain.matching.MatchingEngine
+import com.realestate.sami.sync.SyncPreferences
 import com.realestate.sami.util.RentPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -19,7 +20,8 @@ enum class PropertyViewMode { LIST, MAP }
 class PropertyViewModel @Inject constructor(
     private val repository: PropertyRepository,
     private val matchingEngine: MatchingEngine,
-    private val rentPreferences: RentPreferences
+    private val rentPreferences: RentPreferences,
+    private val syncPrefs: SyncPreferences
 ) : ViewModel() {
 
     /** فاز ۵.۲: نرخ تبدیل رهن↔اجاره، برای پیش‌نمایش زنده‌ی نوار لغزنده هنگام ثبت/ویرایش ملک. */
@@ -85,7 +87,11 @@ class PropertyViewModel @Inject constructor(
 
     fun save(property: PropertyEntity, onSaved: (Long) -> Unit = {}) {
         viewModelScope.launch {
-            val id = repository.save(property)
+            // اگه در تنظیمات sync نام/شماره‌ی نمایشی ثبت شده، همون به‌عنوان «آخرین ویرایش‌کننده»
+            // ذخیره می‌شه؛ اگه خالیه (یا sync تیمی استفاده نمی‌شه)، مقدار قبلی رکورد دست‌نخورده می‌مونه.
+            val stamped = syncPrefs.myDisplayName.takeIf { it.isNotBlank() }
+                ?.let { property.copy(lastEditedBy = it) } ?: property
+            val id = repository.save(stamped)
             onSaved(id)
         }
     }

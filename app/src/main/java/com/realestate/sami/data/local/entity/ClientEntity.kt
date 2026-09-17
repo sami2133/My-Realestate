@@ -45,6 +45,9 @@ data class ClientEntity(
     val remoteId: String? = null,
     val isSynced: Boolean = false,
 
+    /** نام دلخواهی که در تنظیمات sync ثبت شده و آخرین‌بار این متقاضی را ثبت/ویرایش کرده است. */
+    val lastEditedBy: String? = null,
+
     /** soft-delete: به‌جای حذف فیزیکی، این پرچم ست می‌شود تا حذف بین دستگاه‌ها هم sync شود. */
     val isDeleted: Boolean = false
 )

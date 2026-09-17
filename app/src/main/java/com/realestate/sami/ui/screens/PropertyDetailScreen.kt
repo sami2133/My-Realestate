@@ -222,6 +222,9 @@ fun PropertyDetailScreen(
                     InfoRow(stringResource(R.string.amenity_elevator), if (current.hasElevator) stringResource(R.string.value_yes) else stringResource(R.string.value_no))
                     InfoRow(stringResource(R.string.label_address), current.address)
                     InfoRow(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
+                    current.lastEditedBy?.takeIf { it.isNotBlank() }?.let {
+                        InfoRow(stringResource(R.string.label_last_edited_by), it)
+                    }
                     val lat = current.latitude
                     val lng = current.longitude
                     if (lat != null && lng != null) {

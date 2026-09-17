@@ -160,7 +160,14 @@ class SyncManager @Inject constructor(
 
         return try {
             val folder = driveApi.getFolderMetadata(token, trimmedId)
+            // اگه این پوشه با پوشه‌ی تیمی فعلی فرق داره (یا اصلاً تیمی نداشتیم)، هر شناسه‌ی فایل
+            // کش‌شده‌ی متعلق به تیم قبلی را پاک می‌کنیم — وگرنه دفعه‌ی بعدِ sync، id فایل‌های تیم
+            // *قبلی* به اشتباه برای خوندن/نوشتن در پوشه‌ی *جدید* استفاده می‌شه.
+            if (syncPrefs.teamFolderId != folder.id) {
+                syncPrefs.clearTeamState()
+            }
             syncPrefs.teamFolderId = folder.id
+            if (syncPrefs.teamDisplayName.isBlank()) syncPrefs.teamDisplayName = folder.name
             JoinTeamResult.Success(folder.name)
         } catch (e: DriveNotFoundException) {
             JoinTeamResult.Failure(e.message ?: "پوشه پیدا نشد")
@@ -193,7 +200,9 @@ class SyncManager @Inject constructor(
             if (withRemoteId.remoteId != original.remoteId) propertyDao.update(withRemoteId)
             withRemoteId
         }
-        val existingFile = driveApi.findFileInFolder(token, folderId, DriveConstants.PROPERTIES_FILE_NAME)
+        val existingFile = driveApi.resolveExistingFile(
+            token, folderId, DriveConstants.PROPERTIES_FILE_NAME, syncPrefs.propertiesFileId
+        )
         val remoteJson = existingFile?.let { driveApi.downloadFileContent(token, it.id) }
         val remote: List<PropertyEntity> = parsePropertyList(remoteJson)
 
@@ -281,9 +290,11 @@ class SyncManager @Inject constructor(
             withImagesResolved
         }
 
-        driveApi.uploadOrUpdateJson(
-            token, folderId, DriveConstants.PROPERTIES_FILE_NAME, gson.toJson(gcTombstones(uploadPayload))
+        val savedFileId = driveApi.uploadOrUpdateJson(
+            token, folderId, DriveConstants.PROPERTIES_FILE_NAME, gson.toJson(gcTombstones(uploadPayload)),
+            knownFileId = existingFile?.id ?: syncPrefs.propertiesFileId
         )
+        syncPrefs.propertiesFileId = savedFileId
         return withImagesResolved
     }
 
@@ -334,7 +345,9 @@ class SyncManager @Inject constructor(
             if (withRemoteId.remoteId != original.remoteId) clientDao.update(withRemoteId)
             withRemoteId
         }
-        val existingFile = driveApi.findFileInFolder(token, folderId, DriveConstants.CLIENTS_FILE_NAME)
+        val existingFile = driveApi.resolveExistingFile(
+            token, folderId, DriveConstants.CLIENTS_FILE_NAME, syncPrefs.clientsFileId
+        )
         val remoteJson = existingFile?.let { driveApi.downloadFileContent(token, it.id) }
         val remote: List<ClientEntity> = parseClientList(remoteJson)
 
@@ -370,9 +383,11 @@ class SyncManager @Inject constructor(
             if (resolved != null) merged += resolved
         }
 
-        driveApi.uploadOrUpdateJson(
-            token, folderId, DriveConstants.CLIENTS_FILE_NAME, gson.toJson(gcTombstones(merged))
+        val savedFileId = driveApi.uploadOrUpdateJson(
+            token, folderId, DriveConstants.CLIENTS_FILE_NAME, gson.toJson(gcTombstones(merged)),
+            knownFileId = existingFile?.id ?: syncPrefs.clientsFileId
         )
+        syncPrefs.clientsFileId = savedFileId
         return merged
     }
 
@@ -429,7 +444,9 @@ class SyncManager @Inject constructor(
         // sync نمی‌کنیم؛ دور بعد که ملک/متقاضی remoteId گرفت خودش حل می‌شه.
         val syncable = local.filter { it.relatedRemoteId != null }
 
-        val existingFile = driveApi.findFileInFolder(token, folderId, DriveConstants.CONTACT_LOGS_FILE_NAME)
+        val existingFile = driveApi.resolveExistingFile(
+            token, folderId, DriveConstants.CONTACT_LOGS_FILE_NAME, syncPrefs.contactLogsFileId
+        )
         val remoteJson = existingFile?.let { driveApi.downloadFileContent(token, it.id) }
         val remote: List<ContactLogEntity> = parseList(remoteJson)
 
@@ -475,9 +492,11 @@ class SyncManager @Inject constructor(
             if (resolved != null) merged += resolved
         }
 
-        driveApi.uploadOrUpdateJson(
-            token, folderId, DriveConstants.CONTACT_LOGS_FILE_NAME, gson.toJson(gcTombstones(merged))
+        val savedFileId = driveApi.uploadOrUpdateJson(
+            token, folderId, DriveConstants.CONTACT_LOGS_FILE_NAME, gson.toJson(gcTombstones(merged)),
+            knownFileId = existingFile?.id ?: syncPrefs.contactLogsFileId
         )
+        syncPrefs.contactLogsFileId = savedFileId
     }
 
     // ---------- کمکی ----------

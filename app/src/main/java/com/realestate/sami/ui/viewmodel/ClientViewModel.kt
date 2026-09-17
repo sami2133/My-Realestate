@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.realestate.sami.data.local.entity.ClientEntity
 import com.realestate.sami.data.repository.ClientRepository
 import com.realestate.sami.domain.matching.MatchingEngine
+import com.realestate.sami.sync.SyncPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ClientViewModel @Inject constructor(
     private val repository: ClientRepository,
-    private val matchingEngine: MatchingEngine
+    private val matchingEngine: MatchingEngine,
+    private val syncPrefs: SyncPreferences
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -50,7 +52,9 @@ class ClientViewModel @Inject constructor(
 
     fun save(client: ClientEntity, onSaved: (Long) -> Unit = {}) {
         viewModelScope.launch {
-            val id = repository.save(client)
+            val stamped = syncPrefs.myDisplayName.takeIf { it.isNotBlank() }
+                ?.let { client.copy(lastEditedBy = it) } ?: client
+            val id = repository.save(stamped)
             onSaved(id)
         }
     }

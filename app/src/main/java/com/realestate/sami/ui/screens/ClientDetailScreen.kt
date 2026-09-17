@@ -98,6 +98,9 @@ fun ClientDetailScreen(
             SectionCard(title = stringResource(R.string.client_detail_contact_section)) {
                 InfoRowClient(stringResource(R.string.label_name), current.fullName)
                 InfoRowClient(stringResource(R.string.label_registered_at), current.createdAt.toPersianDateString())
+                current.lastEditedBy?.takeIf { it.isNotBlank() }?.let {
+                    InfoRowClient(stringResource(R.string.label_last_edited_by), it)
+                }
                 Spacer(Modifier.height(8.dp))
                 PhoneActionRow(current.phone)
             }

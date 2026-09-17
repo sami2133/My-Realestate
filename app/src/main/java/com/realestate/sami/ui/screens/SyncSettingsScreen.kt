@@ -215,6 +215,26 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(8.dp))
+
+                        // برچسب دلخواه فقط داخل خودِ اپ ذخیره می‌شه (هیچ درخواستی به Drive نمی‌ره)؛
+                        // برای وقتی که چند تیم/دفتر مختلف داری و می‌خوای هر کدوم رو راحت از بقیه
+                        // تشخیص بدی، بدون اینکه نام واقعی پوشه‌ی Drive رو تغییر بدی.
+                        var teamNameInput by remember(state.teamFolderId) { mutableStateOf(state.teamDisplayName) }
+                        OutlinedTextField(
+                            value = teamNameInput,
+                            onValueChange = { teamNameInput = it },
+                            label = { Text(stringResource(R.string.sync_team_display_name_label)) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            trailingIcon = {
+                                TextButton(
+                                    onClick = { viewModel.setTeamDisplayName(teamNameInput) },
+                                    enabled = teamNameInput != state.teamDisplayName
+                                ) { Text(stringResource(R.string.sync_team_display_name_save)) }
+                            }
+                        )
+                        Spacer(Modifier.height(8.dp))
+
                         Button(
                             onClick = {
                                 val folderId = state.teamFolderId.orEmpty()
@@ -230,6 +250,34 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
                             Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
                             Text(stringResource(R.string.sync_team_folder_share_button))
+                        }
+                        Spacer(Modifier.height(8.dp))
+
+                        var showLeaveConfirm by remember { mutableStateOf(false) }
+                        OutlinedButton(
+                            onClick = { showLeaveConfirm = true },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text(stringResource(R.string.sync_leave_team_button))
+                        }
+                        if (showLeaveConfirm) {
+                            AlertDialog(
+                                onDismissRequest = { showLeaveConfirm = false },
+                                title = { Text(stringResource(R.string.sync_leave_team_confirm_title)) },
+                                text = { Text(stringResource(R.string.sync_leave_team_confirm_message)) },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        viewModel.leaveTeam()
+                                        showLeaveConfirm = false
+                                    }) { Text(stringResource(R.string.sync_leave_team_confirm_button)) }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { showLeaveConfirm = false }) {
+                                        Text(stringResource(R.string.sync_cancel_button))
+                                    }
+                                }
+                            )
                         }
                         Spacer(Modifier.height(16.dp))
                     }

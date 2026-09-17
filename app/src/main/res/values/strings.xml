@@ -20,6 +20,7 @@
     <string name="label_phone">شماره تماس</string>
     <string name="label_address">آدرس</string>
     <string name="label_registered_at">تاریخ ثبت</string>
+    <string name="label_last_edited_by">آخرین ویرایش توسط</string>
     <string name="action_show_on_map">نمایش روی نقشه</string>
     <string name="commission_result_section">حق‌العمل طبق نرخ‌نامه</string>
     <string name="commission_result_total">مجموع حق‌العمل</string>
@@ -174,6 +175,14 @@
     <string name="sync_team_folder_title">پوشه‌ی تیمی</string>
     <string name="sync_team_folder_has_one">تو الان به یک پوشه‌ی تیمی وصلی. برای اینکه بقیه‌ی اعضا هم دقیقاً به همین پوشه (نه یک پوشه‌ی جدا) وصل بشن، لینکش رو براشون بفرست.</string>
     <string name="sync_team_folder_share_button">اشتراک‌گذاری لینک پوشه‌ی تیمی</string>
+    <string name="sync_team_display_name_label">نام دلخواه این تیم (فقط داخل اپ)</string>
+    <string name="sync_team_display_name_save">ذخیره</string>
+    <string name="sync_leave_team_button">خروج از تیم</string>
+    <string name="sync_leave_team_confirm_title">خروج از تیم؟</string>
+    <string name="sync_leave_team_confirm_message">اتصال این دستگاه به پوشه‌ی تیمی فعلی قطع می‌شود. ملک‌ها و متقاضیانی که روی همین دستگاه ثبت کرده‌ای پاک نمی‌شوند و بعداً می‌توانی دوباره به همین تیم یا یک تیم دیگر بپیوندی.</string>
+    <string name="sync_leave_team_confirm_button">خروج از تیم</string>
+    <string name="sync_cancel_button">انصراف</string>
+    <string name="label_last_edited_by">آخرین ویرایش توسط</string>
     <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
     <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>

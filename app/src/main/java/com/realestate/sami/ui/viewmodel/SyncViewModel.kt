@@ -34,6 +34,8 @@ data class SyncUiState(
     val pendingConsentIntent: Intent? = null,
     /** شناسه‌ی پوشه‌ی تیمی فعلی (بعد از اولین sync موفق یا join دستی) — برای نمایش/اشتراک‌گذاری با بقیه اعضا. */
     val teamFolderId: String? = null,
+    /** برچسب دلخواه تیم که فقط در UI نمایش داده می‌شود (مستقل از نام واقعی پوشه‌ی Drive). */
+    val teamDisplayName: String = "",
     val joinTeamMessage: String? = null,
     val isJoiningTeam: Boolean = false,
     /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
@@ -58,6 +60,7 @@ class SyncViewModel @Inject constructor(
             account = authManager.getSignedInAccount(context),
             lastSyncedAt = syncPrefs.lastSyncedAt,
             teamFolderId = syncPrefs.teamFolderId,
+            teamDisplayName = syncPrefs.teamDisplayName,
             autoSyncWifiOnly = syncPrefs.autoSyncWifiOnly
         )
     )
@@ -84,7 +87,11 @@ class SyncViewModel @Inject constructor(
 
     fun signOut() {
         authManager.signOut(context) {
-            _uiState.value = SyncUiState(teamFolderId = syncPrefs.teamFolderId, autoSyncWifiOnly = syncPrefs.autoSyncWifiOnly)
+            _uiState.value = SyncUiState(
+                teamFolderId = syncPrefs.teamFolderId,
+                teamDisplayName = syncPrefs.teamDisplayName,
+                autoSyncWifiOnly = syncPrefs.autoSyncWifiOnly
+            )
         }
     }
 
@@ -133,6 +140,7 @@ class SyncViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isJoiningTeam = false,
                         teamFolderId = syncPrefs.teamFolderId,
+                        teamDisplayName = syncPrefs.teamDisplayName,
                         joinTeamMessage = "به پوشه‌ی «${result.folderName}» وصل شدی"
                     )
                     syncNow()
@@ -198,6 +206,28 @@ class SyncViewModel @Inject constructor(
     /** نتیجه‌ی DrivePickerActivity؛ اگه کاربر پوشه‌ای انتخاب کرده باشه (لغو نکرده باشه)، بهش می‌پیونده. */
     fun onFolderPicked(folderId: String?) {
         if (!folderId.isNullOrBlank()) joinTeamFolder(folderId)
+    }
+
+    /** تغییر برچسب دلخواه تیم؛ فقط محلی است، هیچ درخواستی به Drive نمی‌فرستد. */
+    fun setTeamDisplayName(name: String) {
+        syncPrefs.teamDisplayName = name
+        _uiState.value = _uiState.value.copy(teamDisplayName = name)
+    }
+
+    /**
+     * قطع اتصال این دستگاه از تیم فعلی: شناسه‌ی پوشه، شناسه‌های کش‌شده‌ی فایل‌ها و برچسب تیم پاک
+     * می‌شوند تا بشه بی‌دردسر (بدون باقی‌ماندن state تیم قبلی که باعث تکرار/فورک داده می‌شه) به یک
+     * تیم دیگه پیوست یا یک تیم تازه ساخت. داده‌های محلی (ملک/متقاضی ثبت‌شده روی همین دستگاه) پاک
+     * نمی‌شوند و همچنان قابل‌استفاده‌اند.
+     */
+    fun leaveTeam() {
+        syncPrefs.clearTeamState()
+        _uiState.value = _uiState.value.copy(
+            teamFolderId = null,
+            teamDisplayName = "",
+            lastSyncedAt = null,
+            joinTeamMessage = null
+        )
     }
 
     /** تغییر تنظیم «sync خودکار فقط با Wi-Fi»؛ ذخیره می‌شود و کار دوره‌ای فوراً با محدودیت شبکه‌ی جدید دوباره زمان‌بندی می‌شود. */

@@ -20,6 +20,7 @@
     <string name="label_phone">Phone Number</string>
     <string name="label_address">Address</string>
     <string name="label_registered_at">Registered On</string>
+    <string name="label_last_edited_by">Last edited by</string>
     <string name="action_show_on_map">Show on map</string>
     <string name="commission_result_section">Commission per tariff</string>
     <string name="commission_result_total">Total commission</string>
@@ -174,6 +175,14 @@
     <string name="sync_team_folder_title">Team folder</string>
     <string name="sync_team_folder_has_one">You\'re connected to a team folder. Share its link with the rest of the team so they connect to the same folder instead of creating a separate one.</string>
     <string name="sync_team_folder_share_button">Share team folder link</string>
+    <string name="sync_team_display_name_label">Custom name for this team (in-app only)</string>
+    <string name="sync_team_display_name_save">Save</string>
+    <string name="sync_leave_team_button">Leave team</string>
+    <string name="sync_leave_team_confirm_title">Leave team?</string>
+    <string name="sync_leave_team_confirm_message">This device will disconnect from the current team folder. Properties and clients you\'ve saved on this device are not deleted, and you can rejoin the same team or a different one later.</string>
+    <string name="sync_leave_team_confirm_button">Leave team</string>
+    <string name="sync_cancel_button">Cancel</string>
+    <string name="label_last_edited_by">Last edited by</string>
     <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
     <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
     <string name="sync_team_folder_join_button">Join existing team</string>

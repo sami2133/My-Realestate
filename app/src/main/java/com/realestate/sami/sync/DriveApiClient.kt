@@ -94,6 +94,48 @@ class DriveApiClient @Inject constructor() {
     suspend fun findFileInFolder(token: String, folderId: String, fileName: String): DriveFile? =
         withContext(Dispatchers.IO) { findByName(token, fileName, null, folderId) }
 
+    /**
+     * متادیتای یک فایل را مستقیم با شناسه‌اش می‌گیرد (بدون جست‌وجوی نام) — برای اعتبارسنجی این‌که
+     * یک شناسه‌ی قبلاً کش‌شده (مثل [SyncPreferences.propertiesFileId]) هنوز معتبر و در همان پوشه است.
+     * اگر فایل پیدا نشد یا trash شده بود، null برمی‌گرداند (نه throw) تا فراخوان فوراً fallback به
+     * جست‌وجوی نام بزند، به‌جای این‌که کل sync با خطا متوقف شود.
+     */
+    suspend fun findFileById(token: String, fileId: String, expectedParentId: String): DriveFile? =
+        withContext(Dispatchers.IO) {
+            val request = Request.Builder()
+                .url("${DriveConstants.DRIVE_API_BASE}/files/$fileId?fields=id,name,trashed,parents")
+                .header("Authorization", authHeader(token))
+                .get()
+                .build()
+            http.newCall(request).execute().use { resp ->
+                if (resp.code == 404) return@withContext null
+                requireSuccess(resp, "بررسی فایل کش‌شده روی Drive")
+                val result = JsonParser.parseString(resp.body?.string().orEmpty()).asJsonObject
+                if (result.get("trashed")?.asBoolean == true) return@withContext null
+                val parents = result.getAsJsonArray("parents")
+                val stillInExpectedFolder = parents != null && parents.any { it.asString == expectedParentId }
+                if (!stillInExpectedFolder) return@withContext null
+                DriveFile(result.get("id").asString, result.get("name")?.asString.orEmpty())
+            }
+        }
+
+    /**
+     * فایل JSON مشترک را پیدا (یا در نبودش می‌سازد) و id نهایی را برمی‌گرداند — ابتدا با تلاش برای
+     * [knownFileId] کش‌شده (سریع‌تر و روی اسکوپ drive.file قابل‌اعتمادتر از جست‌وجوی نام)، و فقط اگر
+     * آن id دیگر معتبر نبود (فایل حذف/منتقل شده)، به جست‌وجوی نام برمی‌گردد.
+     */
+    suspend fun resolveExistingFile(
+        token: String,
+        folderId: String,
+        fileName: String,
+        knownFileId: String?
+    ): DriveFile? {
+        if (knownFileId != null) {
+            findFileById(token, knownFileId, folderId)?.let { return it }
+        }
+        return findFileInFolder(token, folderId, fileName)
+    }
+
     private fun findByName(token: String, name: String, mimeType: String?, parentId: String?): DriveFile? {
         val escapedName = name.replace("'", "\\'")
         val queryParts = mutableListOf("name = '$escapedName'", "trashed = false")
@@ -133,9 +175,19 @@ class DriveApiClient @Inject constructor() {
      * محتوای JSON را در پوشه‌ی داده‌شده آپلود می‌کند؛ اگر فایلی با همین نام از قبل بود، آپدیتش می‌کند
      * وگرنه فایل جدید می‌سازد. شناسه‌ی نهایی فایل را برمی‌گرداند.
      */
-    suspend fun uploadOrUpdateJson(token: String, folderId: String, fileName: String, content: String): String =
+    suspend fun uploadOrUpdateJson(
+        token: String,
+        folderId: String,
+        fileName: String,
+        content: String,
+        knownFileId: String? = null
+    ): String =
         withContext(Dispatchers.IO) {
-            val existing = findByName(token, fileName, null, folderId)
+            val existing = if (knownFileId != null) {
+                findFileById(token, knownFileId, folderId) ?: findByName(token, fileName, null, folderId)
+            } else {
+                findByName(token, fileName, null, folderId)
+            }
             if (existing != null) {
                 updateFileContent(token, existing.id, content)
                 existing.id
