@@ -34,6 +34,8 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          DRIVE_PICKER_API_KEY: ${{ secrets.DRIVE_PICKER_API_KEY }}
+          DRIVE_APP_ID: ${{ secrets.DRIVE_APP_ID }}
         run: ./gradlew assembleRelease bundleRelease
 
       - name: Create GitHub Release with artifacts
