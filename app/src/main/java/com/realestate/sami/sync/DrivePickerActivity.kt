@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -38,6 +39,11 @@ class DrivePickerActivity : Activity() {
             return
         }
 
+        // ویجت Google Picker برای بعضی درخواست‌های داخلیش (به دامنه‌های دیگه‌ی گوگل) به کوکی
+        // نیاز داره. Android WebView به‌صورت پیش‌فرض کوکی‌های Third-Party رو مسدود می‌کنه که
+        // بدون این خط، گوگل به‌جای Picker صفحه‌ی «Can't access your Google Account» نشون می‌ده.
+        CookieManager.getInstance().setAcceptCookie(true)
+
         val webView = WebView(this).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -45,6 +51,7 @@ class DrivePickerActivity : Activity() {
             )
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
+            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
             addJavascriptInterface(PickerBridge(), "Android")
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
