@@ -27,9 +27,13 @@ class DrivePickerActivity : Activity() {
 
         val token = intent.getStringExtra(EXTRA_ACCESS_TOKEN)
         if (token.isNullOrBlank() || BuildConfig.DRIVE_PICKER_API_KEY.isBlank() || BuildConfig.DRIVE_APP_ID.isBlank()) {
-            // اگه توکن یا کلیدهای Picker تنظیم نشده باشن (مثلاً local.properties هنوز پر نشده)،
-            // به‌جای کرش، فقط لغو می‌کنیم تا صفحه‌ی قبلی پیام مناسب نشون بده.
-            setResult(RESULT_CANCELED)
+            // اگه توکن یا کلیدهای Picker تنظیم نشده باشن (مثلاً local.properties هنوز پر نشده یا
+            // سکرت‌های CI به مرحله‌ی build پاس داده نشدن)، به‌جای کرش یا لغوِ کاملاً بی‌صدا،
+            // دلیل رو هم توی نتیجه می‌ذاریم تا صفحه‌ی قبلی بتونه پیام مناسب نشون بده.
+            setResult(
+                RESULT_CANCELED,
+                Intent().putExtra(EXTRA_CANCEL_REASON, REASON_CONFIG_MISSING)
+            )
             finish()
             return
         }
@@ -82,5 +86,8 @@ class DrivePickerActivity : Activity() {
         const val EXTRA_ACCESS_TOKEN = "extra_access_token"
         const val EXTRA_RESULT_FOLDER_ID = "extra_result_folder_id"
         const val EXTRA_RESULT_FOLDER_NAME = "extra_result_folder_name"
+        /** روی نتیجه‌ی RESULT_CANCELED ست می‌شه تا مشخص کنه لغو به‌خاطر لغو دستی کاربره یا مشکل تنظیمات. */
+        const val EXTRA_CANCEL_REASON = "extra_cancel_reason"
+        const val REASON_CONFIG_MISSING = "config_missing"
     }
 }

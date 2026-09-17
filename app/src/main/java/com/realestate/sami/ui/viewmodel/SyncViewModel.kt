@@ -39,7 +39,10 @@ data class SyncUiState(
     /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
     val autoSyncWifiOnly: Boolean = false,
     /** وقتی مقدار داره، صفحه باید DrivePickerActivity رو با این Intent باز کنه (یک‌بار‌مصرف). */
-    val pickerLaunchIntent: Intent? = null
+    val pickerLaunchIntent: Intent? = null,
+    /** پیام خطای مخصوص Picker — درست کنار دکمه‌ی «انتخاب پوشه» نمایش داده می‌شه، نه در کارت بالای صفحه؛
+     *  چون این خطاها (کلید تنظیم‌نشده، توکن نگرفتن) دقیقاً محل کلیک کاربر رو نشونه می‌گیرن. */
+    val pickerErrorMessage: String? = null
 )
 
 @HiltViewModel
@@ -153,6 +156,7 @@ class SyncViewModel @Inject constructor(
      */
     fun requestFolderPicker() {
         val account = _uiState.value.account ?: return
+        _uiState.value = _uiState.value.copy(pickerErrorMessage = null)
         viewModelScope.launch {
             when (val tokenResult = authManager.getAccessToken(context, account)) {
                 is AccessTokenResult.Success -> _uiState.value = _uiState.value.copy(
@@ -163,7 +167,7 @@ class SyncViewModel @Inject constructor(
                     pendingConsentIntent = tokenResult.intent
                 )
                 is AccessTokenResult.Failure -> _uiState.value = _uiState.value.copy(
-                    errorMessage = tokenResult.message
+                    pickerErrorMessage = tokenResult.message
                 )
             }
         }
@@ -172,6 +176,23 @@ class SyncViewModel @Inject constructor(
     /** بعد از این‌که صفحه Intent رو لانچ کرد، یک‌بار‌مصرف بودنش رو با پاک کردن از state تضمین کن. */
     fun clearPickerLaunchIntent() {
         _uiState.value = _uiState.value.copy(pickerLaunchIntent = null)
+    }
+
+    /**
+     * نتیجه‌ی DrivePickerActivity وقتی RESULT_OK نبوده. اگه [reason] مقدار داشته باشه (یعنی کاربر
+     * خودش لغو نکرده، بلکه Picker اصلاً به‌خاطر یه مشکل تنظیمات باز نشده)، پیام مناسب رو نشون بده؛
+     * وگرنه (لغو دستی خود کاربر از داخل Picker) هیچ پیامی لازم نیست.
+     */
+    fun onPickerCancelled(reason: String?) {
+        if (reason == DrivePickerActivity.REASON_CONFIG_MISSING) {
+            _uiState.value = _uiState.value.copy(
+                pickerErrorMessage = context.getString(com.realestate.sami.R.string.sync_picker_config_missing)
+            )
+        }
+    }
+
+    fun clearPickerErrorMessage() {
+        _uiState.value = _uiState.value.copy(pickerErrorMessage = null)
     }
 
     /** نتیجه‌ی DrivePickerActivity؛ اگه کاربر پوشه‌ای انتخاب کرده باشه (لغو نکرده باشه)، بهش می‌پیونده. */

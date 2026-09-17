@@ -179,6 +179,7 @@
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
     <string name="sync_team_folder_picker_hint">برای پیوستن به پوشه‌ای که یک همکار باهات Share کرده، به‌جای وارد کردن دستی شناسه، از Drive انتخابش کن:</string>
     <string name="sync_team_folder_picker_button">انتخاب پوشه از Google Drive</string>
+    <string name="sync_picker_config_missing">تنظیمات Drive Picker کامل نیست (کلید API یا شناسه‌ی پروژه در بیلد وارد نشده)</string>
 
     <!-- تنظیم نوع اتصال برای sync خودکار پس‌زمینه -->
     <string name="sync_auto_wifi_only_title">همگام‌سازی خودکار فقط با Wi-Fi</string>

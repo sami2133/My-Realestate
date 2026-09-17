@@ -179,6 +179,7 @@
     <string name="sync_team_folder_join_button">Join existing team</string>
     <string name="sync_team_folder_picker_hint">To join a folder a teammate has shared with you, pick it from Drive instead of typing the ID manually:</string>
     <string name="sync_team_folder_picker_button">Pick folder from Google Drive</string>
+    <string name="sync_picker_config_missing">Drive Picker isn\'t fully configured (API key or project ID missing from the build)</string>
 
     <!-- Network type setting for background auto-sync -->
     <string name="sync_auto_wifi_only_title">Auto-sync on Wi-Fi only</string>

@@ -58,6 +58,9 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
         if (result.resultCode == Activity.RESULT_OK) {
             val folderId = result.data?.getStringExtra(DrivePickerActivity.EXTRA_RESULT_FOLDER_ID)
             viewModel.onFolderPicked(folderId)
+        } else {
+            val reason = result.data?.getStringExtra(DrivePickerActivity.EXTRA_CANCEL_REASON)
+            viewModel.onPickerCancelled(reason)
         }
     }
 
@@ -247,6 +250,14 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
                         Icon(Icons.Filled.FolderOpen, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(stringResource(R.string.sync_team_folder_picker_button))
+                    }
+                    state.pickerErrorMessage?.let { msg ->
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            stringResource(R.string.sync_error_prefix, msg),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
 
                     Spacer(Modifier.height(16.dp))
