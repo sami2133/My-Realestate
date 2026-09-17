@@ -182,7 +182,6 @@
     <string name="sync_leave_team_confirm_message">This device will disconnect from the current team folder. Properties and clients you\'ve saved on this device are not deleted, and you can rejoin the same team or a different one later.</string>
     <string name="sync_leave_team_confirm_button">Leave team</string>
     <string name="sync_cancel_button">Cancel</string>
-    <string name="label_last_edited_by">Last edited by</string>
     <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
     <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
     <string name="sync_team_folder_join_button">Join existing team</string>

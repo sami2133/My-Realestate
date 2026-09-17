@@ -182,7 +182,6 @@
     <string name="sync_leave_team_confirm_message">اتصال این دستگاه به پوشه‌ی تیمی فعلی قطع می‌شود. ملک‌ها و متقاضیانی که روی همین دستگاه ثبت کرده‌ای پاک نمی‌شوند و بعداً می‌توانی دوباره به همین تیم یا یک تیم دیگر بپیوندی.</string>
     <string name="sync_leave_team_confirm_button">خروج از تیم</string>
     <string name="sync_cancel_button">انصراف</string>
-    <string name="label_last_edited_by">آخرین ویرایش توسط</string>
     <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
     <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
     <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
