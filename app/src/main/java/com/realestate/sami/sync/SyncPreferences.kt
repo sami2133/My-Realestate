@@ -69,6 +69,14 @@ class SyncPreferences @Inject constructor(@ApplicationContext context: Context) 
         set(value) = prefs.edit().putString(KEY_CONTACT_LOGS_FILE_ID, value).apply()
 
     /**
+     * شناسه‌ی زیرپوشه‌ی «images»، کش‌شده بعد از اولین resolve موفق — تا دکمه‌ی «دریافت تصاویر تیم»
+     * بتونه بدون اجرای یک sync کامل، فوراً بدونه Picker چندانتخابی رو روی کدوم پوشه باز کنه.
+     */
+    var imagesFolderId: String?
+        get() = prefs.getString(KEY_IMAGES_FOLDER_ID, null)
+        set(value) = prefs.edit().putString(KEY_IMAGES_FOLDER_ID, value).apply()
+
+    /**
      * کل وضعیت مربوط به «تیم فعلی» را پاک می‌کند: شناسه‌ی پوشه، شناسه‌های کش‌شده‌ی فایل‌ها، و
      * برچسب دلخواه. برای «ساخت/پیوستن به یک پوشه‌ی جدید» (چه از طریق خروج دستی از تیم، چه هنگام
      * پیوستن به پوشه‌ای متفاوت از پوشه‌ی قبلی) باید همیشه صدا زده شود — وگرنه شناسه‌ی فایل‌های
@@ -83,6 +91,7 @@ class SyncPreferences @Inject constructor(@ApplicationContext context: Context) 
             .remove(KEY_PROPERTIES_FILE_ID)
             .remove(KEY_CLIENTS_FILE_ID)
             .remove(KEY_CONTACT_LOGS_FILE_ID)
+            .remove(KEY_IMAGES_FOLDER_ID)
             .remove(KEY_LAST_SYNC)
             .apply()
     }
@@ -98,5 +107,6 @@ class SyncPreferences @Inject constructor(@ApplicationContext context: Context) 
         private const val KEY_PROPERTIES_FILE_ID = "properties_file_id"
         private const val KEY_CLIENTS_FILE_ID = "clients_file_id"
         private const val KEY_CONTACT_LOGS_FILE_ID = "contact_logs_file_id"
+        private const val KEY_IMAGES_FOLDER_ID = "images_folder_id"
     }
 }

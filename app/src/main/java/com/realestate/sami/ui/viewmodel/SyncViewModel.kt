@@ -11,6 +11,7 @@ import com.google.android.gms.common.api.ApiException
 import com.realestate.sami.sync.AccessTokenResult
 import com.realestate.sami.sync.DrivePickerActivity
 import com.realestate.sami.sync.GoogleAuthManager
+import com.realestate.sami.sync.ImagesFolderResult
 import com.realestate.sami.sync.JoinTeamResult
 import com.realestate.sami.sync.RenameTeamFolderResult
 import com.realestate.sami.sync.SyncManager
@@ -43,8 +44,11 @@ data class SyncUiState(
     val isJoiningTeam: Boolean = false,
     /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
     val autoSyncWifiOnly: Boolean = false,
-    /** وقتی مقدار داره، صفحه باید DrivePickerActivity رو با این Intent باز کنه (یک‌بار‌مصرف). */
+    /** وقتی مقدار داره، صفحه باید DrivePickerActivity رو با این Intent باز کنه (یک‌بار‌مصرف).
+     *  هم برای انتخاب پوشه‌ی تیمی استفاده می‌شه، هم برای «دریافت تصاویر تیم» (با mode متفاوت). */
     val pickerLaunchIntent: Intent? = null,
+    /** خطای مخصوص دکمه‌ی «دریافت تصاویر تیم» (مثلاً هنوز به هیچ تیمی وصل نیستی). */
+    val fetchImagesErrorMessage: String? = null,
     /** پیام خطای مخصوص Picker — درست کنار دکمه‌ی «انتخاب پوشه» نمایش داده می‌شه، نه در کارت بالای صفحه؛
      *  چون این خطاها (کلید تنظیم‌نشده، توکن نگرفتن) دقیقاً محل کلیک کاربر رو نشونه می‌گیرن. */
     val pickerErrorMessage: String? = null
@@ -254,6 +258,46 @@ class SyncViewModel @Inject constructor(
             lastSyncedAt = null,
             joinTeamMessage = null
         )
+    }
+
+    /**
+     * صفحه‌ی جزئیات ملک این رو صدا می‌زنه وقتی کاربر روی یک عکسِ «هنوز دانلود نشده» بزنه.
+     * چون درست‌کردن این محدودیت (اسکوپ drive.file) نیاز به مجوز جداگونه‌ی هر فایل داره، اول
+     * باید شناسه‌ی پوشه‌ی images رو گرفت (بدون sync کامل)، و بعد Picker چندانتخابی رو رویش باز کرد.
+     */
+    fun requestTeamImagesPicker() {
+        val account = _uiState.value.account ?: return
+        _uiState.value = _uiState.value.copy(fetchImagesErrorMessage = null)
+        viewModelScope.launch {
+            when (val result = syncManager.ensureImagesFolderId(account)) {
+                is ImagesFolderResult.Success -> _uiState.value = _uiState.value.copy(
+                    pickerLaunchIntent = Intent(context, DrivePickerActivity::class.java)
+                        .putExtra(DrivePickerActivity.EXTRA_ACCESS_TOKEN, result.token)
+                        .putExtra(DrivePickerActivity.EXTRA_MODE, DrivePickerActivity.MODE_FILES)
+                        .putExtra(DrivePickerActivity.EXTRA_PARENT_FOLDER_ID, result.folderId)
+                )
+                is ImagesFolderResult.ConsentRequired -> _uiState.value = _uiState.value.copy(
+                    pendingConsentIntent = result.intent
+                )
+                is ImagesFolderResult.Failure -> _uiState.value = _uiState.value.copy(
+                    fetchImagesErrorMessage = result.message
+                )
+            }
+        }
+    }
+
+    /**
+     * بعد از این‌که کاربر در Picker چندانتخابی، عکس(های) تیم رو انتخاب کرد (یا حتی لغو کرد —
+     * فرقی نداره، sync دوباره خودش تشخیص می‌ده کدوم عکس واقعاً تازه در دسترس شده). خودِ idهای
+     * انتخاب‌شده لازم نیست جایی استفاده شن؛ صرفِ عبور از Picker مجوز drive.file رو داده،
+     * و منطق دانلود موجود در [SyncManager.syncNow] بقیه‌ش رو انجام می‌ده.
+     */
+    fun onTeamImagesPicked() {
+        syncNow()
+    }
+
+    fun clearFetchImagesErrorMessage() {
+        _uiState.value = _uiState.value.copy(fetchImagesErrorMessage = null)
     }
 
     /** تغییر تنظیم «sync خودکار فقط با Wi-Fi»؛ ذخیره می‌شود و کار دوره‌ای فوراً با محدودیت شبکه‌ی جدید دوباره زمان‌بندی می‌شود. */

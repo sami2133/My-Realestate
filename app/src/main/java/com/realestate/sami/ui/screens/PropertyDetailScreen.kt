@@ -1,7 +1,10 @@
 package com.realestate.sami.ui.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,6 +35,7 @@ import com.realestate.sami.data.local.entity.PropertyStatus
 import com.realestate.sami.data.local.entity.PropertyType
 import com.realestate.sami.ui.screens.common.*
 import com.realestate.sami.ui.viewmodel.PropertyDetailViewModel
+import com.realestate.sami.ui.viewmodel.SyncViewModel
 import com.realestate.sami.util.toPersianDateString
 import com.realestate.sami.util.toTomanDisplay
 
@@ -42,7 +46,8 @@ fun PropertyDetailScreen(
     onClientClick: (ClientEntity) -> Unit,
     onEdit: (Long) -> Unit,
     onDeleted: () -> Unit,
-    viewModel: PropertyDetailViewModel = hiltViewModel()
+    viewModel: PropertyDetailViewModel = hiltViewModel(),
+    syncViewModel: SyncViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val property by viewModel.property.collectAsState()
@@ -52,6 +57,35 @@ fun PropertyDetailScreen(
     val visits by viewModel.visits.collectAsState()
     val visitEventTitleTemplate = stringResource(R.string.visit_calendar_event_title_property)
     var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // --- «دریافت تصاویر تیم»: رفع محدودیت drive.file برای عکس‌هایی که یک همکار روی دستگاه
+    // دیگه آپلود کرده و این دستگاه هنوز مجوز خواندن‌شون رو نداره (نه باگ، محدودیت خودِ اسکوپ). ---
+    val syncState by syncViewModel.uiState.collectAsState()
+
+    val teamImagesConsentLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) syncViewModel.requestTeamImagesPicker()
+    }
+
+    val teamImagesPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // چه کاربر عکسی انتخاب کرده باشه چه لغو کرده باشه، یک sync عادی کافیه؛ syncNow خودش
+        // فقط عکس‌هایی که واقعاً تازه در دسترس شدن رو دانلود می‌کنه.
+        if (result.resultCode == Activity.RESULT_OK) syncViewModel.onTeamImagesPicked()
+    }
+
+    LaunchedEffect(syncState.pendingConsentIntent) {
+        syncState.pendingConsentIntent?.let { teamImagesConsentLauncher.launch(it) }
+    }
+
+    LaunchedEffect(syncState.pickerLaunchIntent) {
+        syncState.pickerLaunchIntent?.let {
+            teamImagesPickerLauncher.launch(it)
+            syncViewModel.clearPickerLaunchIntent()
+        }
+    }
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -123,18 +157,28 @@ fun PropertyDetailScreen(
                                     .clickable { viewerStartIndex = index }
                             )
                         } else {
-                            // این عکس روی یک دستگاه دیگه‌ی تیم ثبت شده؛ با «همگام‌سازی الان» دانلود می‌شود
-                            Box(
+                            // این عکس روی یک دستگاه دیگه‌ی تیم ثبت شده؛ صرفِ «همگام‌سازی الان» کافی نیست
+                            // (اسکوپ drive.file هنوز مجوز خواندن همین فایل خاص رو به این دستگاه نداده) —
+                            // با ضربه زدن، Picker چندانتخابی روی پوشه‌ی مشترک «images» باز می‌شه.
+                            Column(
                                 Modifier
                                     .size(220.dp, 150.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp)),
-                                contentAlignment = Alignment.Center
+                                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
+                                    .clickable { syncViewModel.requestTeamImagesPicker() },
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
                                     Icons.Filled.CloudDownload,
                                     contentDescription = stringResource(R.string.image_not_downloaded_yet),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(32.dp)
+                                )
+                                Text(
+                                    stringResource(R.string.fetch_team_images_action),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp)
                                 )
                             }
                         }
@@ -154,6 +198,23 @@ fun PropertyDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Filled.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(40.dp))
+                }
+            }
+
+            syncState.fetchImagesErrorMessage?.let { message ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(10.dp))
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(message, color = MaterialTheme.colorScheme.onErrorContainer, style = MaterialTheme.typography.bodySmall)
+                    TextButton(onClick = { syncViewModel.clearFetchImagesErrorMessage() }) {
+                        Text(stringResource(R.string.action_close))
+                    }
                 }
             }
 

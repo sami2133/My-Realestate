@@ -257,6 +257,7 @@
 
     <!-- همگام‌سازی عکس -->
     <string name="image_not_downloaded_yet">این عکس هنوز روی این دستگاه دانلود نشده</string>
+    <string name="fetch_team_images_action">دریافت تصاویر تیم</string>
 
     <!-- فاز ۵: گزارش‌ها -->
     <string name="nav_reports">ابزارها</string>

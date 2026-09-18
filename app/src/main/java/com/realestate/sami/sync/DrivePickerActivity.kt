@@ -30,6 +30,8 @@ class DrivePickerActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         val token = intent.getStringExtra(EXTRA_ACCESS_TOKEN)
+        val mode = intent.getStringExtra(EXTRA_MODE) ?: MODE_FOLDER
+        val parentFolderId = intent.getStringExtra(EXTRA_PARENT_FOLDER_ID)
         if (token.isNullOrBlank() || BuildConfig.DRIVE_PICKER_API_KEY.isBlank() || BuildConfig.DRIVE_APP_ID.isBlank()) {
             // اگه توکن یا کلیدهای Picker تنظیم نشده باشن (مثلاً local.properties هنوز پر نشده یا
             // سکرت‌های CI به مرحله‌ی build پاس داده نشدن)، به‌جای کرش یا لغوِ کاملاً بی‌صدا،
@@ -70,7 +72,13 @@ class DrivePickerActivity : Activity() {
                 ): WebResourceResponse? = assetLoader.shouldInterceptRequest(request.url)
 
                 override fun onPageFinished(view: WebView, url: String) {
-                    val js = "init('${token.escapeJs()}', '${BuildConfig.DRIVE_PICKER_API_KEY.escapeJs()}', '${BuildConfig.DRIVE_APP_ID.escapeJs()}')"
+                    val js = "init(" +
+                        "'${token.escapeJs()}', " +
+                        "'${BuildConfig.DRIVE_PICKER_API_KEY.escapeJs()}', " +
+                        "'${BuildConfig.DRIVE_APP_ID.escapeJs()}', " +
+                        "'${mode.escapeJs()}', " +
+                        (parentFolderId?.let { "'${it.escapeJs()}'" } ?: "null") +
+                        ")"
                     view.evaluateJavascript(js, null)
                 }
             }
@@ -95,6 +103,20 @@ class DrivePickerActivity : Activity() {
             }
         }
 
+        /** نتیجه‌ی حالت [MODE_FILES]: چندین فایل هم‌زمان انتخاب شدن (مثلاً همه‌ی عکس‌های پوشه‌ی images).
+         *  خودِ idها لازم نیست به چیز دیگه‌ای وصل شن — همین انتخاب صریح، مجوز drive.file رو
+         *  برای هرکدوم به این دستگاه می‌ده؛ صفحه‌ی فراخوان فقط کافیه بعدش یک sync عادی بزنه. */
+        @JavascriptInterface
+        fun onFilesPicked(idsJson: String) {
+            runOnUiThread {
+                val result = Intent().apply {
+                    putExtra(EXTRA_RESULT_FILE_IDS, idsJson)
+                }
+                setResult(RESULT_OK, result)
+                finish()
+            }
+        }
+
         @JavascriptInterface
         fun onCancel() {
             runOnUiThread {
@@ -111,5 +133,13 @@ class DrivePickerActivity : Activity() {
         /** روی نتیجه‌ی RESULT_CANCELED ست می‌شه تا مشخص کنه لغو به‌خاطر لغو دستی کاربره یا مشکل تنظیمات. */
         const val EXTRA_CANCEL_REASON = "extra_cancel_reason"
         const val REASON_CONFIG_MISSING = "config_missing"
+
+        /** کدوم View جاوااسکریپتی ساخته بشه: انتخاب تک‌پوشه (پیش‌فرض) یا چندانتخابی فایل‌های داخل یک پوشه. */
+        const val EXTRA_MODE = "extra_mode"
+        const val EXTRA_PARENT_FOLDER_ID = "extra_parent_folder_id"
+        const val MODE_FOLDER = "folder"
+        const val MODE_FILES = "files"
+        /** فقط در MODE_FILES پر می‌شه: رشته‌ی JSON آرایه‌ی id فایل‌های انتخاب‌شده. */
+        const val EXTRA_RESULT_FILE_IDS = "extra_result_file_ids"
     }
 }

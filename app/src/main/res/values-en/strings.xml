@@ -257,6 +257,7 @@
 
     <!-- Image sync -->
     <string name="image_not_downloaded_yet">This image hasn\'t been downloaded to this device yet</string>
+    <string name="fetch_team_images_action">Get team photos</string>
 
     <!-- Phase 5: Reports -->
     <string name="nav_reports">Tools</string>
