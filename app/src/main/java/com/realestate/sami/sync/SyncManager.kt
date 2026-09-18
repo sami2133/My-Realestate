@@ -293,7 +293,12 @@ class SyncManager @Inject constructor(
             if (resolvedImages == property.images) {
                 property
             } else {
-                val updated = property.copy(images = resolvedImages)
+                // updatedAt رو هم عمداً به‌روز می‌کنیم: اگه فقط لیست عکس‌ها عوض بشه ولی updatedAt
+                // ثابت بمونه، دفعه‌ی بعد که یک عضو دیگه‌ی تیم sync بزنه، منطق merge بالا چون
+                // «remoteItem.updatedAt > localItem.updatedAt» رو true نمی‌بینه، این تصحیح
+                // (مثلاً driveFileId ترمیم‌شده‌ی یک عکس) رو نادیده می‌گیره و همون نسخه‌ی خرابِ
+                // محلی‌اش رو نگه می‌داره.
+                val updated = property.copy(images = resolvedImages, updatedAt = System.currentTimeMillis())
                 if (updated.id != 0L) propertyDao.update(updated)
                 updated
             }
@@ -343,6 +348,23 @@ class SyncManager @Inject constructor(
             image.driveFileId != null && image.localUri == null -> {
                 val cachedPath = runCatching { downloadAndCacheImage(token, image.driveFileId) }.getOrNull()
                 if (cachedPath != null) image.copy(localUri = cachedPath) else image
+            }
+            // هم localUri و هم driveFileId موجودن — طبق حالت عادی کاری لازم نیست. اما اگه این
+            // دستگاه قبلاً یک‌بار «خروج از تیم» زده و پوشه‌ی تیمی از نو ساخته شده (یا هر دلیل
+            // دیگه‌ای که پوشه‌ی «images» عوض شده)، driveFileId ذخیره‌شده ممکنه دیگه داخل پوشه‌ی
+            // *فعلی* معتبر نباشه — و چون خودِ این دستگاه هنوز فایل محلی رو داره، این تنها نسخه‌ای
+            // از تیمه که می‌تونه با آپلود دوباره، خودش رو ترمیم کنه؛ وگرنه بقیه‌ی اعضا (که فقط
+            // driveFileId رو دارن، نه فایل محلی) برای همیشه با یک مرجع مرده گیر می‌کنن.
+            image.driveFileId != null && image.localUri != null -> {
+                val stillValid = runCatching {
+                    driveApi.findFileById(token, image.driveFileId, imagesFolderId)
+                }.getOrNull() != null
+                if (stillValid) {
+                    image
+                } else {
+                    val reuploadedId = runCatching { uploadImage(token, imagesFolderId, image.localUri) }.getOrNull()
+                    if (reuploadedId != null) image.copy(driveFileId = reuploadedId) else image
+                }
             }
             else -> image
         }
