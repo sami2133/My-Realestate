@@ -281,6 +281,25 @@ class DriveApiClient @Inject constructor() {
      * قبل از این‌که کاربر مطمئن بشه ID درست وارد کرده و واقعاً به اون پوشه دسترسی داره.
      * اگر پوشه وجود نداشت یا کاربر دسترسی نداشت، DriveNotFoundException پرتاب می‌کند.
      */
+    /**
+     * نام واقعیِ پوشه را روی خودِ Drive تغییر می‌دهد (نه فقط برچسب لوکال داخل اپ) — تا وقتی چند
+     * پوشه‌ی هم‌نام (یکی متعلق به خودِ کاربر، یکی Share‌شده از یک عضو دیگر) وجود دارد، حتی در
+     * لیست‌های Drive/Picker هم قابل‌تشخیص باشند. برای rename، کافی‌ست کاربر حداقل دسترسی Editor
+     * (writer) روی پوشه داشته باشد؛ نیازی به مالکیت (owner) نیست.
+     */
+    suspend fun renameFolder(token: String, folderId: String, newName: String): Unit =
+        withContext(Dispatchers.IO) {
+            val body = JsonObject().apply { addProperty("name", newName) }
+            val request = Request.Builder()
+                .url("${DriveConstants.DRIVE_API_BASE}/files/$folderId?fields=id,name")
+                .header("Authorization", authHeader(token))
+                .patch(body.toString().toRequestBody(json))
+                .build()
+            http.newCall(request).execute().use { resp ->
+                requireSuccess(resp, "تغییر نام پوشه‌ی تیمی")
+            }
+        }
+
     suspend fun getFolderMetadata(token: String, folderId: String): DriveFile = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url("${DriveConstants.DRIVE_API_BASE}/files/$folderId?fields=id,name,mimeType,trashed")

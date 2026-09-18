@@ -34,6 +34,11 @@ sealed class JoinTeamResult {
     data class Failure(val message: String) : JoinTeamResult()
 }
 
+sealed class RenameTeamFolderResult {
+    data class Success(val newName: String) : RenameTeamFolderResult()
+    data class Failure(val message: String) : RenameTeamFolderResult()
+}
+
 /**
  * موتور همگام‌سازی: داده‌ی محلی Room را با فایل‌های JSON مشترک روی یک پوشه‌ی Drive ادغام می‌کند.
  *
@@ -141,6 +146,32 @@ class SyncManager @Inject constructor(
             } else {
                 SyncResult.Failure("دسترسی به Drive رد شد؛ لطفاً یک‌بار خارج و دوباره با گوگل وارد شو")
             }
+        }
+    }
+
+    /**
+     * نام واقعیِ پوشه‌ی تیمی فعلی را روی خودِ Drive تغییر می‌دهد (نه فقط برچسب لوکال) — تا وقتی چند
+     * پوشه‌ی هم‌نام هست (یکی خودش ساخته، یکی از یک عضو دیگر Share شده)، در Picker/Drive هم قابل
+     * تشخیص باشند. نیاز به دسترسی Editor (نه لزوماً owner) روی پوشه دارد.
+     */
+    suspend fun renameTeamFolder(account: GoogleSignInAccount, newName: String): RenameTeamFolderResult {
+        val folderId = syncPrefs.teamFolderId
+            ?: return RenameTeamFolderResult.Failure("هنوز به هیچ پوشه‌ی تیمی وصل نیستی")
+        val trimmedName = newName.trim()
+        if (trimmedName.isEmpty()) return RenameTeamFolderResult.Failure("نام نمی‌تواند خالی باشد")
+
+        val token = when (val tokenResult = authManager.getAccessToken(context, account)) {
+            is AccessTokenResult.Success -> tokenResult.token
+            is AccessTokenResult.ConsentRequired -> return RenameTeamFolderResult.Failure("ابتدا نیاز به تایید دسترسی Drive است؛ یک‌بار «همگام‌سازی الان» را بزن")
+            is AccessTokenResult.Failure -> return RenameTeamFolderResult.Failure(tokenResult.message)
+        }
+
+        return try {
+            driveApi.renameFolder(token, folderId, trimmedName)
+            syncPrefs.teamDisplayName = trimmedName
+            RenameTeamFolderResult.Success(trimmedName)
+        } catch (e: Exception) {
+            RenameTeamFolderResult.Failure(e.message ?: "تغییر نام پوشه‌ی تیمی ناموفق بود")
         }
     }
 

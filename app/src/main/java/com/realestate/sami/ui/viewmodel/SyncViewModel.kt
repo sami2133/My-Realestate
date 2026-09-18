@@ -12,6 +12,7 @@ import com.realestate.sami.sync.AccessTokenResult
 import com.realestate.sami.sync.DrivePickerActivity
 import com.realestate.sami.sync.GoogleAuthManager
 import com.realestate.sami.sync.JoinTeamResult
+import com.realestate.sami.sync.RenameTeamFolderResult
 import com.realestate.sami.sync.SyncManager
 import com.realestate.sami.sync.SyncPreferences
 import com.realestate.sami.sync.SyncResult
@@ -36,6 +37,8 @@ data class SyncUiState(
     val teamFolderId: String? = null,
     /** برچسب دلخواه تیم که فقط در UI نمایش داده می‌شود (مستقل از نام واقعی پوشه‌ی Drive). */
     val teamDisplayName: String = "",
+    val isRenamingTeamFolder: Boolean = false,
+    val renameTeamFolderMessage: String? = null,
     val joinTeamMessage: String? = null,
     val isJoiningTeam: Boolean = false,
     /** وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شود. */
@@ -208,10 +211,31 @@ class SyncViewModel @Inject constructor(
         if (!folderId.isNullOrBlank()) joinTeamFolder(folderId)
     }
 
-    /** تغییر برچسب دلخواه تیم؛ فقط محلی است، هیچ درخواستی به Drive نمی‌فرستد. */
+    /**
+     * نام واقعیِ پوشه‌ی تیمی را روی خودِ Google Drive تغییر می‌دهد (نه فقط یک برچسب لوکال داخل اپ) —
+     * تا وقتی چند پوشه‌ی هم‌نام هست (یکی خودش ساخته، یکی Share‌شده از یک عضو دیگر)، در خودِ
+     * Drive/Picker هم قابل‌تشخیص بمونن، نه فقط داخل لیست تیم‌های همین اپ.
+     */
     fun setTeamDisplayName(name: String) {
-        syncPrefs.teamDisplayName = name
-        _uiState.value = _uiState.value.copy(teamDisplayName = name)
+        val account = _uiState.value.account ?: return
+        _uiState.value = _uiState.value.copy(isRenamingTeamFolder = true, renameTeamFolderMessage = null)
+        viewModelScope.launch {
+            when (val result = syncManager.renameTeamFolder(account, name)) {
+                is RenameTeamFolderResult.Success -> _uiState.value = _uiState.value.copy(
+                    isRenamingTeamFolder = false,
+                    teamDisplayName = result.newName,
+                    renameTeamFolderMessage = null
+                )
+                is RenameTeamFolderResult.Failure -> _uiState.value = _uiState.value.copy(
+                    isRenamingTeamFolder = false,
+                    renameTeamFolderMessage = result.message
+                )
+            }
+        }
+    }
+
+    fun clearRenameTeamFolderMessage() {
+        _uiState.value = _uiState.value.copy(renameTeamFolderMessage = null)
     }
 
     /**
@@ -225,6 +249,8 @@ class SyncViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             teamFolderId = null,
             teamDisplayName = "",
+            isRenamingTeamFolder = false,
+            renameTeamFolderMessage = null,
             lastSyncedAt = null,
             joinTeamMessage = null
         )

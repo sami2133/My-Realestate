@@ -175,7 +175,7 @@
     <string name="sync_team_folder_title">Team folder</string>
     <string name="sync_team_folder_has_one">You\'re connected to a team folder. Share its link with the rest of the team so they connect to the same folder instead of creating a separate one.</string>
     <string name="sync_team_folder_share_button">Share team folder link</string>
-    <string name="sync_team_display_name_label">Custom name for this team (in-app only)</string>
+    <string name="sync_team_display_name_label">Real name of this folder on Drive</string>
     <string name="sync_team_display_name_save">Save</string>
     <string name="sync_leave_team_button">Leave team</string>
     <string name="sync_leave_team_confirm_title">Leave team?</string>

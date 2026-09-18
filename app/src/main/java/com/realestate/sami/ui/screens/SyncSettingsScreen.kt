@@ -216,23 +216,36 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
                         )
                         Spacer(Modifier.height(8.dp))
 
-                        // برچسب دلخواه فقط داخل خودِ اپ ذخیره می‌شه (هیچ درخواستی به Drive نمی‌ره)؛
-                        // برای وقتی که چند تیم/دفتر مختلف داری و می‌خوای هر کدوم رو راحت از بقیه
-                        // تشخیص بدی، بدون اینکه نام واقعی پوشه‌ی Drive رو تغییر بدی.
+                        // این نام روی خودِ Drive تغییر می‌کند (نه فقط لوکال داخل اپ) — تا وقتی چند
+                        // پوشه‌ی هم‌نام هست (یکی خودِ این دستگاه ساخته، یکی از یک عضو دیگر Share
+                        // شده)، در خودِ Drive و Picker هم قابل‌تشخیص بمونن.
                         var teamNameInput by remember(state.teamFolderId) { mutableStateOf(state.teamDisplayName) }
                         OutlinedTextField(
                             value = teamNameInput,
                             onValueChange = { teamNameInput = it },
                             label = { Text(stringResource(R.string.sync_team_display_name_label)) },
                             singleLine = true,
+                            enabled = !state.isRenamingTeamFolder,
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
-                                TextButton(
-                                    onClick = { viewModel.setTeamDisplayName(teamNameInput) },
-                                    enabled = teamNameInput != state.teamDisplayName
-                                ) { Text(stringResource(R.string.sync_team_display_name_save)) }
+                                if (state.isRenamingTeamFolder) {
+                                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                                } else {
+                                    TextButton(
+                                        onClick = { viewModel.setTeamDisplayName(teamNameInput) },
+                                        enabled = teamNameInput.isNotBlank() && teamNameInput != state.teamDisplayName
+                                    ) { Text(stringResource(R.string.sync_team_display_name_save)) }
+                                }
                             }
                         )
+                        state.renameTeamFolderMessage?.let { message ->
+                            Text(
+                                message,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
                         Spacer(Modifier.height(8.dp))
 
                         Button(

@@ -27,14 +27,29 @@
   function createPicker() {
     if (!pickerApiLoaded || !accessToken) return;
 
-    // فقط پوشه‌ها قابل انتخاب باشن — چون این Picker مخصوص انتخاب «پوشه‌ی تیمی» است، نه فایل تکی.
-    var view = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+    // قبلاً فقط یک ویو (تب) وجود داشت که پوشه‌های خودِ کاربر و پوشه‌های Shared with me رو با هم
+    // قاطی نشون می‌داد — وقتی هم اپ روی دستگاه، یه پوشه‌ی هم‌نام برای خودش ساخته بود و هم یه
+    // پوشه‌ی هم‌نام از یک عضو دیگه Share شده بود، هیچ راهی برای تشخیص‌شون توی همون یک لیست نبود.
+    // با اضافه‌کردن دو تب مجزا با setLabel، حالا مشخصاً معلومه هر پوشه از کدوم دسته‌ست؛ ضمناً
+    // Google Picker زیر پوشه‌های تب «Shared with me» معمولاً نام مالک/آخرین ویرایش رو هم نشون
+    // می‌ده که به تشخیص بیشتر کمک می‌کنه.
+    var myFoldersView = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
       .setIncludeFolders(true)
       .setSelectFolderEnabled(true)
-      .setMimeTypes('application/vnd.google-apps.folder');
+      .setMimeTypes('application/vnd.google-apps.folder')
+      .setOwnedByMe(true)
+      .setLabel('پوشه‌های من');
+
+    var sharedFoldersView = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+      .setIncludeFolders(true)
+      .setSelectFolderEnabled(true)
+      .setMimeTypes('application/vnd.google-apps.folder')
+      .setOwnedByMe(false)
+      .setLabel('به اشتراک گذاشته‌شده با من');
 
     var picker = new google.picker.PickerBuilder()
-      .addView(view)
+      .addView(sharedFoldersView)
+      .addView(myFoldersView)
       .setOAuthToken(accessToken)
       .setDeveloperKey(developerKey)
       .setAppId(appId)
