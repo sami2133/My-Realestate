@@ -1,0 +1,142 @@
+package com.realestate.sami.ui.viewmodel
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.realestate.sami.data.local.entity.ClientEntity
+import com.realestate.sami.data.local.entity.ContactLogEntity
+import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyStatus
+import com.realestate.sami.data.local.entity.RelatedType
+import com.realestate.sami.data.local.entity.VisitEntity
+import com.realestate.sami.data.local.entity.VisitResult
+import com.realestate.sami.data.repository.ContactLogRepository
+import com.realestate.sami.data.repository.PropertyRepository
+import com.realestate.sami.data.repository.VisitRepository
+import com.realestate.sami.domain.matching.MatchingEngine
+import com.realestate.sami.util.CommissionCalculator
+import com.realestate.sami.util.CommissionResult
+import com.realestate.sami.util.CommissionTariffPreferences
+import com.realestate.sami.util.RentPreferences
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class PropertyDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val propertyRepository: PropertyRepository,
+    private val contactLogRepository: ContactLogRepository,
+    private val visitRepository: VisitRepository,
+    private val matchingEngine: MatchingEngine,
+    private val rentPreferences: RentPreferences,
+    private val commissionTariffPreferences: CommissionTariffPreferences
+) : ViewModel() {
+
+    private val propertyId: Long = checkNotNull(savedStateHandle["propertyId"])
+
+    /** فاز ۵.۲: نرخ تبدیل رهن↔اجاره، برای نوار لغزنده‌ی تعدیل رهن در همین صفحه. */
+    val rentConversionPercent: Float = rentPreferences.conversionPercent
+
+    private val _property = MutableStateFlow<PropertyEntity?>(null)
+    val property: StateFlow<PropertyEntity?> = _property
+
+    /**
+     * فاز ۶ — حق‌العمل واقعی این ملک طبق نرخ‌نامه‌ی رسمی (نه نرخ ثابت تخمینیِ داشبورد گزارش‌ها).
+     * برای فروش/معاوضه روی [PropertyEntity.totalPrice] پلکانی حساب می‌شود؛ برای اجاره/رهن،
+     * رهن با نرخ [RentPreferences.conversionPercent] به معادل اجاره تبدیل و با اجاره‌ی ماهانه جمع
+     * می‌شود. اگر مبلغی ثبت نشده باشد null برمی‌گردد (چیزی برای محاسبه نیست).
+     */
+    val commissionResult: StateFlow<CommissionResult?> = _property
+        .map { p ->
+            when {
+                p == null -> null
+                p.dealType == DealType.SALE || p.dealType == DealType.EXCHANGE ->
+                    p.totalPrice?.let { CommissionCalculator.calculateSaleCommission(it, commissionTariffPreferences) }
+                p.dealType == DealType.RENT || p.dealType == DealType.MORTGAGE ->
+                    if ((p.rentPrice ?: 0L) > 0L || (p.depositPrice ?: 0L) > 0L) {
+                        CommissionCalculator.calculateRentCommission(
+                            monthlyRent = p.rentPrice ?: 0L,
+                            depositAmount = p.depositPrice ?: 0L,
+                            tariff = commissionTariffPreferences,
+                            rentConversionPercent = rentConversionPercent
+                        )
+                    } else null
+                else -> null
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val matchingClients: StateFlow<List<ClientEntity>> = _property
+        .filterNotNull()
+        .flatMapLatest { matchingEngine.matchesForProperty(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val contactLogs: StateFlow<List<ContactLogEntity>> =
+        contactLogRepository.getForEntity(propertyId, RelatedType.PROPERTY)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** فاز ۵: قرارهای بازدید ثبت‌شده برای این ملک (با متقاضیان مختلف). */
+    val visits: StateFlow<List<VisitEntity>> = visitRepository.getForProperty(propertyId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        viewModelScope.launch {
+            _property.value = propertyRepository.getById(propertyId)
+        }
+    }
+
+    fun updateStatus(status: PropertyStatus) {
+        viewModelScope.launch {
+            _property.value?.let {
+                val updated = it.copy(status = status)
+                propertyRepository.save(updated)
+                _property.value = updated
+            }
+        }
+    }
+
+    fun addContactLog(note: String, followUpDate: Long?) {
+        viewModelScope.launch {
+            contactLogRepository.add(
+                ContactLogEntity(
+                    relatedId = propertyId,
+                    relatedType = RelatedType.PROPERTY,
+                    note = note,
+                    followUpDate = followUpDate
+                )
+            )
+        }
+    }
+
+    /** فاز ۵: زمان‌بندی بازدید یک متقاضی سازگار از این ملک. */
+    fun scheduleVisit(clientId: Long, visitDateMillis: Long) {
+        viewModelScope.launch {
+            visitRepository.add(
+                VisitEntity(
+                    propertyId = propertyId,
+                    clientId = clientId,
+                    visitDate = visitDateMillis
+                )
+            )
+        }
+    }
+
+    fun updateVisitResult(visit: VisitEntity, result: VisitResult) {
+        viewModelScope.launch {
+            visitRepository.update(visit.copy(result = result))
+        }
+    }
+
+    /** حذف نرم (soft delete) ملک جاری؛ پس از اتمام، callback برای بازگشت از صفحه فراخوانی می‌شود. */
+    fun delete(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            _property.value?.let {
+                propertyRepository.delete(it)
+                onDeleted()
+            }
+        }
+    }
+}

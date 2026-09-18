@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">املاک من</string>
+
+    <!-- ناوبری -->
+    <string name="nav_properties">ملک‌ها</string>
+    <string name="nav_add_property">ثبت ملک</string>
+    <string name="nav_property_detail">جزئیات ملک</string>
+    <string name="nav_clients">متقاضیان</string>
+    <string name="nav_add_client">ثبت متقاضی</string>
+    <string name="nav_client_detail">جزئیات متقاضی</string>
+
+    <!-- اکشن‌ها و برچسب‌های مشترک -->
+    <string name="action_call">تماس</string>
+    <string name="action_sms">پیامک</string>
+    <string name="action_submit">ثبت</string>
+    <string name="action_close">بستن</string>
+    <string name="action_back">بازگشت</string>
+    <string name="label_name">نام</string>
+    <string name="label_phone">شماره تماس</string>
+    <string name="label_address">آدرس</string>
+    <string name="label_registered_at">تاریخ ثبت</string>
+    <string name="label_last_edited_by">آخرین ویرایش توسط</string>
+    <string name="action_show_on_map">نمایش روی نقشه</string>
+    <string name="commission_result_section">حق‌العمل طبق نرخ‌نامه</string>
+    <string name="commission_result_total">مجموع حق‌العمل</string>
+    <string name="commission_result_buyer">سهم خریدار</string>
+    <string name="commission_result_seller">سهم فروشنده</string>
+    <string name="commission_result_tenant">سهم مستاجر</string>
+    <string name="commission_result_landlord">سهم موجر</string>
+    <string name="label_area">متراژ</string>
+    <string name="label_rooms">تعداد اتاق</string>
+    <string name="value_yes">دارد</string>
+    <string name="value_no">ندارد</string>
+    <string name="cd_add_photo">افزودن عکس</string>
+    <string name="cd_remove_photo">حذف عکس</string>
+
+    <!-- امکانات ملک -->
+    <string name="amenity_parking">پارکینگ</string>
+    <string name="amenity_storage">انباری</string>
+    <string name="amenity_elevator">آسانسور</string>
+
+    <!-- انواع ملک -->
+    <string name="property_type_apartment">آپارتمان</string>
+    <string name="property_type_villa">ویلایی</string>
+    <string name="property_type_land">زمین</string>
+    <string name="property_type_commercial">تجاری</string>
+    <string name="property_type_office">اداری</string>
+
+    <!-- انواع معامله -->
+    <string name="deal_type_sale">خرید و فروش</string>
+    <!-- فاز ۵.۲: رهن کامل و اجاره ادغام شدن؛ این یک نوع معامله با رهن+اجاره‌ی قابل‌تبدیله -->
+    <string name="deal_type_rent">رهن و اجاره</string>
+    <string name="deal_type_mortgage">رهن کامل</string>
+    <string name="deal_type_exchange">مبادله</string>
+
+    <!-- وضعیت ملک -->
+    <string name="property_status_available">قابل معرفی</string>
+    <string name="property_status_reserved">رزرو شده</string>
+    <string name="property_status_sold">فروخته/اجاره شده</string>
+    <string name="property_status_archived">بایگانی</string>
+
+    <!-- وضعیت متقاضی -->
+    <string name="client_status_searching">در حال جستجو</string>
+    <string name="client_status_paused">متوقف‌شده</string>
+    <string name="client_status_matched">تطبیق یافته</string>
+    <string name="client_status_closed">بسته‌شده</string>
+
+    <!-- لیست ملک -->
+    <string name="property_list_title">ملک‌های ثبت‌شده</string>
+    <string name="property_list_search_hint">جستجو بر اساس آدرس یا نام مالک</string>
+    <string name="property_list_empty">هنوز ملکی ثبت نشده است.\nبرای شروع، از دکمه پایین یک ملک اضافه کن.</string>
+    <string name="property_card_area_rooms">%1$d متر • %2$d خواب</string>
+    <string name="property_card_rent_prefix">اجاره %1$s</string>
+    <string name="price_not_set">قیمت ثبت نشده</string>
+
+    <!-- ثبت ملک -->
+    <string name="add_property_title">ثبت ملک جدید</string>
+    <string name="add_property_owner_section">اطلاعات معرف / مالک</string>
+    <string name="add_property_owner_name">نام معرف/مالک</string>
+    <string name="add_property_pick_from_contacts">انتخاب از مخاطبین</string>
+    <string name="add_property_photos_section">عکس‌های ملک</string>
+    <string name="add_property_specs_section">مشخصات ملک</string>
+    <string name="add_property_type_label">نوع ملک</string>
+    <string name="add_property_deal_type_label">نوع معامله</string>
+    <string name="add_property_pick_location">انتخاب موقعیت روی نقشه</string>
+    <string name="add_property_location_selected">موقعیت روی نقشه ثبت شد</string>
+    <string name="add_property_area_hint">متراژ (متر)</string>
+    <string name="add_property_amenities_section">امکانات</string>
+    <string name="add_property_pricing_section">قیمت‌گذاری</string>
+    <string name="add_property_total_price">قیمت کل (تومان)</string>
+    <string name="add_property_deposit_price">مبلغ ودیعه/رهن</string>
+    <string name="add_property_rent_price">اجاره ماهانه</string>
+    <string name="add_property_exchange_value">ارزش تقریبی</string>
+    <string name="add_property_save">ذخیره ملک</string>
+
+    <!-- ثبت متقاضی -->
+    <string name="add_client_title">ثبت متقاضی جدید</string>
+    <string name="add_client_info_section">اطلاعات متقاضی</string>
+    <string name="add_client_full_name">نام و نام خانوادگی</string>
+    <string name="add_client_desired_section">مشخصات ملک مورد نظر</string>
+    <string name="add_client_region">منطقه/محله مورد نظر</string>
+    <string name="add_client_min_area">حداقل متراژ</string>
+    <string name="add_client_max_area">حداکثر متراژ</string>
+    <string name="add_client_min_rooms">حداقل تعداد اتاق</string>
+    <string name="add_client_needs_parking">نیاز به پارکینگ دارد</string>
+    <string name="add_client_needs_elevator">نیاز به آسانسور دارد</string>
+    <string name="add_client_budget_section">سقف بودجه</string>
+    <string name="add_client_max_total_price">حداکثر قیمت کل</string>
+    <string name="add_client_max_deposit">حداکثر ودیعه/رهن</string>
+    <string name="add_client_max_rent">حداکثر اجاره ماهانه</string>
+    <string name="add_client_save">ذخیره متقاضی</string>
+
+    <!-- لیست متقاضیان -->
+    <string name="client_list_title">متقاضیان</string>
+    <string name="client_list_search_hint">جستجو بر اساس نام یا منطقه</string>
+    <string name="client_list_empty">هنوز متقاضی‌ای ثبت نشده است.\nبرای شروع، از دکمه پایین یک متقاضی اضافه کن.</string>
+
+    <!-- جزئیات ملک -->
+    <string name="property_detail_title_fallback">جزئیات ملک</string>
+    <string name="property_detail_deposit_rent_format">رهن %1$s / اجاره %2$s</string>
+    <string name="property_detail_specs_section">مشخصات</string>
+    <string name="property_detail_area_value">%1$d متر مربع</string>
+    <string name="property_detail_owner_section">معرف / مالک</string>
+    <string name="property_detail_status_section">وضعیت ملک</string>
+    <string name="property_detail_matches_section">متقاضیان سازگار (%1$d)</string>
+    <string name="property_detail_no_matches">در حال حاضر متقاضی سازگاری پیدا نشد.</string>
+
+    <!-- جزئیات متقاضی -->
+    <string name="client_detail_title_fallback">جزئیات متقاضی</string>
+    <string name="client_detail_contact_section">اطلاعات تماس</string>
+    <string name="client_detail_criteria_section">معیارهای جستجو</string>
+    <string name="client_detail_region">منطقه مورد نظر</string>
+    <string name="client_detail_area_range">%1$s تا %2$s متر</string>
+    <string name="client_detail_min_rooms">حداقل اتاق</string>
+    <string name="client_detail_budget_total">سقف قیمت</string>
+    <string name="client_detail_budget_deposit">سقف ودیعه</string>
+    <string name="client_detail_budget_rent">سقف اجاره ماهانه</string>
+    <string name="client_detail_status_section">وضعیت پیگیری</string>
+    <string name="client_detail_matches_section">ملک‌های سازگار (%1$d)</string>
+    <string name="client_detail_no_matches">در حال حاضر ملک سازگاری پیدا نشد.</string>
+    <string name="property_row_area_rooms">%1$d متر • %2$d خواب</string>
+
+    <!-- تاریخچه تماس -->
+    <string name="contact_log_section_title">تاریخچه پیگیری</string>
+    <string name="contact_log_placeholder">یادداشت تماس جدید...</string>
+    <string name="contact_log_empty">هنوز تماسی ثبت نشده.</string>
+
+    <!-- نقشه (فاز ۳) -->
+    <string name="map_picker_title">انتخاب موقعیت ملک</string>
+    <string name="map_picker_confirm">تایید این موقعیت</string>
+    <string name="map_picker_hint">نقشه رو جابه‌جا کن تا پین روی محل دقیق ملک بیاد</string>
+    <string name="map_picker_use_my_location">موقعیت فعلی من</string>
+    <string name="properties_map_title">نقشه ملک‌ها</string>
+    <string name="properties_map_empty">ملکی با موقعیت ثبت‌شده روی نقشه وجود ندارد.</string>
+    <string name="nav_map">نقشه</string>
+    <string name="map_type_switcher_cd">تغییر نوع نقشه</string>
+    <string name="map_type_normal">عادی</string>
+    <string name="map_type_satellite">ماهواره‌ای</string>
+    <string name="map_type_terrain">توپوگرافی</string>
+    <string name="map_type_hybrid">ترکیبی</string>
+    <string name="nav_sync">تیم</string>
+    <string name="sync_title">همگام‌سازی تیمی</string>
+    <string name="sync_sign_in_button">ورود با حساب گوگل</string>
+    <string name="sync_sign_out_button">خروج از حساب</string>
+    <string name="sync_signed_in_as">وارد شده با: %1$s</string>
+    <string name="sync_now_button">همگام‌سازی الان</string>
+    <string name="sync_in_progress">در حال همگام‌سازی…</string>
+    <string name="sync_success">همگام‌سازی با موفقیت انجام شد</string>
+    <string name="sync_error_prefix">خطا: %1$s</string>
+    <string name="sync_last_synced">آخرین همگام‌سازی: %1$s</string>
+    <string name="sync_never_synced">هنوز همگام‌سازی نشده</string>
+    <string name="sync_consent_needed">برای دسترسی به Drive نیاز به تایید مجدد است</string>
+    <string name="sync_description">ملک‌ها و متقاضیان با اعضای تیمی که به همین پوشه‌ی مشترک Drive دسترسی دارند به‌اشتراک گذاشته می‌شود.</string>
+    <string name="sync_team_folder_title">پوشه‌ی تیمی</string>
+    <string name="sync_team_folder_has_one">تو الان به یک پوشه‌ی تیمی وصلی. برای اینکه بقیه‌ی اعضا هم دقیقاً به همین پوشه (نه یک پوشه‌ی جدا) وصل بشن، لینکش رو براشون بفرست.</string>
+    <string name="sync_team_folder_share_button">اشتراک‌گذاری لینک پوشه‌ی تیمی</string>
+    <string name="sync_team_display_name_label">نام دلخواه این تیم (فقط داخل اپ)</string>
+    <string name="sync_team_display_name_save">ذخیره</string>
+    <string name="sync_leave_team_button">خروج از تیم</string>
+    <string name="sync_leave_team_confirm_title">خروج از تیم؟</string>
+    <string name="sync_leave_team_confirm_message">اتصال این دستگاه به پوشه‌ی تیمی فعلی قطع می‌شود. ملک‌ها و متقاضیانی که روی همین دستگاه ثبت کرده‌ای پاک نمی‌شوند و بعداً می‌توانی دوباره به همین تیم یا یک تیم دیگر بپیوندی.</string>
+    <string name="sync_leave_team_confirm_button">خروج از تیم</string>
+    <string name="sync_cancel_button">انصراف</string>
+    <string name="sync_team_folder_join_label">اگه یکی از همکارها قبلاً یه پوشه‌ی تیمی ساخته و لینک/شناسه‌شو برات فرستاده، اینجا وارد کن تا به‌جای ساخت یه پوشه‌ی جدا، به همون وصل بشی:</string>
+    <string name="sync_team_folder_id_placeholder">لینک یا شناسه‌ی پوشه‌ی تیمی</string>
+    <string name="sync_team_folder_join_button">پیوستن به تیم موجود</string>
+    <string name="sync_team_folder_picker_hint">برای پیوستن به پوشه‌ای که یک همکار باهات Share کرده، به‌جای وارد کردن دستی شناسه، از Drive انتخابش کن:</string>
+    <string name="sync_team_folder_picker_button">انتخاب پوشه از Google Drive</string>
+    <string name="sync_picker_config_missing">تنظیمات Drive Picker کامل نیست (کلید API یا شناسه‌ی پروژه در بیلد وارد نشده)</string>
+
+    <!-- تنظیم نوع اتصال برای sync خودکار پس‌زمینه -->
+    <string name="sync_auto_wifi_only_title">همگام‌سازی خودکار فقط با Wi-Fi</string>
+    <string name="sync_auto_wifi_only_description">وقتی روشنه، sync دوره‌ای پس‌زمینه فقط روی Wi-Fi اجرا می‌شه و از دیتای موبایل استفاده نمی‌کنه. دکمه‌ی «همگام‌سازی الان» همیشه با هر اتصالی کار می‌کنه.</string>
+
+    <!-- اکشن‌های عمومی: ویرایش، حذف، ترتیب -->
+    <string name="action_edit">ویرایش</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_cancel">انصراف</string>
+    <string name="action_sort">ترتیب نمایش</string>
+
+    <!-- ویرایش ملک -->
+    <string name="edit_property_title">ویرایش ملک</string>
+    <string name="edit_property_save">ذخیره تغییرات</string>
+    <string name="delete_property_confirm_title">حذف این ملک؟</string>
+    <string name="delete_property_confirm_message">این ملک از لیست حذف می‌شود. این عملیات قابل بازگشت نیست.</string>
+
+    <!-- ویرایش متقاضی -->
+    <string name="edit_client_title">ویرایش متقاضی</string>
+    <string name="edit_client_save">ذخیره تغییرات</string>
+    <string name="delete_client_confirm_title">حذف این متقاضی؟</string>
+    <string name="delete_client_confirm_message">این متقاضی از لیست حذف می‌شود. این عملیات قابل بازگشت نیست.</string>
+
+    <!-- ترتیب لیست ملک‌ها -->
+    <string name="sort_newest">جدیدترین</string>
+    <string name="sort_oldest">قدیمی‌ترین</string>
+    <string name="property_sort_price_low_to_high">قیمت: کم به زیاد</string>
+    <string name="property_sort_price_high_to_low">قیمت: زیاد به کم</string>
+    <string name="property_sort_area_large_to_small">متراژ: زیاد به کم</string>
+    <string name="property_sort_area_small_to_large">متراژ: کم به زیاد</string>
+    <string name="property_sort_rooms_most_to_fewest">تعداد اتاق: زیاد به کم</string>
+    <string name="property_sort_rooms_fewest_to_most">تعداد اتاق: کم به زیاد</string>
+    <string name="property_sort_building_age_newest">قدمت بنا: نوسازترین</string>
+    <string name="property_sort_building_age_oldest">قدمت بنا: قدیمی‌ترین</string>
+
+    <!-- ترتیب لیست متقاضیان -->
+    <string name="client_sort_name_a_to_z">نام: الف تا ی</string>
+    <string name="client_sort_budget_high_to_low">بودجه: زیاد به کم</string>
+
+    <!-- فیلتر و ترتیب لیست ملک‌ها (شیت واحد) -->
+    <string name="action_filter">فیلتر</string>
+    <string name="action_filter_sort">فیلتر و ترتیب</string>
+    <string name="filter_sort_tab_filter">فیلتر</string>
+    <string name="filter_sort_tab_sort">ترتیب</string>
+    <string name="filter_dialog_title">فیلتر ملک‌ها</string>
+    <string name="filter_option_all">همه</string>
+    <string name="filter_price_range_section">بازه قیمت (تومان)</string>
+    <string name="filter_min_price">حداقل قیمت</string>
+    <string name="filter_max_price">حداکثر قیمت</string>
+    <string name="filter_clear">پاک کردن فیلتر</string>
+    <string name="filter_apply">اعمال فیلتر</string>
+    <string name="filter_status_section">وضعیت ملک</string>
+    <string name="filter_area_range_section">بازه متراژ (متر مربع)</string>
+    <string name="filter_min_area">حداقل متراژ</string>
+    <string name="filter_max_area">حداکثر متراژ</string>
+    <string name="filter_rooms_section">تعداد اتاق</string>
+    <string name="filter_rooms_4_plus">۴+</string>
+    <string name="filter_building_age_section">قدمت بنا</string>
+    <string name="filter_building_age_new">نوساز (۰ تا ۲ سال)</string>
+    <string name="filter_building_age_2_5">۲ تا ۵ سال</string>
+    <string name="filter_building_age_5_10">۵ تا ۱۰ سال</string>
+    <string name="filter_building_age_10_plus">بالای ۱۰ سال</string>
+    <string name="filter_amenities_section">امکانات</string>
+    <string name="filter_deed_type_section">نوع سند</string>
+    <string name="filter_exchangeable_only">فقط قابل‌تبدیل به مبادله</string>
+    <string name="property_list_empty_filtered">با این فیلتر ملکی پیدا نشد.\nفیلتر را تغییر بده یا پاک کن.</string>
+
+    <!-- همگام‌سازی عکس -->
+    <string name="image_not_downloaded_yet">این عکس هنوز روی این دستگاه دانلود نشده</string>
+
+    <!-- فاز ۵: گزارش‌ها -->
+    <string name="nav_reports">ابزارها</string>
+
+    <!-- فاز ۵: یادآوری پیگیری -->
+    <string name="follow_up_section_label">یادآوری پیگیری بعدی</string>
+    <string name="follow_up_option_none">بدون یادآوری</string>
+    <string name="follow_up_option_tomorrow">فردا</string>
+    <string name="follow_up_option_3_days">۳ روز دیگر</string>
+    <string name="follow_up_option_1_week">هفته دیگر</string>
+    <string name="follow_up_pending_badge">یادآوری: %1$s</string>
+    <string name="follow_up_done_badge">پیگیری شد (%1$s)</string>
+    <string name="notification_channel_followup_name">یادآوری پیگیری</string>
+    <string name="notification_channel_followup_desc">وقتی موعد پیگیری یک ملک یا متقاضی فرا برسد، یادآوری نشان داده می‌شود</string>
+    <string name="notification_followup_title">یادآوری پیگیری: %1$s</string>
+
+    <!-- فاز ۵: زمان‌بندی بازدید و تقویم -->
+    <string name="visit_section_title">بازدیدها</string>
+    <string name="visit_schedule_action">افزودن بازدید</string>
+    <string name="visit_no_candidates">برای زمان‌بندی بازدید، اول باید حداقل یک تطبیق سازگار وجود داشته باشد.</string>
+    <string name="visit_section_empty">هنوز بازدیدی ثبت نشده.</string>
+    <string name="visit_unknown_party">نامشخص</string>
+    <string name="visit_add_to_calendar">افزودن به تقویم</string>
+    <string name="visit_result_pending">در انتظار</string>
+    <string name="visit_result_interested">علاقه‌مند</string>
+    <string name="visit_result_not_interested">بی‌علاقه</string>
+    <string name="visit_result_deal_closed">معامله موفق</string>
+    <string name="visit_schedule_dialog_title">زمان‌بندی بازدید</string>
+    <string name="visit_pick_party_label">انتخاب طرف بازدید</string>
+    <string name="visit_pick_datetime_label">تاریخ و ساعت بازدید</string>
+    <string name="visit_pick_datetime_placeholder">انتخاب تاریخ و ساعت</string>
+    <string name="visit_schedule_confirm">ثبت بازدید</string>
+
+    <!-- فاز ۵: داشبورد آماری -->
+    <string name="reports_total_properties">کل ملک‌ها</string>
+    <string name="reports_available_properties">قابل معرفی</string>
+    <string name="reports_closed_deals">معاملات موفق</string>
+    <string name="reports_active_clients">متقاضیان فعال</string>
+    <string name="reports_commission_section">نرخ کمیسیون</string>
+    <string name="reports_commission_hint">این نرخ برای برآورد درآمد کمیسیون از معاملات موفق استفاده می‌شود؛ فقط روی همین گوشی ذخیره می‌شود.</string>
+    <string name="reports_commission_percent_label">درصد کمیسیون</string>
+
+    <string name="commission_tariff_section">نرخ‌نامه‌ی حق‌العمل فروش</string>
+    <string name="commission_tariff_hint">نرخ‌نامه‌ی پلکانی رسمی: هر بازه فقط روی همان بخش از مبلغ معامله اعمال می‌شود، نه کل مبلغ. سهم خریدار و فروشنده در هر بازه همیشه مساوی است. مبالغ به تومان‌اند (اعداد ریالی نرخ‌نامه تقسیم بر ۱۰).</string>
+    <string name="commission_tariff_threshold_1_label">سقف بازه‌ی اول (تومان)</string>
+    <string name="commission_tariff_rate_1_label">نرخ بازه‌ی اول (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_threshold_2_label">سقف بازه‌ی دوم (تومان)</string>
+    <string name="commission_tariff_rate_2_label">نرخ بازه‌ی دوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_threshold_3_label">سقف بازه‌ی سوم (تومان)</string>
+    <string name="commission_tariff_rate_3_label">نرخ بازه‌ی سوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_tariff_rate_4_label">نرخ مازاد بر سقف سوم (درصد کل، نصف‌نصف)</string>
+    <string name="commission_calculation_mode_label">روش محاسبه</string>
+    <string name="commission_calculation_mode_flat">غیرپلکانی (کل مبلغ × نرخ همان بازه)</string>
+    <string name="commission_calculation_mode_marginal">پلکانی (هر بازه روی سهم خودش)</string>
+    <string name="commission_calculator_section">ماشین‌حساب حق‌العمل فروش</string>
+    <string name="commission_calculator_hint">مبلغ معامله رو وارد کنید تا حق‌العمل طبق نرخ‌نامه و روش محاسبه‌ی فعلی (قابل تغییر از تنظیمات) محاسبه بشه.</string>
+    <string name="commission_calculator_amount_label">مبلغ معامله (تومان)</string>
+
+    <string name="commission_calculator_rent_section">ماشین‌حساب حق‌العمل اجاره</string>
+    <string name="commission_calculator_rent_hint">رهن و اجاره‌ی ماهانه رو وارد کنید تا حق‌العمل طبق نرخ حق‌العمل اجاره و نرخ تبدیل رهن↔اجاره‌ی فعلی (قابل تغییر از تنظیمات) محاسبه بشه.</string>
+    <string name="commission_calculator_deposit_label">مبلغ رهن (تومان)</string>
+    <string name="commission_calculator_monthly_rent_label">اجاره‌ی ماهانه (تومان)</string>
+
+    <string name="commission_rent_section">نرخ حق‌العمل اجاره</string>
+    <string name="commission_rent_hint">کل حق‌العمل اجاره برابر این درصد از (اجاره‌ی ماهانه + معادلِ اجاره‌ای رهن) است؛ نصف آن با موجر و نصف با مستاجر. برای تبدیل رهن به معادل اجاره از نرخ «تبدیل رهن↔اجاره» در همین صفحه استفاده می‌شود.</string>
+    <string name="commission_rent_percent_label">درصد کل حق‌العمل اجاره</string>
+
+    <!-- فاز ۵.۲: نرخ تبدیل رهن↔اجاره -->
+    <string name="reports_rent_conversion_section">نرخ تبدیل رهن↔اجاره</string>
+    <string name="reports_rent_conversion_hint">نرخ رسمی/قانونی معمولاً ۲.۵٪ و نرخ متعارف بازار ۳٪ است؛ هر عددی که خودت می‌خواهی وارد کن. این نرخ برای محاسبه‌ی نوار لغزنده‌ی تعدیل رهن هنگام ثبت ملک استفاده می‌شود.</string>
+    <string name="reports_rent_conversion_percent_label">درصد تبدیل (ماهانه)</string>
+    <string name="reports_rent_conversion_saved">نرخ تبدیل ذخیره شد</string>
+    <string name="reports_estimated_commission">برآورد درآمد کمیسیون</string>
+    <string name="reports_upcoming_visits_section">بازدیدهای پیش‌رو (%1$d)</string>
+    <string name="reports_no_upcoming_visits">بازدید پیش‌رویی ثبت نشده.</string>
+    <string name="reports_visit_row">بازدید ملک #%1$d با متقاضی #%2$d</string>
+    <string name="reports_export_section">خروجی گرفتن</string>
+    <string name="reports_export_hint">خروجی PDF یا اکسل از لیست کامل ملک‌ها، برای ارسال یا چاپ.</string>
+    <string name="reports_export_pdf">خروجی PDF</string>
+    <string name="reports_export_excel">خروجی اکسل</string>
+
+    <string name="backup_restore_section">پشتیبان‌گیری و بازیابی</string>
+    <string name="backup_restore_hint">یک فایل پشتیبان از کل اطلاعات اپ (ملک‌ها، مشتری‌ها، تماس‌ها، بازدیدها) بساز و جایی نگه دار، یا از یک فایل پشتیبانِ قبلی بازیابی کن.</string>
+    <string name="backup_create_action">تهیه پشتیبان</string>
+    <string name="backup_restore_action">بازیابی از پشتیبان</string>
+    <string name="backup_create_failed">تهیه‌ی فایل پشتیبان ناموفق بود.</string>
+    <string name="backup_restore_confirm_title">بازیابی نسخه‌ی پشتیبان</string>
+    <string name="backup_restore_confirm_message">با بازیابی، تمام اطلاعات فعلی اپ (ملک‌ها، مشتری‌ها، تماس‌ها، بازدیدها) با محتوای این فایل پشتیبان جایگزین می‌شود و قابل بازگشت نیست. اپ بلافاصله بعد از بازیابی دوباره باز می‌شود. ادامه می‌دهید؟</string>
+    <string name="backup_restore_failed">بازیابی از فایل پشتیبان ناموفق بود؛ فایل انتخاب‌شده معتبر نیست.</string>
+    <string name="backup_restore_action_confirm">بازیابی</string>
+
+    <!-- فاز ۵: عنوان رویداد تقویم هنگام «افزودن به تقویم» -->
+    <string name="visit_calendar_event_title_property">بازدید %1$s از ملک %2$s</string>
+    <string name="visit_calendar_event_title_client">بازدید %1$s با متقاضی %2$s</string>
+
+    <!-- فاز ۵.۱: باز کردن تصویر ملک با اپ گالری/نمایش‌گر دلخواه گوشی -->
+    <string name="property_image_open_with">باز کردن با…</string>
+    <string name="property_image_open_failed">هیچ اپی برای نمایش عکس روی این گوشی پیدا نشد</string>
+
+    <!-- فاز ۵.۲: ادغام رهن کامل و اجاره + نوار لغزنده‌ی تبدیل -->
+    <string name="add_property_deposit_negotiable">رهن قابل تعدیل است (بازه‌ی مذاکره)</string>
+    <string name="add_property_min_deposit">حداقل رهن قابل تعدیل (تومان)</string>
+    <string name="rent_calc_title">پیش‌نمایش تبدیل رهن به اجاره</string>
+    <string name="rent_calc_deposit_label">رهن پیشنهادی</string>
+    <string name="rent_calc_rent_label">اجاره‌ی متناظر</string>
+    <string name="rent_calc_hint">بر اساس نرخ تبدیل %1$s٪ (قابل تغییر از تنظیمات)</string>
+
+    <!-- فاز ۵.۳: معاوضه به‌عنوان زیرمجموعه‌ی فروش -->
+    <string name="add_property_exchangeable">قابل معاوضه با ملک دیگر</string>
+    <string name="add_property_exchange_preferred_type">نوع ملک مدنظر برای معاوضه</string>
+    <string name="add_property_exchange_any_type">هر نوع ملکی</string>
+    <string name="add_property_exchange_note">توضیح تکمیلی معاوضه (اختیاری)</string>
+    <string name="property_detail_exchangeable_badge">قابل معاوضه</string>
+    <string name="property_detail_exchange_section">جزئیات معاوضه</string>
+    <string name="property_detail_exchange_preferred_type_label">نوع ملک مدنظر</string>
+    <string name="property_detail_exchange_note_label">توضیحات</string>
+
+    <!-- فاز ۵.۳: منوی تنظیمات -->
+    <string name="nav_settings">تنظیمات</string>
+    <string name="settings_title">تنظیمات</string>
+    <string name="settings_language_section">زبان برنامه</string>
+    <string name="settings_language_hint">زبان نمایش متن‌های برنامه را انتخاب کنید.</string>
+    <string name="settings_owner_contact_section">محافظت از اطلاعات تماس مالک/معرف</string>
+    <string name="settings_owner_contact_hint">وقتی روشن باشد، نام و شماره‌ی واقعی مالک/معرف هر ملک فقط روی همین دستگاه (که آن را ثبت کرده) باقی می‌ماند و هرگز برای بقیه‌ی اعضای تیم فرستاده نمی‌شود؛ به‌جایش نام و شماره‌ی زیر برای آن‌ها نمایش داده می‌شود.</string>
+    <string name="settings_owner_contact_toggle_label">محافظت از اطلاعات تماس مالک برای تیم</string>
+    <string name="settings_owner_contact_display_hint">این نام و شماره به‌جای مالک واقعی، برای بقیه‌ی اعضای تیم روی ملک‌هایی که تو ثبت می‌کنی نمایش داده می‌شود:</string>
+    <string name="settings_owner_contact_name_label">نام نمایشی برای تیم (مثلاً نام خودت)</string>
+    <string name="settings_owner_contact_phone_label">شماره‌ی تماس نمایشی برای تیم</string>
+    <string name="settings_more_soon_hint">تنظیمات بیشتر به‌مرور به همین صفحه اضافه می‌شود.</string>
+    <string name="settings_open_action">تنظیمات</string>
+    <string name="settings_saved">ذخیره شد</string>
+
+    <!-- فاز ۵.۵ — مشخصات تکمیلی بسته به نوع ملک -->
+    <string name="value_unspecified">نامشخص</string>
+    <string name="add_property_description">توضیحات تکمیلی</string>
+
+    <!-- مقادیر enum: DeedType -->
+    <string name="deed_type_single_page">تک‌برگ</string>
+    <string name="deed_type_mangoleh">منگوله‌دار</string>
+    <string name="deed_type_agreement">قولنامه‌ای</string>
+    <string name="deed_type_under_construction">در حال ساخت</string>
+    <string name="deed_type_six_dang">شش‌دانگ</string>
+    <string name="deed_type_endowment">وقفی</string>
+    <string name="deed_type_other">سایر</string>
+
+    <!-- مقادیر enum: UtilityStatus -->
+    <string name="utility_status_available">دارد</string>
+    <string name="utility_status_not_available">ندارد</string>
+    <string name="utility_status_obtainable">قابل‌اخذ</string>
+
+    <!-- مقادیر enum: HeatingCoolingSystem -->
+    <string name="heating_cooling_package">پکیج</string>
+    <string name="heating_cooling_radiator">شوفاژ</string>
+    <string name="heating_cooling_split">اسپلیت</string>
+    <string name="heating_cooling_fan_coil">فن‌کوئل</string>
+    <string name="heating_cooling_central">مرکزی</string>
+    <string name="heating_cooling_other">سایر</string>
+
+    <!-- مقادیر enum: UnitDirection -->
+    <string name="unit_direction_north">شمالی</string>
+    <string name="unit_direction_south">جنوبی</string>
+    <string name="unit_direction_east">شرقی</string>
+    <string name="unit_direction_west">غربی</string>
+    <string name="unit_direction_two_sided">دوکله</string>
+
+    <!-- مقادیر enum: UnitCondition -->
+    <string name="unit_condition_new">نوساز</string>
+    <string name="unit_condition_renovated">بازسازی‌شده</string>
+    <string name="unit_condition_lived_in">سکونتی</string>
+    <string name="unit_condition_unoccupied">کلیدنخورده</string>
+
+    <!-- مقادیر enum: FlooringType -->
+    <string name="flooring_ceramic">سرامیک</string>
+    <string name="flooring_parquet">پارکت</string>
+    <string name="flooring_mosaic">موزاییک</string>
+    <string name="flooring_stone">سنگ</string>
+    <string name="flooring_other">سایر</string>
+
+    <!-- مقادیر enum: FacadeType -->
+    <string name="facade_stone">سنگ</string>
+    <string name="facade_brick">آجر</string>
+    <string name="facade_composite">کامپوزیت</string>
+    <string name="facade_other">سایر</string>
+
+    <!-- مقادیر enum: LandUse -->
+    <string name="land_use_residential">مسکونی</string>
+    <string name="land_use_commercial">تجاری</string>
+    <string name="land_use_office">اداری</string>
+    <string name="land_use_agricultural">کشاورزی</string>
+    <string name="land_use_industrial">صنعتی</string>
+    <string name="land_use_garden">باغی</string>
+
+    <!-- مقادیر enum: LandPosition -->
+    <string name="land_position_north">شمالی</string>
+    <string name="land_position_south">جنوبی</string>
+    <string name="land_position_two_sided">دوکله</string>
+    <string name="land_position_corner_three">سه‌نبش</string>
+    <string name="land_position_corner_four">چهارنبش</string>
+
+    <!-- مقادیر enum: LandSlope -->
+    <string name="land_slope_flat">مسطح</string>
+    <string name="land_slope_sloped">شیب‌دار</string>
+
+    <!-- مقادیر enum: CommercialPosition -->
+    <string name="commercial_position_basement">زیرزمین</string>
+    <string name="commercial_position_ground">همکف</string>
+    <string name="commercial_position_upper_floor">طبقه بالا</string>
+
+    <!-- مقادیر enum: StreetPosition -->
+    <string name="street_position_main">گذر اصلی</string>
+    <string name="street_position_side">گذر فرعی</string>
+
+    <!-- مقادیر enum: BuildingClass -->
+    <string name="building_class_a">کلاس A</string>
+    <string name="building_class_b">کلاس B</string>
+    <string name="building_class_c">کلاس C</string>
+
+    <!-- فاز ۵.۵/۵.۶: عنوان بخش‌ها و برچسب فیلدهای مشخصات تکمیلی فرم ثبت ملک -->
+    <string name="spec_section_common">مشخصات تکمیلی</string>
+    <string name="spec_section_apartment">مشخصات آپارتمان</string>
+    <string name="spec_section_land">مشخصات زمین</string>
+    <string name="spec_section_commercial">مشخصات تجاری</string>
+    <string name="spec_section_office">مشخصات اداری</string>
+    <string name="spec_section_amenities">امکانات</string>
+
+    <string name="label_building_age">سن بنا (سال)</string>
+    <string name="label_floor">طبقه</string>
+    <string name="label_total_floors">تعداد طبقات</string>
+    <string name="label_deed_type">نوع سند</string>
+    <string name="label_water_status">امتیاز آب</string>
+    <string name="label_electricity_status">امتیاز برق</string>
+    <string name="label_gas_status">امتیاز گاز</string>
+    <string name="label_building_class">کلاس ساختمان</string>
+    <string name="label_heating_cooling">سیستم سرمایش/گرمایش</string>
+    <string name="label_street_position">موقعیت نسبت به گذر</string>
+    <string name="label_frontage_width_land">طول ورودی (متر)</string>
+    <string name="label_frontage_width_commercial">طول ورودی (متر)</string>
+
+    <string name="label_unit_direction">جهت واحد</string>
+    <string name="label_unit_condition">وضعیت واحد</string>
+    <string name="label_flooring">کفپوش</string>
+    <string name="label_facade">نمای ساختمان</string>
+    <string name="label_bathroom_count">تعداد سرویس/حمام</string>
+    <string name="amenity_balcony">بالکن/تراس</string>
+    <string name="amenity_pool">استخر</string>
+    <string name="amenity_sauna">سونا/جکوزی</string>
+    <string name="amenity_gym">سالن ورزشی</string>
+    <string name="amenity_lobby">لابی</string>
+    <string name="amenity_security_guard">نگهبانی</string>
+    <string name="amenity_video_intercom">آیفون تصویری</string>
+
+    <string name="label_land_use">کاربری</string>
+    <string name="label_street_width">عرض گذر (متر)</string>
+    <string name="label_allowed_density">تراکم مجاز (٪)</string>
+    <string name="label_allowed_floors">تعداد طبقات مجاز ساخت</string>
+    <string name="label_land_position">موقعیت زمین نسبت به گذر</string>
+    <string name="amenity_wall">دیوارکشی شده</string>
+    <string name="amenity_building_permit">پروانه/نقشه ساخت دارد</string>
+    <string name="label_land_slope">شیب زمین</string>
+
+    <string name="label_key_money">مبلغ سرقفلی (تومان)</string>
+    <string name="label_commercial_floor_position">موقعیت طبقه</string>
+    <string name="label_ceiling_height">ارتفاع سقف (متر)</string>
+    <string name="label_business_license_type">صنف/کاربری مجاز پروانه کسب</string>
+    <string name="amenity_three_phase_electricity">کنتور برق سه‌فاز</string>
+    <string name="amenity_restroom">سرویس بهداشتی</string>
+
+    <string name="label_partition_count">تعداد اتاق‌بندی/پارتیشن</string>
+    <string name="amenity_false_floor">کف کاذب</string>
+    <string name="amenity_false_ceiling">سقف کاذب</string>
+    <string name="amenity_conference_room">سالن کنفرانس</string>
+
+    <!-- فاز ۵.۶: یادداشت آزاد شخصی/داخلی، جدا از توضیحات نمایش‌داده‌شده به مشتری -->
+    <string name="label_additional_notes">توضیحات اضافی (یادداشت داخلی)</string>
+    <string name="add_property_additional_notes_hint">هر نکته‌ی شخصی که فقط برای خودتان یا همکارانتان لازم است؛ به مشتری نشان داده نمی‌شود</string>
+
+    <!-- فاز ۶: بازطراحی کامل مشخصات ملک مطابق فرم‌های جدید (آپارتمان/ویلایی/تجاری/زمین) -->
+    <string name="spec_section_kitchen">آشپزخانه</string>
+    <string name="spec_section_finishes">کف‌پوش/دیوارپوش/سقف‌پوش</string>
+    <string name="spec_section_bathroom">سرویس بهداشتی</string>
+    <string name="spec_section_hvac">سرمایش/گرمایش</string>
+    <string name="spec_section_villa">مشخصات ویلایی</string>
+    <string name="spec_section_building_amenities">امکانات ساختمان</string>
+    <string name="spec_section_land_rights">امتیازات آب/برق/گاز</string>
+    <string name="spec_section_amenities_apartment">امکانات آپارتمان</string>
+    <string name="spec_section_amenities_villa">امکانات ویلایی</string>
+    <string name="spec_section_amenities_commercial">امکانات تجاری</string>
+    <string name="spec_section_land_amenities">امکانات زمین</string>
+
+    <string name="label_area_built">مساحت بنا (متر)</string>
+    <string name="label_area_total">مساحت کل (متر)</string>
+    <string name="label_area_balcony">مساحت بالکن (متر)</string>
+    <string name="label_units_per_floor">تعداد واحدها</string>
+    <string name="label_cabinet_material">جنس کابینت</string>
+    <string name="label_wall_covering">دیوارپوش</string>
+    <string name="label_ceiling_covering">سقف‌پوش</string>
+    <string name="label_cooling_system">سیستم سرمایش</string>
+    <string name="label_heating_system">سیستم گرمایش</string>
+    <string name="label_yard_area">حیاط‌اختصاصی (متر)</string>
+    <string name="label_terrace_area">مساحت تراس (متر)</string>
+    <string name="label_master_bedroom_count">تعداد مستر</string>
+    <string name="label_building_permit_area">پروانه ساختمانی به‌مساحت (متر)</string>
+    <string name="label_commercial_usage">کاربرد</string>
+
+    <string name="building_class_a_plus">کلاس +A</string>
+    <string name="deed_type_undivided">تفکیک نشده</string>
+    <string name="flooring_concrete">بتن</string>
+    <string name="land_use_unplanned">فاقد طرح کاربری</string>
+
+    <string name="cabinet_material_high_gloss">های‌گلاس</string>
+    <string name="cabinet_material_mdf">ام‌دی‌اف</string>
+    <string name="cabinet_material_membrane">ممبران</string>
+    <string name="cabinet_material_wood">چوبی</string>
+    <string name="cabinet_material_metal">فلزی</string>
+
+    <string name="wall_covering_plaster">گچ</string>
+    <string name="wall_covering_wallpaper">کاغذ دیواری</string>
+    <string name="wall_covering_paint">رنگ‌آمیزی</string>
+    <string name="wall_covering_ceramic">سرامیک</string>
+    <string name="wall_covering_concrete">بتن</string>
+
+    <string name="ceiling_covering_plaster">گچ</string>
+    <string name="ceiling_covering_gypsum_board">کناف</string>
+    <string name="ceiling_covering_paint">رنگ‌آمیزی</string>
+    <string name="ceiling_covering_suspended">سقف کاذب</string>
+
+    <string name="cooling_split">اسپلیت</string>
+    <string name="cooling_cooler">کولر گازی</string>
+    <string name="cooling_central">مرکزی</string>
+
+    <string name="heating_package">پکیج</string>
+    <string name="heating_water_heater">آبگرمکن</string>
+    <string name="heating_radiator">شوفاژ</string>
+    <string name="heating_fan_coil">فن‌کوئل</string>
+    <string name="heating_central">مرکزی</string>
+
+    <string name="commercial_usage_retail">تجاری</string>
+    <string name="commercial_usage_complex">مجتمع تجاری</string>
+    <string name="commercial_usage_office">اداری</string>
+    <string name="commercial_usage_workshop">کارگاه</string>
+    <string name="commercial_usage_warehouse">سوله</string>
+
+    <string name="amenity_kitchen_island">جزیره</string>
+    <string name="amenity_kitchenette">مطبخ</string>
+    <string name="amenity_barbecue">باربیکیو</string>
+    <string name="amenity_iranian_toilet">سرویس ایرانی</string>
+    <string name="amenity_western_toilet">سرویس فرنگی</string>
+    <string name="amenity_jacuzzi">وان و جکوزی</string>
+    <string name="amenity_private_parking_path">مسیر پارکینگ اختصاصی</string>
+    <string name="amenity_shared_parking_path">مسیر پارکینگ اشتراکی</string>
+    <string name="amenity_automatic_parking_door">درب پارکینگ اتوماتیک ریموت‌دار</string>
+    <string name="amenity_private_water">آب اختصاصی</string>
+    <string name="amenity_shared_water">آب اشتراکی</string>
+    <string name="amenity_private_electricity">برق اختصاصی</string>
+    <string name="amenity_shared_electricity">برق اشتراکی</string>
+    <string name="amenity_private_gas">گاز اختصاصی</string>
+    <string name="amenity_shared_gas">گاز اشتراکی</string>
+    <string name="amenity_built_in_closet">کمد دیواری</string>
+    <string name="amenity_courtyard">محوطه حیاط</string>
+    <string name="amenity_caretaker">سرایداری</string>
+    <string name="amenity_kitchen">آشپزخانه</string>
+    <string name="amenity_water_right_owned">امتیاز آب</string>
+    <string name="amenity_water_right_obtainable">امکان اخذ امتیاز آب</string>
+    <string name="amenity_electricity_right_owned">امتیاز برق</string>
+    <string name="amenity_electricity_right_obtainable">امکان اخذ امتیاز برق</string>
+    <string name="amenity_gas_right_owned">امتیاز گاز</string>
+    <string name="amenity_gas_right_obtainable">امکان اخذ امتیاز گاز</string>
+
+    <string name="property_card_area_only">%1$d متر</string>
+</resources>

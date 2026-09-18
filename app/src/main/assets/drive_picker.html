@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="margin:0;background:transparent;">
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+  var accessToken = null;
+  var developerKey = null;
+  var appId = null;
+  var pickerApiLoaded = false;
+
+  // این تابع از سمت اندروید (WebView.evaluateJavascript) بعد از لود شدن صفحه صدا زده می‌شه.
+  function init(token, devKey, projectAppId) {
+    accessToken = token;
+    developerKey = devKey;
+    appId = projectAppId;
+    gapi.load('picker', { callback: onPickerApiLoad });
+  }
+
+  function onPickerApiLoad() {
+    pickerApiLoaded = true;
+    createPicker();
+  }
+
+  function createPicker() {
+    if (!pickerApiLoaded || !accessToken) return;
+
+    // فقط پوشه‌ها قابل انتخاب باشن — چون این Picker مخصوص انتخاب «پوشه‌ی تیمی» است، نه فایل تکی.
+    var view = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+      .setIncludeFolders(true)
+      .setSelectFolderEnabled(true)
+      .setMimeTypes('application/vnd.google-apps.folder');
+
+    var picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOAuthToken(accessToken)
+      .setDeveloperKey(developerKey)
+      .setAppId(appId)
+      .setCallback(pickerCallback)
+      .build();
+    picker.setVisible(true);
+  }
+
+  function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+      var doc = data.docs[0];
+      Android.onPicked(doc.id, doc.name);
+    } else if (data.action === google.picker.Action.CANCEL) {
+      Android.onCancel();
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+package com.realestate.sami.ui.navigation
+
+import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
+import androidx.navigation.navArgument
+import com.realestate.sami.R
+import com.realestate.sami.ui.screens.*
+
+sealed class Screen(val route: String, @StringRes val labelRes: Int) {
+    data object PropertyList : Screen("property_list", R.string.nav_properties)
+    data object AddProperty : Screen("add_property", R.string.nav_add_property)
+    data object EditProperty : Screen("edit_property/{propertyId}", R.string.edit_property_title) {
+        fun buildRoute(id: Long) = "edit_property/$id"
+    }
+    data object PropertyDetail : Screen("property_detail/{propertyId}", R.string.nav_property_detail) {
+        fun buildRoute(id: Long) = "property_detail/$id"
+    }
+    data object LocationPicker : Screen("location_picker", R.string.map_picker_title)
+    data object ClientList : Screen("client_list", R.string.nav_clients)
+    data object AddClient : Screen("add_client", R.string.nav_add_client)
+    data object EditClient : Screen("edit_client/{clientId}", R.string.edit_client_title) {
+        fun buildRoute(id: Long) = "edit_client/$id"
+    }
+    data object ClientDetail : Screen("client_detail/{clientId}", R.string.nav_client_detail) {
+        fun buildRoute(id: Long) = "client_detail/$id"
+    }
+    data object Sync : Screen("sync", R.string.nav_sync)
+    data object Reports : Screen("reports", R.string.nav_reports)
+    data object Settings : Screen("settings", R.string.nav_settings)
+}
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+    // این چهار مورد تنها مقصدهای «سطح بالا»ی اپ هستند که باید نوار ناوبری پایین در آن‌ها دیده شود.
+    val bottomItems = listOf(Screen.PropertyList, Screen.ClientList, Screen.Reports, Screen.Sync)
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    // اگه مقصد فعلی هیچ‌کدوم از چهار تب اصلی نباشد (یعنی داخل ثبت/ویرایش ملک، جزئیات، انتخاب
+    // موقعیت، ثبت/ویرایش متقاضی یا تنظیمات هستیم)، نوار پایین مخفی می‌شود و با popBackStack
+    // (دکمه‌ی برگشت یا onSaved/onBack هر صفحه) خودکار دوباره ظاهر می‌شود.
+    val showBottomBar = bottomItems.any { screen ->
+        currentDestination?.hierarchy?.any { it.route == screen.route } == true
+    }
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomItems.forEach { screen ->
+                        val icon = when (screen) {
+                            Screen.PropertyList -> Icons.Filled.Home
+                            Screen.Sync -> Icons.Filled.Groups
+                            Screen.Reports -> Icons.Filled.Build
+                            else -> Icons.Filled.People
+                        }
+                        val label = stringResource(screen.labelRes)
+                        NavigationBarItem(
+                            icon = { Icon(icon, contentDescription = label) },
+                            label = { Text(label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    ) { padding ->
+        // انیمیشن ظریف اسلاید+فِید بین صفحه‌ها (به‌جای پرش خشک پیش‌فرض)؛ جهت اسلاید با
+        // LocalLayoutDirection هماهنگه، پس در حالت راست‌به‌چپ (فارسی) خودکار درست می‌چرخه.
+        val transitionSpec = tween<androidx.compose.ui.unit.IntOffset>(durationMillis = 260)
+        val fadeSpec = tween<Float>(durationMillis = 220)
+        NavHost(
+            navController = navController,
+            startDestination = Screen.PropertyList.route,
+            modifier = androidx.compose.ui.Modifier.padding(padding),
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    fadeIn(fadeSpec)
+            },
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, transitionSpec) +
+                    fadeOut(fadeSpec)
+            },
+            popEnterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    fadeIn(fadeSpec)
+            },
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, transitionSpec) +
+                    fadeOut(fadeSpec)
+            }
+        ) {
+            composable(Screen.PropertyList.route) {
+                PropertyListScreen(
+                    onAddClick = { navController.navigate(Screen.AddProperty.route) },
+                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) },
+                    onOpenSettings = { navController.navigate(Screen.Settings.route) }
+                )
+            }
+            composable(Screen.AddProperty.route) { entry ->
+                val pickedLat by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lat", null)
+                    .collectAsState()
+                val pickedLng by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lng", null)
+                    .collectAsState()
+                val pickedAddress by entry.savedStateHandle
+                    .getStateFlow<String?>("picked_address", null)
+                    .collectAsState()
+                AddPropertyScreen(
+                    onSaved = { navController.popBackStack() },
+                    onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
+                    pickedLatitude = pickedLat,
+                    pickedLongitude = pickedLng,
+                    pickedAddress = pickedAddress
+                )
+            }
+            composable(
+                Screen.EditProperty.route,
+                arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
+            ) { entry ->
+                val propertyId = entry.arguments?.getLong("propertyId")
+                val pickedLat by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lat", null)
+                    .collectAsState()
+                val pickedLng by entry.savedStateHandle
+                    .getStateFlow<Double?>("picked_lng", null)
+                    .collectAsState()
+                val pickedAddress by entry.savedStateHandle
+                    .getStateFlow<String?>("picked_address", null)
+                    .collectAsState()
+                AddPropertyScreen(
+                    propertyId = propertyId,
+                    onSaved = { navController.popBackStack() },
+                    onPickLocationOnMap = { navController.navigate(Screen.LocationPicker.route) },
+                    pickedLatitude = pickedLat,
+                    pickedLongitude = pickedLng,
+                    pickedAddress = pickedAddress
+                )
+            }
+            composable(
+                Screen.PropertyDetail.route,
+                arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
+            ) {
+                PropertyDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) },
+                    onEdit = { id -> navController.navigate(Screen.EditProperty.buildRoute(id)) },
+                    onDeleted = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.LocationPicker.route) {
+                LocationPickerScreen(
+                    initialLatitude = null,
+                    initialLongitude = null,
+                    onBack = { navController.popBackStack() },
+                    onConfirm = { lat, lng, address ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_lat", lat)
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_lng", lng)
+                        navController.previousBackStackEntry?.savedStateHandle?.set("picked_address", address)
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.ClientList.route) {
+                ClientListScreen(
+                    onAddClick = { navController.navigate(Screen.AddClient.route) },
+                    onClientClick = { navController.navigate(Screen.ClientDetail.buildRoute(it.id)) }
+                )
+            }
+            composable(Screen.AddClient.route) {
+                AddClientScreen(onSaved = { navController.popBackStack() })
+            }
+            composable(
+                Screen.EditClient.route,
+                arguments = listOf(navArgument("clientId") { type = NavType.LongType })
+            ) { entry ->
+                val clientId = entry.arguments?.getLong("clientId")
+                AddClientScreen(clientId = clientId, onSaved = { navController.popBackStack() })
+            }
+            composable(
+                Screen.ClientDetail.route,
+                arguments = listOf(navArgument("clientId") { type = NavType.LongType })
+            ) {
+                ClientDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onPropertyClick = { navController.navigate(Screen.PropertyDetail.buildRoute(it.id)) },
+                    onEdit = { id -> navController.navigate(Screen.EditClient.buildRoute(id)) },
+                    onDeleted = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.Sync.route) {
+                SyncSettingsScreen()
+            }
+            composable(Screen.Reports.route) {
+                ReportsScreen(onOpenSettings = { navController.navigate(Screen.Settings.route) })
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(onBack = { navController.popBackStack() })
+            }
+        }
+    }
+}

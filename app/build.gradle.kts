@@ -1,0 +1,148 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+//    id("com.google.gms.google-services")
+}
+
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) load(FileInputStream(f))
+}
+
+android {
+    namespace = "com.realestate.sami"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.realestate.sami"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 66
+        versionName = "1.2.1"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        manifestPlaceholders["MAPS_API_KEY"] =
+                System.getenv("MAPS_API_KEY")
+                    ?: localProps.getProperty("MAPS_API_KEY")
+                    ?: ""
+
+        buildConfigField(
+            "String", "DRIVE_PICKER_API_KEY",
+            "\"${System.getenv("DRIVE_PICKER_API_KEY") ?: localProps.getProperty("DRIVE_PICKER_API_KEY") ?: ""}\""
+        )
+        buildConfigField(
+            "String", "DRIVE_APP_ID",
+            "\"${System.getenv("DRIVE_APP_ID") ?: localProps.getProperty("DRIVE_APP_ID") ?: ""}\""
+        )
+    }
+    
+    signingConfigs {
+        create("release") {
+            storeFile = file(
+                System.getenv("KEYSTORE_PATH")
+                    ?: localProps.getProperty("RELEASE_STORE_FILE")
+                    ?: "release.keystore.jks"
+            )
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: localProps.getProperty("RELEASE_STORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: localProps.getProperty("RELEASE_KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: localProps.getProperty("RELEASE_KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    // Core / Compose
+    implementation("androidx.core:core-ktx:1.13.1")
+    // برای WebViewAssetLoader — سرو کردن drive_picker.html از یک origin مجازی https به‌جای file://
+    // (Google Picker با origin از نوع file:// کار نمی‌کنه و 403 برمی‌گردونه).
+    implementation("androidx.webkit:webkit:1.11.0")
+    // فقط برای AppCompatDelegate.setApplicationLocales (انتخاب زبان اپ) — بدون نیاز به AppCompatActivity
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.activity:activity-compose:1.9.1")
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    // فونت وزیرمتن به‌صورت Google Font دانلودی (بدون نیاز به باندل‌کردن فایل .ttf داخل اپ)
+    implementation("androidx.compose.ui:ui-text-google-fonts")
+    // اسپلش‌اسکرین برند‌شده (به‌جای صفحه‌ی سفید خام موقع باز شدن اپ)
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+
+    // Room (local database)
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+    // Hilt (Dependency Injection)
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    // WorkManager (sync / reminders in later phase)
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
+    // Coil (image loading, for property photos)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // نقشه (فاز ۳) — Google Maps Compose برای انتخاب موقعیت ملک و نمایش خوشه‌ای ملک‌ها
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+    implementation("com.google.maps.android:maps-compose-utils:4.4.1")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // همگام‌سازی تیمی فاز ۴ — Google Sign-In + Google Drive REST API (بدون نیاز به Firebase)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.11.0")
+
+    // WorkManager + Hilt برای زمان‌بندی همگام‌سازی دوره‌ای در پس‌زمینه
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
+
+    // Firebase (Phase 3: cloud sync) - BOM keeps versions aligned
+//    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+//    implementation("com.google.firebase:firebase-firestore-ktx")
+//    implementation("com.google.firebase:firebase-storage-ktx")
+//    implementation("com.google.firebase:firebase-auth-ktx")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+}

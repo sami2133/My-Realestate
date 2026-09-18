@@ -1,0 +1,134 @@
+package com.realestate.sami.ui.viewmodel
+
+import android.content.Context
+import android.net.Uri
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.realestate.sami.data.local.AppDatabase
+import com.realestate.sami.data.local.entity.ClientStatus
+import com.realestate.sami.data.local.entity.DealType
+import com.realestate.sami.data.local.entity.PropertyEntity
+import com.realestate.sami.data.local.entity.PropertyStatus
+import com.realestate.sami.data.local.entity.VisitEntity
+import com.realestate.sami.data.repository.ClientRepository
+import com.realestate.sami.data.repository.PropertyRepository
+import com.realestate.sami.data.repository.VisitRepository
+import com.realestate.sami.util.BackupManager
+import com.realestate.sami.util.CommissionCalculator
+import com.realestate.sami.util.CommissionResult
+import com.realestate.sami.util.CommissionTariffPreferences
+import com.realestate.sami.util.RentPreferences
+import com.realestate.sami.util.ReportPreferences
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
+
+/** فاز ۵ — گزارش‌ها و داشبورد آماری: تعداد معاملات موفق، درآمد کمیسیون تخمینی، بازدیدهای پیش‌رو. */
+data class ReportStats(
+    val totalProperties: Int = 0,
+    val availableProperties: Int = 0,
+    val closedDeals: Int = 0,
+    val activeClients: Int = 0,
+    val upcomingVisits: Int = 0,
+    val estimatedCommission: Long = 0L
+)
+
+@HiltViewModel
+class ReportsViewModel @Inject constructor(
+    private val propertyRepository: PropertyRepository,
+    private val clientRepository: ClientRepository,
+    private val visitRepository: VisitRepository,
+    private val reportPreferences: ReportPreferences,
+    private val commissionTariffPreferences: CommissionTariffPreferences,
+    private val rentPreferences: RentPreferences,
+    private val appDatabase: AppDatabase
+) : ViewModel() {
+
+    // فاز ۵.۳: نرخ کمیسیون و نرخ تبدیل رهن↔اجاره از اینجا قابل‌ویرایش نیستن؛ فقط برای محاسبه‌ی
+    // زیر خونده می‌شن. ویرایش‌شون از صفحه‌ی «تنظیمات» انجام می‌شه (SettingsViewModel).
+    private val _commissionPercent = MutableStateFlow(reportPreferences.commissionPercent)
+    val commissionPercent: StateFlow<Float> = _commissionPercent
+
+    val stats: StateFlow<ReportStats> = combine(
+        propertyRepository.getAll(),
+        clientRepository.getAll(),
+        visitRepository.getUpcoming(),
+        _commissionPercent
+    ) { properties, clients, upcomingVisits, commissionPercent ->
+        val closed = properties.filter { it.status == PropertyStatus.SOLD_OR_RENTED }
+        val commissionableAmount = closed.sumOf { it.commissionableAmount() }
+        ReportStats(
+            totalProperties = properties.size,
+            availableProperties = properties.count { it.status == PropertyStatus.AVAILABLE },
+            closedDeals = closed.size,
+            activeClients = clients.count { it.status == ClientStatus.SEARCHING },
+            upcomingVisits = upcomingVisits.size,
+            estimatedCommission = (commissionableAmount * commissionPercent / 100f).toLong()
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReportStats())
+
+    /** آخرین بازدیدهای پیش‌رو، برای فهرست کوتاه در پایین داشبورد. */
+    val upcomingVisits: StateFlow<List<VisitEntity>> = visitRepository.getUpcoming()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allProperties: StateFlow<List<PropertyEntity>> = propertyRepository.getAll()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /**
+     * چون نرخ کمیسیون الان فقط از صفحه‌ی «تنظیمات» (یک ViewModel جدا) ویرایش می‌شه، این ViewModel
+     * از تغییرش خبردار نمی‌شه مگر دوباره از SharedPreferences بخونیم. این تابع از یک
+     * LaunchedEffect(Unit) در ReportsScreen صدا زده می‌شه تا هر بار کاربر به تب گزارش‌ها برمی‌گرده،
+     * آخرین نرخ ذخیره‌شده لود بشه.
+     */
+    fun refreshCommissionPercent() {
+        _commissionPercent.value = reportPreferences.commissionPercent
+    }
+
+    /**
+     * فاز ۶.۱ — ماشین‌حساب زنده‌ی حق‌العمل فروش، برای بخش «نرخ کمیسیون» در گزارش‌ها.
+     * هر بار مستقیم از [CommissionTariffPreferences] (یعنی آخرین تنظیمات ذخیره‌شده، شامل
+     * روش محاسبه‌ی پلکانی/غیرپلکانی) می‌خواند — نیازی به refresh جدا نیست چون خودِ همین
+     * تابع در لحظه‌ی فراخوانی SharedPreferences را می‌خواند.
+     */
+    fun calculateLiveSaleCommission(dealAmountToman: Long): CommissionResult =
+        CommissionCalculator.calculateSaleCommission(dealAmountToman, commissionTariffPreferences)
+
+    /**
+     * ماشین‌حساب زنده‌ی حق‌العمل اجاره، برای بخش «ماشین‌حساب حق‌العمل اجاره» در ابزارها. مثل
+     * [calculateLiveSaleCommission]، هر بار مستقیم از آخرین تنظیمات ذخیره‌شده (نرخ حق‌العمل اجاره +
+     * نرخ تبدیل رهن↔اجاره) می‌خواند.
+     */
+    fun calculateLiveRentCommission(depositToman: Long, monthlyRentToman: Long): CommissionResult =
+        CommissionCalculator.calculateRentCommission(
+            monthlyRent = monthlyRentToman,
+            depositAmount = depositToman,
+            tariff = commissionTariffPreferences,
+            rentConversionPercent = rentPreferences.conversionPercent
+        )
+
+    /** یک فایل پشتیبان تازه می‌سازه (یا در صورت خطا null برمی‌گردونه) تا UI اون رو به اشتراک بذاره. */
+    fun createBackup(context: Context): File? = BackupManager.createBackup(context, appDatabase)
+
+    fun shareBackup(context: Context, file: File) = BackupManager.shareBackup(context, file)
+
+    /** فایل انتخاب‌شده رو جایگزین دیتابیس فعلی می‌کنه؛ در صورت موفقیت، UI باید [restartApp] را صدا بزند. */
+    fun restoreBackup(context: Context, sourceUri: Uri): Boolean =
+        BackupManager.restoreBackup(context, appDatabase, sourceUri)
+
+    fun restartApp(context: Context) = BackupManager.restartApp(context)
+}
+
+/**
+ * مبلغ مبنای محاسبه‌ی کمیسیون. برای رهن‌واجاره (که حالا هم رهن‌های خیلی سنگین با اجاره‌ی نزدیک
+ * صفر، هم اجاره‌های سنگین با رهن کم رو شامل می‌شه) جمع رهن + اجاره در نظر گرفته می‌شه تا معامله‌های
+ * تماماً-رهنی (قبلاً MORTGAGE) دستِ‌کم‌گرفته نشن.
+ */
+private fun PropertyEntity.commissionableAmount(): Long = when (dealType) {
+    DealType.SALE, DealType.EXCHANGE -> totalPrice ?: 0L
+    DealType.RENT, DealType.MORTGAGE -> (depositPrice ?: 0L) + (rentPrice ?: 0L)
+}

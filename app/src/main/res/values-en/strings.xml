@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My RealEstate</string>
+
+    <!-- Navigation -->
+    <string name="nav_properties">Properties</string>
+    <string name="nav_add_property">Add Property</string>
+    <string name="nav_property_detail">Property Details</string>
+    <string name="nav_clients">Clients</string>
+    <string name="nav_add_client">Add Client</string>
+    <string name="nav_client_detail">Client Details</string>
+
+    <!-- Common actions and labels -->
+    <string name="action_call">Call</string>
+    <string name="action_sms">Text</string>
+    <string name="action_submit">Save</string>
+    <string name="action_close">Close</string>
+    <string name="action_back">Back</string>
+    <string name="label_name">Name</string>
+    <string name="label_phone">Phone Number</string>
+    <string name="label_address">Address</string>
+    <string name="label_registered_at">Registered On</string>
+    <string name="label_last_edited_by">Last edited by</string>
+    <string name="action_show_on_map">Show on map</string>
+    <string name="commission_result_section">Commission per tariff</string>
+    <string name="commission_result_total">Total commission</string>
+    <string name="commission_result_buyer">Buyer share</string>
+    <string name="commission_result_seller">Seller share</string>
+    <string name="commission_result_tenant">Tenant share</string>
+    <string name="commission_result_landlord">Landlord share</string>
+    <string name="label_area">Area</string>
+    <string name="label_rooms">Rooms</string>
+    <string name="value_yes">Yes</string>
+    <string name="value_no">No</string>
+    <string name="cd_add_photo">Add photo</string>
+    <string name="cd_remove_photo">Remove photo</string>
+
+    <!-- Amenities -->
+    <string name="amenity_parking">Parking</string>
+    <string name="amenity_storage">Storage</string>
+    <string name="amenity_elevator">Elevator</string>
+
+    <!-- Property types -->
+    <string name="property_type_apartment">Apartment</string>
+    <string name="property_type_villa">Villa</string>
+    <string name="property_type_land">Land</string>
+    <string name="property_type_commercial">Commercial</string>
+    <string name="property_type_office">Office</string>
+
+    <!-- Deal types -->
+    <string name="deal_type_sale">Sale</string>
+    <!-- Phase 5.2: full mortgage and rent were merged; this is one deal type with convertible deposit+rent -->
+    <string name="deal_type_rent">Rent / Mortgage</string>
+    <string name="deal_type_mortgage">Full Mortgage</string>
+    <string name="deal_type_exchange">Exchange</string>
+
+    <!-- Property status -->
+    <string name="property_status_available">Available</string>
+    <string name="property_status_reserved">Reserved</string>
+    <string name="property_status_sold">Sold/Rented</string>
+    <string name="property_status_archived">Archived</string>
+
+    <!-- Client status -->
+    <string name="client_status_searching">Searching</string>
+    <string name="client_status_paused">Paused</string>
+    <string name="client_status_matched">Matched</string>
+    <string name="client_status_closed">Closed</string>
+
+    <!-- Property list -->
+    <string name="property_list_title">Listed Properties</string>
+    <string name="property_list_search_hint">Search by address or owner name</string>
+    <string name="property_list_empty">No properties yet.\nTap the button below to add one.</string>
+    <string name="property_card_area_rooms">%1$d m² • %2$d rooms</string>
+    <string name="property_card_rent_prefix">Rent %1$s</string>
+    <string name="price_not_set">Price not set</string>
+
+    <!-- Add property -->
+    <string name="add_property_title">Add New Property</string>
+    <string name="add_property_owner_section">Referrer / Owner Info</string>
+    <string name="add_property_owner_name">Referrer/Owner Name</string>
+    <string name="add_property_pick_from_contacts">Pick from contacts</string>
+    <string name="add_property_photos_section">Property Photos</string>
+    <string name="add_property_specs_section">Property Details</string>
+    <string name="add_property_type_label">Property Type</string>
+    <string name="add_property_deal_type_label">Deal Type</string>
+    <string name="add_property_pick_location">Pick Location on Map</string>
+    <string name="add_property_location_selected">Map location saved</string>
+    <string name="add_property_area_hint">Area (m²)</string>
+    <string name="add_property_amenities_section">Amenities</string>
+    <string name="add_property_pricing_section">Pricing</string>
+    <string name="add_property_total_price">Total Price (Toman)</string>
+    <string name="add_property_deposit_price">Deposit Amount</string>
+    <string name="add_property_rent_price">Monthly Rent</string>
+    <string name="add_property_exchange_value">Approximate Value</string>
+    <string name="add_property_save">Save Property</string>
+
+    <!-- Add client -->
+    <string name="add_client_title">Add New Client</string>
+    <string name="add_client_info_section">Client Info</string>
+    <string name="add_client_full_name">Full Name</string>
+    <string name="add_client_desired_section">Desired Property Details</string>
+    <string name="add_client_region">Desired Area/Neighborhood</string>
+    <string name="add_client_min_area">Minimum Area</string>
+    <string name="add_client_max_area">Maximum Area</string>
+    <string name="add_client_min_rooms">Minimum Rooms</string>
+    <string name="add_client_needs_parking">Needs Parking</string>
+    <string name="add_client_needs_elevator">Needs Elevator</string>
+    <string name="add_client_budget_section">Budget Ceiling</string>
+    <string name="add_client_max_total_price">Max Total Price</string>
+    <string name="add_client_max_deposit">Max Deposit</string>
+    <string name="add_client_max_rent">Max Monthly Rent</string>
+    <string name="add_client_save">Save Client</string>
+
+    <!-- Client list -->
+    <string name="client_list_title">Clients</string>
+    <string name="client_list_search_hint">Search by name or area</string>
+    <string name="client_list_empty">No clients yet.\nTap the button below to add one.</string>
+
+    <!-- Property detail -->
+    <string name="property_detail_title_fallback">Property Details</string>
+    <string name="property_detail_deposit_rent_format">Deposit %1$s / Rent %2$s</string>
+    <string name="property_detail_specs_section">Specifications</string>
+    <string name="property_detail_area_value">%1$d m²</string>
+    <string name="property_detail_owner_section">Referrer / Owner</string>
+    <string name="property_detail_status_section">Property Status</string>
+    <string name="property_detail_matches_section">Matching Clients (%1$d)</string>
+    <string name="property_detail_no_matches">No matching clients found yet.</string>
+
+    <!-- Client detail -->
+    <string name="client_detail_title_fallback">Client Details</string>
+    <string name="client_detail_contact_section">Contact Info</string>
+    <string name="client_detail_criteria_section">Search Criteria</string>
+    <string name="client_detail_region">Desired Area</string>
+    <string name="client_detail_area_range">%1$s to %2$s m²</string>
+    <string name="client_detail_min_rooms">Min Rooms</string>
+    <string name="client_detail_budget_total">Max Price</string>
+    <string name="client_detail_budget_deposit">Max Deposit</string>
+    <string name="client_detail_budget_rent">Max Monthly Rent</string>
+    <string name="client_detail_status_section">Follow-up Status</string>
+    <string name="client_detail_matches_section">Matching Properties (%1$d)</string>
+    <string name="client_detail_no_matches">No matching properties found yet.</string>
+    <string name="property_row_area_rooms">%1$d m² • %2$d rooms</string>
+
+    <!-- Contact log -->
+    <string name="contact_log_section_title">Follow-up History</string>
+    <string name="contact_log_placeholder">New contact note...</string>
+    <string name="contact_log_empty">No contact logged yet.</string>
+
+    <!-- Map (Phase 3) -->
+    <string name="map_picker_title">Pick Property Location</string>
+    <string name="map_picker_confirm">Confirm This Location</string>
+    <string name="map_picker_hint">Move the map so the pin sits on the exact property location</string>
+    <string name="map_picker_use_my_location">My Current Location</string>
+    <string name="properties_map_title">Properties Map</string>
+    <string name="properties_map_empty">No properties with a saved location yet.</string>
+    <string name="nav_map">Map</string>
+    <string name="map_type_switcher_cd">Change map type</string>
+    <string name="map_type_normal">Normal</string>
+    <string name="map_type_satellite">Satellite</string>
+    <string name="map_type_terrain">Terrain</string>
+    <string name="map_type_hybrid">Hybrid</string>
+    <string name="nav_sync">Team</string>
+    <string name="sync_title">Team Sync</string>
+    <string name="sync_sign_in_button">Sign in with Google</string>
+    <string name="sync_sign_out_button">Sign out</string>
+    <string name="sync_signed_in_as">Signed in as: %1$s</string>
+    <string name="sync_now_button">Sync now</string>
+    <string name="sync_in_progress">Syncing…</string>
+    <string name="sync_success">Sync completed successfully</string>
+    <string name="sync_error_prefix">Error: %1$s</string>
+    <string name="sync_last_synced">Last synced: %1$s</string>
+    <string name="sync_never_synced">Not synced yet</string>
+    <string name="sync_consent_needed">Drive access needs to be re-confirmed</string>
+    <string name="sync_description">Properties and clients are shared with team members who have access to the same shared Drive folder.</string>
+    <string name="sync_team_folder_title">Team folder</string>
+    <string name="sync_team_folder_has_one">You\'re connected to a team folder. Share its link with the rest of the team so they connect to the same folder instead of creating a separate one.</string>
+    <string name="sync_team_folder_share_button">Share team folder link</string>
+    <string name="sync_team_display_name_label">Custom name for this team (in-app only)</string>
+    <string name="sync_team_display_name_save">Save</string>
+    <string name="sync_leave_team_button">Leave team</string>
+    <string name="sync_leave_team_confirm_title">Leave team?</string>
+    <string name="sync_leave_team_confirm_message">This device will disconnect from the current team folder. Properties and clients you\'ve saved on this device are not deleted, and you can rejoin the same team or a different one later.</string>
+    <string name="sync_leave_team_confirm_button">Leave team</string>
+    <string name="sync_cancel_button">Cancel</string>
+    <string name="sync_team_folder_join_label">If a teammate already created a team folder and sent you its link/ID, enter it here to join that folder instead of creating a separate one:</string>
+    <string name="sync_team_folder_id_placeholder">Team folder link or ID</string>
+    <string name="sync_team_folder_join_button">Join existing team</string>
+    <string name="sync_team_folder_picker_hint">To join a folder a teammate has shared with you, pick it from Drive instead of typing the ID manually:</string>
+    <string name="sync_team_folder_picker_button">Pick folder from Google Drive</string>
+    <string name="sync_picker_config_missing">Drive Picker isn\'t fully configured (API key or project ID missing from the build)</string>
+
+    <!-- Network type setting for background auto-sync -->
+    <string name="sync_auto_wifi_only_title">Auto-sync on Wi-Fi only</string>
+    <string name="sync_auto_wifi_only_description">When on, periodic background sync only runs on Wi-Fi and won\'t use mobile data. The "Sync now" button always works on any connection.</string>
+
+    <!-- Common actions: edit, delete, sort -->
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_sort">Sort</string>
+
+    <!-- Edit property -->
+    <string name="edit_property_title">Edit property</string>
+    <string name="edit_property_save">Save changes</string>
+    <string name="delete_property_confirm_title">Delete this property?</string>
+    <string name="delete_property_confirm_message">This property will be removed from the list. This cannot be undone.</string>
+
+    <!-- Edit client -->
+    <string name="edit_client_title">Edit client</string>
+    <string name="edit_client_save">Save changes</string>
+    <string name="delete_client_confirm_title">Delete this client?</string>
+    <string name="delete_client_confirm_message">This client will be removed from the list. This cannot be undone.</string>
+
+    <!-- Property list sorting -->
+    <string name="sort_newest">Newest</string>
+    <string name="sort_oldest">Oldest</string>
+    <string name="property_sort_price_low_to_high">Price: low to high</string>
+    <string name="property_sort_price_high_to_low">Price: high to low</string>
+    <string name="property_sort_area_large_to_small">Area: large to small</string>
+    <string name="property_sort_area_small_to_large">Area: small to large</string>
+    <string name="property_sort_rooms_most_to_fewest">Rooms: most to fewest</string>
+    <string name="property_sort_rooms_fewest_to_most">Rooms: fewest to most</string>
+    <string name="property_sort_building_age_newest">Building age: newest first</string>
+    <string name="property_sort_building_age_oldest">Building age: oldest first</string>
+
+    <!-- Client list sorting -->
+    <string name="client_sort_name_a_to_z">Name: A to Z</string>
+    <string name="client_sort_budget_high_to_low">Budget: high to low</string>
+
+    <!-- Property list filter -->
+    <string name="action_filter">Filter</string>
+    <string name="action_filter_sort">Filter &amp; sort</string>
+    <string name="filter_sort_tab_filter">Filter</string>
+    <string name="filter_sort_tab_sort">Sort</string>
+    <string name="filter_dialog_title">Filter properties</string>
+    <string name="filter_option_all">All</string>
+    <string name="filter_price_range_section">Price range (Toman)</string>
+    <string name="filter_min_price">Min price</string>
+    <string name="filter_max_price">Max price</string>
+    <string name="filter_clear">Clear filter</string>
+    <string name="filter_apply">Apply filter</string>
+    <string name="filter_status_section">Property status</string>
+    <string name="filter_area_range_section">Area range (sqm)</string>
+    <string name="filter_min_area">Min area</string>
+    <string name="filter_max_area">Max area</string>
+    <string name="filter_rooms_section">Rooms</string>
+    <string name="filter_rooms_4_plus">4+</string>
+    <string name="filter_building_age_section">Building age</string>
+    <string name="filter_building_age_new">New (0-2 years)</string>
+    <string name="filter_building_age_2_5">2-5 years</string>
+    <string name="filter_building_age_5_10">5-10 years</string>
+    <string name="filter_building_age_10_plus">Over 10 years</string>
+    <string name="filter_amenities_section">Amenities</string>
+    <string name="filter_deed_type_section">Deed type</string>
+    <string name="filter_exchangeable_only">Exchange-eligible only</string>
+    <string name="property_list_empty_filtered">No properties match this filter.\nChange or clear the filter.</string>
+
+    <!-- Image sync -->
+    <string name="image_not_downloaded_yet">This image hasn\'t been downloaded to this device yet</string>
+
+    <!-- Phase 5: Reports -->
+    <string name="nav_reports">Tools</string>
+
+    <!-- Phase 5: Follow-up reminders -->
+    <string name="follow_up_section_label">Next follow-up reminder</string>
+    <string name="follow_up_option_none">No reminder</string>
+    <string name="follow_up_option_tomorrow">Tomorrow</string>
+    <string name="follow_up_option_3_days">In 3 days</string>
+    <string name="follow_up_option_1_week">In a week</string>
+    <string name="follow_up_pending_badge">Reminder: %1$s</string>
+    <string name="follow_up_done_badge">Followed up (%1$s)</string>
+    <string name="notification_channel_followup_name">Follow-up reminders</string>
+    <string name="notification_channel_followup_desc">Shows a reminder when a property or client follow-up is due</string>
+    <string name="notification_followup_title">Follow-up reminder: %1$s</string>
+
+    <!-- Phase 5: Visit scheduling and calendar -->
+    <string name="visit_section_title">Visits</string>
+    <string name="visit_schedule_action">Schedule visit</string>
+    <string name="visit_no_candidates">You need at least one matching client/property before scheduling a visit.</string>
+    <string name="visit_section_empty">No visits scheduled yet.</string>
+    <string name="visit_unknown_party">Unknown</string>
+    <string name="visit_add_to_calendar">Add to calendar</string>
+    <string name="visit_result_pending">Pending</string>
+    <string name="visit_result_interested">Interested</string>
+    <string name="visit_result_not_interested">Not interested</string>
+    <string name="visit_result_deal_closed">Deal closed</string>
+    <string name="visit_schedule_dialog_title">Schedule a visit</string>
+    <string name="visit_pick_party_label">Choose the other party</string>
+    <string name="visit_pick_datetime_label">Visit date and time</string>
+    <string name="visit_pick_datetime_placeholder">Pick date and time</string>
+    <string name="visit_schedule_confirm">Save visit</string>
+
+    <!-- Phase 5: Reports dashboard -->
+    <string name="reports_total_properties">Total properties</string>
+    <string name="reports_available_properties">Available</string>
+    <string name="reports_closed_deals">Closed deals</string>
+    <string name="reports_active_clients">Active clients</string>
+    <string name="reports_commission_section">Commission rate</string>
+    <string name="reports_commission_hint">Used to estimate commission income from closed deals; stored only on this device.</string>
+    <string name="reports_commission_percent_label">Commission percent</string>
+
+    <string name="commission_tariff_section">Sale Commission Tariff</string>
+    <string name="commission_tariff_hint">Official marginal tariff: each bracket applies only to the portion of the deal amount within it, not the whole amount. The buyer and seller share is always split evenly per bracket. Amounts are in Toman (tariff Rial figures divided by 10).</string>
+    <string name="commission_tariff_threshold_1_label">Bracket 1 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_1_label">Bracket 1 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_threshold_2_label">Bracket 2 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_2_label">Bracket 2 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_threshold_3_label">Bracket 3 ceiling (Toman)</string>
+    <string name="commission_tariff_rate_3_label">Bracket 3 rate (% of total, split evenly)</string>
+    <string name="commission_tariff_rate_4_label">Rate above bracket 3 (% of total, split evenly)</string>
+    <string name="commission_calculation_mode_label">Calculation method</string>
+    <string name="commission_calculation_mode_flat">Flat (whole amount × that bracket\'s rate)</string>
+    <string name="commission_calculation_mode_marginal">Marginal (each bracket on its own portion)</string>
+    <string name="commission_calculator_section">Sale Commission Calculator</string>
+    <string name="commission_calculator_hint">Enter the deal amount to calculate the commission per the tariff and the current calculation method (changeable in Settings).</string>
+    <string name="commission_calculator_amount_label">Deal amount (Toman)</string>
+
+    <string name="commission_calculator_rent_section">Rent Commission Calculator</string>
+    <string name="commission_calculator_rent_hint">Enter the deposit and monthly rent to calculate the commission based on the current rent commission rate and deposit↔rent conversion rate (editable in settings).</string>
+    <string name="commission_calculator_deposit_label">Deposit amount (Toman)</string>
+    <string name="commission_calculator_monthly_rent_label">Monthly rent (Toman)</string>
+
+    <string name="commission_rent_section">Rent Commission Rate</string>
+    <string name="commission_rent_hint">Total rent commission equals this percent of (monthly rent + deposit\'s rent-equivalent); split evenly between landlord and tenant. The deposit is converted using the \"deposit↔rent conversion\" rate on this page.</string>
+    <string name="commission_rent_percent_label">Total rent commission percent</string>
+
+    <!-- Phase 5.2: rent-deposit conversion rate -->
+    <string name="reports_rent_conversion_section">Rent↔Deposit conversion rate</string>
+    <string name="reports_rent_conversion_hint">The official/legal rate is usually 2.5% and the common market rate is 3%; enter whatever rate you use. Used to calculate the deposit-adjustment slider when registering a property.</string>
+    <string name="reports_rent_conversion_percent_label">Conversion percent (monthly)</string>
+    <string name="reports_rent_conversion_saved">Conversion rate saved</string>
+    <string name="reports_estimated_commission">Estimated commission income</string>
+    <string name="reports_upcoming_visits_section">Upcoming visits (%1$d)</string>
+    <string name="reports_no_upcoming_visits">No upcoming visits scheduled.</string>
+    <string name="reports_visit_row">Visit — property #%1$d with client #%2$d</string>
+    <string name="reports_export_section">Export</string>
+    <string name="reports_export_hint">Export the full property list as PDF or Excel, to send or print.</string>
+    <string name="reports_export_pdf">Export PDF</string>
+    <string name="reports_export_excel">Export Excel</string>
+
+    <string name="backup_restore_section">Backup &amp; Restore</string>
+    <string name="backup_restore_hint">Create a backup file of all app data (properties, clients, contact logs, visits) and keep it somewhere, or restore from a previous backup file.</string>
+    <string name="backup_create_action">Create backup</string>
+    <string name="backup_restore_action">Restore from backup</string>
+    <string name="backup_create_failed">Failed to create the backup file.</string>
+    <string name="backup_restore_confirm_title">Restore backup</string>
+    <string name="backup_restore_confirm_message">Restoring will replace all current app data (properties, clients, contact logs, visits) with the content of this backup file, and cannot be undone. The app will reopen immediately after restoring. Continue?</string>
+    <string name="backup_restore_failed">Restore failed; the selected file is not valid.</string>
+    <string name="backup_restore_action_confirm">Restore</string>
+
+    <!-- Phase 5: calendar event title used by "Add to calendar" -->
+    <string name="visit_calendar_event_title_property">Visit: %1$s viewing %2$s</string>
+    <string name="visit_calendar_event_title_client">Visit: %1$s with client %2$s</string>
+
+    <!-- Phase 5.1: open a property image with the device's preferred gallery/viewer app -->
+    <string name="property_image_open_with">Open with…</string>
+    <string name="property_image_open_failed">No app found on this device to view images</string>
+
+    <!-- Phase 5.2: merged full-mortgage and rent + deposit/rent conversion slider -->
+    <string name="add_property_deposit_negotiable">Deposit is negotiable (adjustable range)</string>
+    <string name="add_property_min_deposit">Minimum adjustable deposit (Toman)</string>
+    <string name="rent_calc_title">Deposit-to-rent conversion preview</string>
+    <string name="rent_calc_deposit_label">Proposed deposit</string>
+    <string name="rent_calc_rent_label">Corresponding rent</string>
+    <string name="rent_calc_hint">Based on a %1$s%% conversion rate (editable in settings)</string>
+
+    <!-- Phase 5.3: exchange as a sub-option of sale -->
+    <string name="add_property_exchangeable">Open to exchange with another property</string>
+    <string name="add_property_exchange_preferred_type">Preferred property type for exchange</string>
+    <string name="add_property_exchange_any_type">Any property type</string>
+    <string name="add_property_exchange_note">Additional exchange notes (optional)</string>
+    <string name="property_detail_exchangeable_badge">Exchange OK</string>
+    <string name="property_detail_exchange_section">Exchange details</string>
+    <string name="property_detail_exchange_preferred_type_label">Preferred type</string>
+    <string name="property_detail_exchange_note_label">Notes</string>
+
+    <!-- Phase 5.3: settings menu -->
+    <string name="nav_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_language_section">App Language</string>
+    <string name="settings_language_hint">Choose the language used for the app\'s text.</string>
+    <string name="settings_owner_contact_section">Owner/Referrer Contact Protection</string>
+    <string name="settings_owner_contact_hint">When on, the real name and phone number of each property\'s owner/referrer stay only on the device that registered it, and are never sent to other team members; the name and number below are shown to them instead.</string>
+    <string name="settings_owner_contact_toggle_label">Protect owner contact info from team</string>
+    <string name="settings_owner_contact_display_hint">This name and number are shown to other team members instead of the real owner, on properties you register:</string>
+    <string name="settings_owner_contact_name_label">Display name for team (e.g. your name)</string>
+    <string name="settings_owner_contact_phone_label">Display phone number for team</string>
+    <string name="settings_more_soon_hint">More settings will be added here over time.</string>
+    <string name="settings_open_action">Settings</string>
+    <string name="settings_saved">Saved</string>
+
+    <!-- Phase 5.5 — additional specs depending on property type -->
+    <string name="value_unspecified">Unspecified</string>
+    <string name="add_property_description">Additional notes</string>
+
+    <!-- Enum values: DeedType -->
+    <string name="deed_type_single_page">Single-page title</string>
+    <string name="deed_type_mangoleh">Mangoleh-dar title</string>
+    <string name="deed_type_agreement">Agreement (قولنامه)</string>
+    <string name="deed_type_under_construction">Under construction</string>
+    <string name="deed_type_six_dang">Six-dang</string>
+    <string name="deed_type_endowment">Endowment (وقف)</string>
+    <string name="deed_type_other">Other</string>
+
+    <!-- Enum values: UtilityStatus -->
+    <string name="utility_status_available">Available</string>
+    <string name="utility_status_not_available">Not available</string>
+    <string name="utility_status_obtainable">Obtainable</string>
+
+    <!-- Enum values: HeatingCoolingSystem -->
+    <string name="heating_cooling_package">Package unit</string>
+    <string name="heating_cooling_radiator">Radiator</string>
+    <string name="heating_cooling_split">Split AC</string>
+    <string name="heating_cooling_fan_coil">Fan coil</string>
+    <string name="heating_cooling_central">Central</string>
+    <string name="heating_cooling_other">Other</string>
+
+    <!-- Enum values: UnitDirection -->
+    <string name="unit_direction_north">North</string>
+    <string name="unit_direction_south">South</string>
+    <string name="unit_direction_east">East</string>
+    <string name="unit_direction_west">West</string>
+    <string name="unit_direction_two_sided">Two-sided</string>
+
+    <!-- Enum values: UnitCondition -->
+    <string name="unit_condition_new">New</string>
+    <string name="unit_condition_renovated">Renovated</string>
+    <string name="unit_condition_lived_in">Lived-in</string>
+    <string name="unit_condition_unoccupied">Unoccupied</string>
+
+    <!-- Enum values: FlooringType -->
+    <string name="flooring_ceramic">Ceramic</string>
+    <string name="flooring_parquet">Parquet</string>
+    <string name="flooring_mosaic">Mosaic</string>
+    <string name="flooring_stone">Stone</string>
+    <string name="flooring_other">Other</string>
+
+    <!-- Enum values: FacadeType -->
+    <string name="facade_stone">Stone</string>
+    <string name="facade_brick">Brick</string>
+    <string name="facade_composite">Composite</string>
+    <string name="facade_other">Other</string>
+
+    <!-- Enum values: LandUse -->
+    <string name="land_use_residential">Residential</string>
+    <string name="land_use_commercial">Commercial</string>
+    <string name="land_use_office">Office</string>
+    <string name="land_use_agricultural">Agricultural</string>
+    <string name="land_use_industrial">Industrial</string>
+    <string name="land_use_garden">Garden</string>
+
+    <!-- Enum values: LandPosition -->
+    <string name="land_position_north">North</string>
+    <string name="land_position_south">South</string>
+    <string name="land_position_two_sided">Two-sided</string>
+    <string name="land_position_corner_three">Three-way corner</string>
+    <string name="land_position_corner_four">Four-way corner</string>
+
+    <!-- Enum values: LandSlope -->
+    <string name="land_slope_flat">Flat</string>
+    <string name="land_slope_sloped">Sloped</string>
+
+    <!-- Enum values: CommercialPosition -->
+    <string name="commercial_position_basement">Basement</string>
+    <string name="commercial_position_ground">Ground floor</string>
+    <string name="commercial_position_upper_floor">Upper floor</string>
+
+    <!-- Enum values: StreetPosition -->
+    <string name="street_position_main">Main street</string>
+    <string name="street_position_side">Side street</string>
+
+    <!-- Enum values: BuildingClass -->
+    <string name="building_class_a">Class A</string>
+    <string name="building_class_b">Class B</string>
+    <string name="building_class_c">Class C</string>
+
+    <!-- Phase 5.5/5.6: section titles and field labels for the extended property specs form -->
+    <string name="spec_section_common">Additional specs</string>
+    <string name="spec_section_apartment">Apartment specs</string>
+    <string name="spec_section_land">Land specs</string>
+    <string name="spec_section_commercial">Commercial specs</string>
+    <string name="spec_section_office">Office specs</string>
+    <string name="spec_section_amenities">Amenities</string>
+
+    <string name="label_building_age">Building age (years)</string>
+    <string name="label_floor">Floor</string>
+    <string name="label_total_floors">Total floors</string>
+    <string name="label_deed_type">Deed type</string>
+    <string name="label_water_status">Water connection</string>
+    <string name="label_electricity_status">Electricity connection</string>
+    <string name="label_gas_status">Gas connection</string>
+    <string name="label_building_class">Building class</string>
+    <string name="label_heating_cooling">Heating/cooling system</string>
+    <string name="label_street_position">Street position</string>
+    <string name="label_frontage_width_land">Street frontage (m)</string>
+    <string name="label_frontage_width_commercial">Storefront width (m)</string>
+
+    <string name="label_unit_direction">Unit direction</string>
+    <string name="label_unit_condition">Unit condition</string>
+    <string name="label_flooring">Flooring</string>
+    <string name="label_facade">Facade</string>
+    <string name="label_bathroom_count">Bathroom count</string>
+    <string name="amenity_balcony">Balcony/terrace</string>
+    <string name="amenity_pool">Pool</string>
+    <string name="amenity_sauna">Sauna/jacuzzi</string>
+    <string name="amenity_gym">Gym</string>
+    <string name="amenity_lobby">Lobby</string>
+    <string name="amenity_security_guard">Security guard</string>
+    <string name="amenity_video_intercom">Video intercom</string>
+
+    <string name="label_land_use">Land use</string>
+    <string name="label_street_width">Street width (m)</string>
+    <string name="label_allowed_density">Allowed density (%)</string>
+    <string name="label_allowed_floors">Allowed floors to build</string>
+    <string name="label_land_position">Position relative to street</string>
+    <string name="amenity_wall">Walled/fenced</string>
+    <string name="amenity_building_permit">Has construction permit</string>
+    <string name="label_land_slope">Land slope</string>
+
+    <string name="label_key_money">Key money / سرقفلی (Toman)</string>
+    <string name="label_commercial_floor_position">Floor position</string>
+    <string name="label_ceiling_height">Ceiling height (m)</string>
+    <string name="label_business_license_type">Permitted business type</string>
+    <string name="amenity_three_phase_electricity">Three-phase electricity</string>
+    <string name="amenity_restroom">Restroom</string>
+
+    <string name="label_partition_count">Partitions/rooms</string>
+    <string name="amenity_false_floor">Raised floor</string>
+    <string name="amenity_false_ceiling">Suspended ceiling</string>
+    <string name="amenity_conference_room">Conference room</string>
+
+    <!-- Phase 5.6: free-form personal/internal note, separate from the customer-facing description -->
+    <string name="label_additional_notes">Additional notes (internal)</string>
+    <string name="add_property_additional_notes_hint">Any personal note for you or your colleagues; not shown to the customer</string>
+
+    <!-- Phase 6: full redesign of property specs to match the new forms (apartment/villa/commercial/land) -->
+    <string name="spec_section_kitchen">Kitchen</string>
+    <string name="spec_section_finishes">Flooring/Walls/Ceiling</string>
+    <string name="spec_section_bathroom">Bathroom</string>
+    <string name="spec_section_hvac">Heating &amp; Cooling</string>
+    <string name="spec_section_villa">Villa specs</string>
+    <string name="spec_section_building_amenities">Building amenities</string>
+    <string name="spec_section_land_rights">Water/electricity/gas rights</string>
+
+    <string name="label_area_built">Built area (m²)</string>
+    <string name="label_area_total">Total area (m²)</string>
+    <string name="label_area_balcony">Balcony area (m²)</string>
+    <string name="label_units_per_floor">Units per floor</string>
+    <string name="label_cabinet_material">Cabinet material</string>
+    <string name="label_wall_covering">Wall covering</string>
+    <string name="label_ceiling_covering">Ceiling covering</string>
+    <string name="label_cooling_system">Cooling system</string>
+    <string name="label_heating_system">Heating system</string>
+    <string name="label_yard_area">Yard area (m²)</string>
+    <string name="label_terrace_area">Terrace area (m²)</string>
+    <string name="label_master_bedroom_count">Master bedrooms</string>
+    <string name="label_building_permit_area">Building permit area (m²)</string>
+    <string name="label_commercial_usage">Usage</string>
+
+    <string name="building_class_a_plus">Class A+</string>
+    <string name="deed_type_undivided">Undivided</string>
+    <string name="flooring_concrete">Concrete</string>
+    <string name="land_use_unplanned">No zoning plan</string>
+
+    <string name="cabinet_material_high_gloss">High gloss</string>
+    <string name="cabinet_material_mdf">MDF</string>
+    <string name="cabinet_material_membrane">Membrane</string>
+    <string name="cabinet_material_wood">Wood</string>
+    <string name="cabinet_material_metal">Metal</string>
+
+    <string name="wall_covering_plaster">Plaster</string>
+    <string name="wall_covering_wallpaper">Wallpaper</string>
+    <string name="wall_covering_paint">Paint</string>
+    <string name="wall_covering_ceramic">Ceramic</string>
+    <string name="wall_covering_concrete">Concrete</string>
+
+    <string name="ceiling_covering_plaster">Plaster</string>
+    <string name="ceiling_covering_gypsum_board">Gypsum board</string>
+    <string name="ceiling_covering_paint">Paint</string>
+    <string name="ceiling_covering_suspended">Suspended ceiling</string>
+
+    <string name="cooling_split">Split</string>
+    <string name="cooling_cooler">Air cooler</string>
+    <string name="cooling_central">Central</string>
+
+    <string name="heating_package">Package unit</string>
+    <string name="heating_water_heater">Water heater</string>
+    <string name="heating_radiator">Radiator</string>
+    <string name="heating_fan_coil">Fan coil</string>
+    <string name="heating_central">Central</string>
+
+    <string name="commercial_usage_retail">Retail</string>
+    <string name="commercial_usage_complex">Commercial complex</string>
+    <string name="commercial_usage_office">Office</string>
+    <string name="commercial_usage_workshop">Workshop</string>
+    <string name="commercial_usage_warehouse">Warehouse</string>
+
+    <string name="amenity_kitchen_island">Kitchen island</string>
+    <string name="amenity_kitchenette">Kitchenette</string>
+    <string name="amenity_barbecue">Barbecue</string>
+    <string name="amenity_iranian_toilet">Iranian-style toilet</string>
+    <string name="amenity_western_toilet">Western-style toilet</string>
+    <string name="amenity_jacuzzi">Bathtub &amp; jacuzzi</string>
+    <string name="amenity_private_parking_path">Private parking path</string>
+    <string name="amenity_shared_parking_path">Shared parking path</string>
+    <string name="amenity_automatic_parking_door">Automatic parking door</string>
+    <string name="amenity_private_water">Private water</string>
+    <string name="amenity_shared_water">Shared water</string>
+    <string name="amenity_private_electricity">Private electricity</string>
+    <string name="amenity_shared_electricity">Shared electricity</string>
+    <string name="amenity_private_gas">Private gas</string>
+    <string name="amenity_shared_gas">Shared gas</string>
+    <string name="amenity_built_in_closet">Built-in closet</string>
+    <string name="amenity_courtyard">Courtyard</string>
+    <string name="amenity_caretaker">Caretaker</string>
+    <string name="amenity_kitchen">Kitchen</string>
+    <string name="amenity_water_right_owned">Private water right</string>
+    <string name="amenity_water_right_obtainable">Water right obtainable</string>
+    <string name="amenity_electricity_right_owned">Private electricity right</string>
+    <string name="amenity_electricity_right_obtainable">Electricity right obtainable</string>
+    <string name="amenity_gas_right_owned">Private gas right</string>
+    <string name="amenity_gas_right_obtainable">Gas right obtainable</string>
+
+    <string name="property_card_area_only">%1$d m²</string>
+</resources>

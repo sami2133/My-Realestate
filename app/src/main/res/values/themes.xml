@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.RealEstateConsultant" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- اسپلش‌اسکرین برند‌شده (کتابخانه‌ی androidx.core.splashscreen): پس‌زمینه سبز زمردی اصلی +
+         آیکون خانه‌ی همون لوگوی اپ در وسط، به‌جای یک صفحه‌ی سفید خام موقع باز شدن. بعد از اتمام
+         اسپلش، خودکار به تم اصلی اپ (postSplashScreenTheme) سوییچ می‌کنه. -->
+    <style name="Theme.RealEstateConsultant.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.RealEstateConsultant</item>
+    </style>
+</resources>
