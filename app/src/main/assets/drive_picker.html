@@ -10,19 +10,12 @@
   var developerKey = null;
   var appId = null;
   var pickerApiLoaded = false;
-  // "folder": حالت قبلی — انتخاب پوشه‌ی تیمی (تک‌انتخابی).
-  // "files": حالت جدید — چندانتخابی روی محتوای یک پوشه‌ی مشخص (parentFolderId)، برای گرفتن
-  // مجوز drive.file روی فایل‌هایی که یک عضو دیگر تیم ساخته و این دستگاه هنوز ندیده (مثلاً عکس‌ها).
-  var mode = 'folder';
-  var parentFolderId = null;
 
   // این تابع از سمت اندروید (WebView.evaluateJavascript) بعد از لود شدن صفحه صدا زده می‌شه.
-  function init(token, devKey, projectAppId, pickerMode, parent) {
+  function init(token, devKey, projectAppId) {
     accessToken = token;
     developerKey = devKey;
     appId = projectAppId;
-    mode = pickerMode || 'folder';
-    parentFolderId = parent || null;
     gapi.load('picker', { callback: onPickerApiLoad });
   }
 
@@ -33,20 +26,10 @@
 
   function createPicker() {
     if (!pickerApiLoaded || !accessToken) return;
-    if (mode === 'files') {
-      createFilesPicker();
-    } else {
-      createFolderPicker();
-    }
-  }
 
-  function createFolderPicker() {
-    // قبلاً فقط یک ویو (تب) وجود داشت که پوشه‌های خودِ کاربر و پوشه‌های Shared with me رو با هم
-    // قاطی نشون می‌داد — وقتی هم اپ روی دستگاه، یه پوشه‌ی هم‌نام برای خودش ساخته بود و هم یه
-    // پوشه‌ی هم‌نام از یک عضو دیگه Share شده بود، هیچ راهی برای تشخیص‌شون توی همون یک لیست نبود.
-    // با اضافه‌کردن دو تب مجزا با setLabel، حالا مشخصاً معلومه هر پوشه از کدوم دسته‌ست؛ ضمناً
-    // Google Picker زیر پوشه‌های تب «Shared with me» معمولاً نام مالک/آخرین ویرایش رو هم نشون
-    // می‌ده که به تشخیص بیشتر کمک می‌کنه.
+    // دو تب مجزا با setLabel برای پوشه‌های خودِ کاربر و پوشه‌های Shared with me — تا وقتی هم اپ
+    // پوشه‌ای برای خودش ساخته و هم پوشه‌ای هم‌نام از یک اکانت دیگه Share شده، توی همون یک لیست
+    // قاطی نشن. زیر پوشه‌های تب «Shared with me»، Google Picker معمولاً نام مالک رو هم نشون می‌ده.
     var myFoldersView = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
       .setIncludeFolders(true)
       .setSelectFolderEnabled(true)
@@ -72,38 +55,10 @@
     picker.setVisible(true);
   }
 
-  // چندانتخابی روی محتوای پوشه‌ی «images»: کاربر با Ctrl/Cmd+A همه‌ی عکس‌های تیم رو یک‌جا
-  // انتخاب می‌کنه؛ همین انتخاب صریح، طبق قانون drive.file، مجوز خواندن هرکدوم رو به این دستگاه
-  // می‌ده — بدون این کار، عکس‌هایی که یک همکار روی دستگاه دیگه آپلود کرده برای این دستگاه
-  // برای همیشه ۴۰۴/۴۰۳ می‌مونن، حتی بعد از «همگام‌سازی الان».
-  function createFilesPicker() {
-    var filesView = new google.picker.DocsView(google.picker.ViewId.DOCS)
-      .setParent(parentFolderId)
-      .setIncludeFolders(false)
-      .setSelectFolderEnabled(false)
-      .setMimeTypes('image/jpeg,image/png,image/webp')
-      .setLabel('عکس‌های تیم');
-
-    var picker = new google.picker.PickerBuilder()
-      .addView(filesView)
-      .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
-      .setOAuthToken(accessToken)
-      .setDeveloperKey(developerKey)
-      .setAppId(appId)
-      .setCallback(pickerCallback)
-      .build();
-    picker.setVisible(true);
-  }
-
   function pickerCallback(data) {
     if (data.action === google.picker.Action.PICKED) {
-      if (mode === 'files') {
-        var ids = data.docs.map(function (doc) { return doc.id; });
-        Android.onFilesPicked(JSON.stringify(ids));
-      } else {
-        var doc = data.docs[0];
-        Android.onPicked(doc.id, doc.name);
-      }
+      var doc = data.docs[0];
+      Android.onPicked(doc.id, doc.name);
     } else if (data.action === google.picker.Action.CANCEL) {
       Android.onCancel();
     }

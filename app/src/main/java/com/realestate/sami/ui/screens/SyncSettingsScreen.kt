@@ -51,16 +51,13 @@ fun SyncSettingsScreen(viewModel: SyncViewModel = hiltViewModel()) {
         }
     }
 
-    // Google Picker: هم برای انتخاب پوشه‌ی تیمی استفاده می‌شه (نتیجه شامل EXTRA_RESULT_FOLDER_ID)،
-    // هم — بلافاصله بعد از یک join موفق — برای انتخاب چندگانه‌ی فایل‌های از‌قبل‌موجود داخل همون پوشه
-    // (نتیجه شامل EXTRA_RESULT_FILE_IDS، بدون EXTRA_RESULT_FOLDER_ID). چون هر دو از همون
-    // pickerLaunchIntent رد می‌شن، بر اساس این‌که کدوم extra توی نتیجه هست تشخیص می‌دیم کدوم بوده.
+    // Google Picker (انتخاب پوشه‌ی تیمی از Drive) رو باز می‌کنه؛ نتیجه شناسه/نام پوشه‌ی انتخاب‌شده است.
     val pickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val folderId = result.data?.getStringExtra(DrivePickerActivity.EXTRA_RESULT_FOLDER_ID)
-            if (folderId != null) viewModel.onFolderPicked(folderId) else viewModel.onFilesPicked()
+            viewModel.onFolderPicked(folderId)
         } else {
             val reason = result.data?.getStringExtra(DrivePickerActivity.EXTRA_CANCEL_REASON)
             viewModel.onPickerCancelled(reason)

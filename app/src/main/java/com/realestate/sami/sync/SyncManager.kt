@@ -40,18 +40,15 @@ sealed class RenameTeamFolderResult {
 }
 
 /**
- * نتیجه‌ی گرفتن شناسه‌ی زیرپوشه‌ی «images» بدون اجرای یک sync کامل — برای دکمه‌ی
- * «دریافت تصاویر تیم»، که فقط لازم دارد بداند Picker چندانتخابی را روی کدام پوشه باز کند.
- * توکن هم همراهش برمی‌گردد تا صفحه‌ی فراخوان مجبور نباشد دوباره جدا آن را بگیرد.
- */
-sealed class ImagesFolderResult {
-    data class Success(val token: String, val folderId: String) : ImagesFolderResult()
-    data class ConsentRequired(val intent: Intent) : ImagesFolderResult()
-    data class Failure(val message: String) : ImagesFolderResult()
-}
-
-/**
  * موتور همگام‌سازی: داده‌ی محلی Room را با فایل‌های JSON مشترک روی یک پوشه‌ی Drive ادغام می‌کند.
+ *
+ * **فرض معماری مهم:** همه‌ی اعضای تیم با یک اکانت گوگل مشترک (نه اکانت شخصی هرکس) وارد این اپ
+ * می‌شوند. چرا: اسکوپ drive.file مجوز خواندن/نوشتن هر فایل را روی جفت (اکانت گوگل، همین اپ) ثبت
+ * می‌کند، نه روی «دستگاه». اگر هر عضو اکانت شخصی خودش را وارد کند، فایلی که دستگاه یک عضو ساخته
+ * برای اکانت اعضای دیگر اصلاً «دیده‌شده» نیست، و resolveExistingFile/resolvePropertyImages به‌جای
+ * update، هر بار یک نسخه‌ی موازی و خالی می‌سازند. با اکانت مشترک این مشکل از ریشه منتفی می‌شود:
+ * هر دستگاهی با همین اکانت، از اول به هر فایلی که همین اپ (با همین اکانت، از هر دستگاهی) ساخته
+ * دسترسی کامل دارد — بدون نیاز به Picker چندمرحله‌ای یا تغییر اسکوپ به `drive` کامل.
  *
  * استراتژی ادغام: «آخرین ویرایش برنده است» (last-write-wins) بر اساس فیلد updatedAt،
  * و تطبیق رکوردها بین دستگاه‌ها از طریق remoteId (UUID) نه id محلی (که فقط داخل هر دستگاه معتبر است).
@@ -159,29 +156,6 @@ class SyncManager @Inject constructor(
             } else {
                 SyncResult.Failure("دسترسی به Drive رد شد؛ لطفاً یک‌بار خارج و دوباره با گوگل وارد شو")
             }
-        }
-    }
-
-    /**
-     * شناسه‌ی زیرپوشه‌ی «images» را بدون اجرای merge کامل sync برمی‌گرداند (فقط توکن +
-     * ensureTeamFolder + ensureSubfolder) — برای این‌که صفحه‌ی جزئیات ملک بتواند Picker
-     * چندانتخابی («دریافت تصاویر تیم») را فوری باز کند، بدون منتظرِ یک sync کامل ماندن.
-     */
-    suspend fun ensureImagesFolderId(account: GoogleSignInAccount): ImagesFolderResult {
-        val token = when (val tokenResult = authManager.getAccessToken(context, account)) {
-            is AccessTokenResult.Success -> tokenResult.token
-            is AccessTokenResult.ConsentRequired -> return ImagesFolderResult.ConsentRequired(tokenResult.intent)
-            is AccessTokenResult.Failure -> return ImagesFolderResult.Failure(tokenResult.message)
-        }
-        val teamFolderId = syncPrefs.teamFolderId
-            ?: return ImagesFolderResult.Failure("هنوز به هیچ پوشه‌ی تیمی وصل نیستی")
-        return try {
-            val imagesFolderId = syncPrefs.imagesFolderId
-                ?: driveApi.ensureSubfolder(token, teamFolderId, DriveConstants.IMAGES_FOLDER_NAME)
-                    .also { syncPrefs.imagesFolderId = it }
-            ImagesFolderResult.Success(token, imagesFolderId)
-        } catch (e: Exception) {
-            ImagesFolderResult.Failure(e.message ?: "پیدا کردن پوشه‌ی عکس‌های تیم ناموفق بود")
         }
     }
 
