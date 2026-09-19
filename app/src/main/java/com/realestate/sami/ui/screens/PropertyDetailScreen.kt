@@ -70,10 +70,10 @@ fun PropertyDetailScreen(
 
     val teamImagesPickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    ) { _ ->
         // چه کاربر عکسی انتخاب کرده باشه چه لغو کرده باشه، یک sync عادی کافیه؛ syncNow خودش
         // فقط عکس‌هایی که واقعاً تازه در دسترس شدن رو دانلود می‌کنه.
-        if (result.resultCode == Activity.RESULT_OK) syncViewModel.onTeamImagesPicked()
+        syncViewModel.onFilesPicked()
     }
 
     LaunchedEffect(syncState.pendingConsentIntent) {
